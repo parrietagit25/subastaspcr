@@ -22,6 +22,6 @@ RUN docker-php-ext-install zip pdo pdo_mysql gd
 # Instalar Composer
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-COPY ./php /var/www/html
+COPY ./php20 /var/www/html
 
 EXPOSE 80
