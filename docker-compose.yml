@@ -4,7 +4,7 @@ services:
   php:
     build: .
     volumes:
-      - ./php:/var/www/html
+      - ./php20:/var/www/html
     ports:
       - 8082:80  
       - 4443:443  

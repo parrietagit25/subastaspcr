@@ -1,6 +1,5 @@
 FROM php:8.0-apache
 
-# Instalar dependencias y habilitar módulos de Apache
 RUN apt-get update && \
     apt-get install -y \
     zlib1g-dev \
@@ -12,11 +11,11 @@ RUN apt-get update && \
     libfreetype6-dev \
     libjpeg62-turbo-dev \
     libpng-dev \
-    nano && \
-    a2enmod ssl && \
-    a2ensite default-ssl
+    nano 
+    # Comentadas las líneas para habilitar SSL
+    # a2enmod ssl && \
+    # a2ensite default-ssl
 
-# Instalar extensiones de PHP
 RUN docker-php-ext-configure gd --with-freetype --with-jpeg
 RUN docker-php-ext-install zip pdo pdo_mysql gd
 
@@ -25,4 +24,4 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 
 COPY ./php /var/www/html
 
-EXPOSE 80 443
+EXPOSE 80
