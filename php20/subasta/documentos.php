@@ -2,7 +2,7 @@
 $mensaje = "";
 
 try {
-  $pdo = new PDO('mysql:host=db;dbname=subastas;charset=utf8mb4', 'parrieta', 'Subastas2023');
+  $pdo = new PDO('mysql:host=db;dbname=subastas;charset=utf8mb4', 'root', 'rootpass');
   $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
   echo "Error de conexión: " . $e->getMessage();
