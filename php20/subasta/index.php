@@ -10,7 +10,7 @@ if(isset($_SESSION["email"])) {
 if (isset($_POST['email'])) {
 
     try {
-        $pdo = new PDO('mysql:host=db;dbname=db;charset=utf8mb4', 'parrieta', 'Dollar2022');
+        $pdo = new PDO('mysql:host=db;dbname=subastas;charset=utf8mb4', 'parrieta', 'Subastas2023');
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     } catch (PDOException $e) {
         echo "Error de conexión: " . $e->getMessage();
