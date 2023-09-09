@@ -152,45 +152,34 @@
                 </button>
 
                 <div class="navbar-collapse offcanvas-collapse" id="navbarsExampleDefault">
-                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                    <li class="nav-item">
-                    <a class="nav-link active" aria-current="page" href="#">Inicio</a>
-                    </li>
-                    
-                    <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Registros</a>
-                    <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="#">Solicitud</a></li>
-                        <li><a class="dropdown-item" href="aprobados.php">Aprobados</a></li>
-                        <li><a class="dropdown-item" href="#">API</a></li>
-                    </ul>
-                    </li>
-                    <li class="nav-item">
-                    <a class="nav-link" href="#">Salir</a>
-                    </li>
-                </ul>
+
+                    <div class="container">
+                        <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+                            <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
+                                <img src="img/logo20años.png" width="200">
+                            </a>
+
+                            <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
+                            <li><a href="#" class="nav-link px-2 text-secondary"></a></li>
+                            <li><a href="#" class="nav-link px-2 text-white"></a></li>
+                            <li><a href="#" class="nav-link px-2 text-white"></a></li>
+                            <li><a href="#" class="nav-link px-2 text-white"></a></li>
+                            <li><a href="#" class="nav-link px-2 text-white"></a></li>
+                            </ul>
+
+                            <form class="col-12 col-lg-auto mb-3 mb-lg-0 me-lg-3" role="search">
+                            <input type="search" class="form-control form-control-dark text-bg-dark" placeholder="Search..." aria-label="Search">
+                            </form>
+
+                            <div class="text-end">
+                                <img src="img/logosubastas.png" width="200">
+                            </div>
+                        </div>
+                    </div>
+                
                 </div>
             </div>
         </nav>
-        <!-- Modal Aprobar -->
-        <div class="modal fade" id="aprobacion" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-            <div class="modal-dialog">
-                <div class="modal-content">
-                <div class="modal-header">
-                    <h1 class="modal-title fs-5" id="exampleModalLabel">Aprobar</h1>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <form action="" method="post">
-                    <div class="modal-body" id="aprobar">
-                    </div>
-                    <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                    <button type="submit" class="btn btn-primary" name="aprobar_final">Aprobar</button>
-                    </div>
-                </form>
-                </div>
-            </div>
-        </div>
         <main class="container">
             <div class="container">
             <h2>Subastas</h2>
