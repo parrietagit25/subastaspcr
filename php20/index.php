@@ -19,7 +19,7 @@ if (isset($_POST['enviar_codigo'])) {
    }
    
    if (isset($contar) && $contar > 0) {
-      $_SESSION['activacion_code']
+      $_SESSION['activacion_code'] = 1;
    }
   
 }
@@ -208,6 +208,7 @@ if (isset($_POST['enviar_codigo'])) {
         <main class="container">
             <div class="container">
             <h2>Subastas</h2>
+                <?php if (!isset($_SESSION['activacion_code'])) { ?>
                 <div class="modal fade show" id="codeon" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: block;">
                   <div class="modal-dialog">
                     <div class="modal-content">
@@ -227,6 +228,7 @@ if (isset($_POST['enviar_codigo'])) {
                     </div>
                   </div>
                 </div>
+                <?php } ?>
             </div>
         </main>
         <script src="https://getbootstrap.com/docs/5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
