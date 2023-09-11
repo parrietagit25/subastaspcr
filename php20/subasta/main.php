@@ -57,28 +57,18 @@ try {
         $mail->IsHTML(true);
 
         $mail->Subject = 'GRUPO PCR - APROBADO';
-        $mail->Body    = 'Estimado , '.$nombre.'
-        Esperamos que este mensaje le encuentre bien.
-        Nos complace informarle que su proceso de registro con el Grupo PCR ha sido aprobado exitosamente. Queremos darle la bienvenida a nuestra comunidad y estamos emocionados por las oportunidades que esta aprobación abre para usted y para todos nosotros.
-        Código de Continuación de Registro: '.$codigo.'
-        Por favor, utilice el código proporcionado para continuar con las siguientes etapas de su registro en nuestra plataforma.
-        Si tiene alguna pregunta o necesita más información, no dude en ponerse en contacto con nosotros. Estamos aquí para ayudarle en todo lo que necesite para asegurar una transición fluida.
-        ¡Muchas gracias por elegir el Grupo PCR! Esperamos tener una relación larga y fructífera con usted.
-        
-        Atentamente,
-        El Equipo del Grupo PCR 
-        
+        $mail->Body    = '
         <html>
           <head>
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
           </head>
-          <body>
+          <body> 
             <img src="cid:logosubastas" alt="Logo 1" />
-            
+            <br>
             <p>Estimado, '.$nombre.'</p>
             <p>Esperamos que este mensaje le encuentre bien. Nos complace informarle que su proceso de registro con el Grupo PCR ha sido aprobado exitosamente.</p>
             <p><strong style="font-size: 18px;">Código de Continuación de Registro: '.$codigo.'</strong></p>
-            <p>Por favor, utilice el código proporcionado para continuar con las siguientes etapas de su registro en nuestra plataforma.</p>
+            <p>Por favor, utilice el código proporcionado para continuar con las siguientes etapas de su registro en nuestra plataforma web <a href="https://subastas.grupopcr.com.pa/">https://subastas.grupopcr.com.pa/</a> entra en nuestra pagina e ingresa el codigo.</p>
             <p>Si tiene alguna pregunta o necesita más información, no dude en ponerse en contacto con nosotros. Estamos aquí para ayudarle en todo </p>
             <p>lo que necesite para asegurar una transición fluida.</p>
             <p>¡Muchas gracias por elegir el Grupo PCR! Esperamos tener una relación larga y fructífera con usted.</p>
