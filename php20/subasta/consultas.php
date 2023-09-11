@@ -34,7 +34,7 @@ if (isset($_GET['adjuntos'])) {
 
             echo '<a href="'.$row['pn_ficha'].'" target="_blank">Ficha</a><br>';
 
-            echo '<a href="'.$row['pn_carta_ex'].'" target="_blank">Carta</a><br>';
+            // echo '<a href="'.$row['pn_carta_ex'].'" target="_blank">Carta</a><br>';
 
             echo '<a href="'.$row['pn_cc'].'" target="_blank">Conosca a su cliente</a><br>';
 
@@ -52,7 +52,7 @@ if (isset($_GET['adjuntos'])) {
 
             echo '<a href="'.$row['pni_cc'].'" target="_blank">Conosca a su cliente</a><br>';
 
-            echo '<a href="'.$row['pni_carta_ex'].'" target="_blank">Carta</a><br>';
+            //echo '<a href="'.$row['pni_carta_ex'].'" target="_blank">Carta</a><br>';
 
         }
 
@@ -68,7 +68,7 @@ if (isset($_GET['adjuntos'])) {
 
             echo '<a href="'.$row['pj_cc'].'" target="_blank">Conosca a su cliente</a><br>';
 
-            echo '<a href="'.$row['pj_carta_exo'].'" target="_blank">Carta</a><br>';
+            //echo '<a href="'.$row['pj_carta_exo'].'" target="_blank">Carta</a><br>';
 
         }
 
