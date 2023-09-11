@@ -9,7 +9,7 @@ if (isset($_POST['enviar_codigo'])) {
     echo "Error de conexión: " . $e->getMessage();
   }
 
-  $datos_user = $pdo -> query("SELECT count(*) as contar FROM cc_subastas WHERE code = '".$_POST['codigo_acceso']."'");
+  $datos_user = $pdo -> query("SELECT count(*) as contar FROM cc_subastas WHERE codigo = '".$_POST['codigo_acceso']."'");
   $rowss = $datos_user->fetchAll(PDO::FETCH_ASSOC);
 
   foreach ($rowss as $rows) {
@@ -27,8 +27,8 @@ if (isset($_POST['enviar_codigo'])) {
 ?>
 <!doctype html>
 <html lang="en" data-bs-theme="auto">
-  <head><script src="https://getbootstrap.com/docs/5.3/assets/js/color-modes.js"></script>
-
+  <head>
+    <script src="https://getbootstrap.com/docs/5.3/assets/js/color-modes.js"></script>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
