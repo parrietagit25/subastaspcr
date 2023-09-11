@@ -53,7 +53,9 @@ try {
         $mail->addAddress($email_destinatario, $nombre);
 
         // Contenido del correo
-        $mail->isHTML(true);
+        $mail->CharSet = 'UTF-8';
+        $mail->IsHTML(true);
+
         $mail->Subject = 'GRUPO PCR - APROBADO';
         $mail->Body    = 'Estimado , '.$nombre.'
         Esperamos que este mensaje le encuentre bien.
@@ -64,7 +66,34 @@ try {
         ¡Muchas gracias por elegir el Grupo PCR! Esperamos tener una relación larga y fructífera con usted.
         
         Atentamente,
-        El Equipo del Grupo PCR';
+        El Equipo del Grupo PCR 
+        
+        <html>
+          <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+          </head>
+          <body>
+            <img src="cid:logosubastas" alt="Logo 1" />
+            
+            <p>Estimado, '.$nombre.'</p>
+            <p>Esperamos que este mensaje le encuentre bien. Nos complace informarle que su proceso de registro con el Grupo PCR ha sido aprobado exitosamente.</p>
+            <p><strong style="font-size: 18px;">Código de Continuación de Registro: '.$codigo.'</strong></p>
+            <p>Por favor, utilice el código proporcionado para continuar con las siguientes etapas de su registro en nuestra plataforma.</p>
+            <p>Si tiene alguna pregunta o necesita más información, no dude en ponerse en contacto con nosotros. Estamos aquí para ayudarle en todo </p>
+            <p>lo que necesite para asegurar una transición fluida.</p>
+            <p>¡Muchas gracias por elegir el Grupo PCR! Esperamos tener una relación larga y fructífera con usted.</p>
+            <br>
+            Atentamente,
+            <br>
+            El Equipo del Grupo PCR
+            <br>
+            <img src="cid:logogrupopcr" alt="Logo 2" />
+          </body>
+        </html>
+        ';
+
+        $mail->AddEmbeddedImage('../img/logo20años.png', 'logogrupopcr');
+        $mail->AddEmbeddedImage('../img/logosubastas.png', 'logosubastas');
 
         $mail->send();
         //echo 'El mensaje ha sido enviado';
