@@ -33,7 +33,7 @@ if (isset($_POST['nombre_pn'])) {
       $fileExtension = pathinfo($_FILES["recibo_pn"]["name"], PATHINFO_EXTENSION);
       $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
       $allowed_image_extensions = ["jpg", "png", "gif", "bmp", "jpeg"];
-      $allowed_doc_extensions = ["pdf", "doc", "docx", "txt"];
+      $allowed_doc_extensions = ["pdf", "doc", "docx", "txt", "jpg", "png", "gif", "bmp", "jpeg"];
       $check = getimagesize($_FILES["recibo_pn"]["tmp_name"]);
 
       if ($check !== false || in_array($fileExtension, $allowed_doc_extensions)) {
@@ -62,7 +62,7 @@ if (isset($_POST['nombre_pn'])) {
       $fileExtension = pathinfo($_FILES["ficha_pn"]["name"], PATHINFO_EXTENSION);
       $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
       $allowed_image_extensions = ["jpg", "png", "gif", "bmp", "jpeg"];
-      $allowed_doc_extensions = ["pdf", "doc", "docx", "txt"];
+      $allowed_doc_extensions = ["pdf", "doc", "docx", "txt", "jpg", "png", "gif", "bmp", "jpeg"];
       $check = getimagesize($_FILES["ficha_pn"]["tmp_name"]);
 
       if ($check !== false || in_array($fileExtension, $allowed_doc_extensions)) {
@@ -91,7 +91,7 @@ if (isset($_POST['nombre_pn'])) {
       $fileExtension = pathinfo($_FILES["cc_pn"]["name"], PATHINFO_EXTENSION);
       $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
       $allowed_image_extensions = ["jpg", "png", "gif", "bmp", "jpeg"];
-      $allowed_doc_extensions = ["pdf", "doc", "docx", "txt"];
+      $allowed_doc_extensions = ["pdf", "doc", "docx", "txt", "jpg", "png", "gif", "bmp", "jpeg"];
       $check = getimagesize($_FILES["cc_pn"]["tmp_name"]);
 
       if ($check !== false || in_array($fileExtension, $allowed_doc_extensions)) {
@@ -120,7 +120,7 @@ if (isset($_POST['nombre_pn'])) {
       $fileExtension = pathinfo($_FILES["carta_exo_pn"]["name"], PATHINFO_EXTENSION);
       $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
       $allowed_image_extensions = ["jpg", "png", "gif", "bmp", "jpeg"];
-      $allowed_doc_extensions = ["pdf", "doc", "docx", "txt"];
+      $allowed_doc_extensions = ["pdf", "doc", "docx", "txt", "jpg", "png", "gif", "bmp", "jpeg"];
       $check = getimagesize($_FILES["carta_exo_pn"]["tmp_name"]);
 
       if ($check !== false || in_array($fileExtension, $allowed_doc_extensions)) {
@@ -166,7 +166,7 @@ if (isset($_POST['nombre_completo_pni'])) {
     $fileExtension = pathinfo($_FILES["recibo_pni"]["name"], PATHINFO_EXTENSION);
     $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
     $allowed_image_extensions = ["jpg", "png", "gif", "bmp", "jpeg"];
-    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt"];
+    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt", "jpg", "png", "gif", "bmp", "jpeg"];
     $check = getimagesize($_FILES["recibo_pni"]["tmp_name"]);
 
     if ($check !== false || in_array($fileExtension, $allowed_doc_extensions)) {
@@ -195,7 +195,7 @@ if (isset($_POST['nombre_completo_pni'])) {
     $fileExtension = pathinfo($_FILES["cedula_pni"]["name"], PATHINFO_EXTENSION);
     $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
     $allowed_image_extensions = ["jpg", "png", "gif", "bmp", "jpeg"];
-    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt"];
+    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt", "jpg", "png", "gif", "bmp", "jpeg"];
     $check = getimagesize($_FILES["cedula_pni"]["tmp_name"]);
 
     if ($check !== false || in_array($fileExtension, $allowed_doc_extensions)) {
@@ -224,7 +224,7 @@ if (isset($_POST['nombre_completo_pni'])) {
     $fileExtension = pathinfo($_FILES["aviso_pni"]["name"], PATHINFO_EXTENSION);
     $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
     $allowed_image_extensions = ["jpg", "png", "gif", "bmp", "jpeg"];
-    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt"];
+    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt", "jpg", "png", "gif", "bmp", "jpeg"];
     $check = getimagesize($_FILES["aviso_pni"]["tmp_name"]);
 
     if ($check !== false || in_array($fileExtension, $allowed_doc_extensions)) {
@@ -253,7 +253,7 @@ if (isset($_POST['nombre_completo_pni'])) {
     $fileExtension = pathinfo($_FILES["referencia_pni"]["name"], PATHINFO_EXTENSION);
     $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
     $allowed_image_extensions = ["jpg", "png", "gif", "bmp", "jpeg"];
-    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt"];
+    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt", "jpg", "png", "gif", "bmp", "jpeg"];
     $check = getimagesize($_FILES["referencia_pni"]["tmp_name"]);
 
     if ($check !== false || in_array($fileExtension, $allowed_doc_extensions)) {
@@ -282,7 +282,7 @@ if (isset($_POST['nombre_completo_pni'])) {
     $fileExtension = pathinfo($_FILES["cc_pni"]["name"], PATHINFO_EXTENSION);
     $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
     $allowed_image_extensions = ["jpg", "png", "gif", "bmp", "jpeg"];
-    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt"];
+    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt", "jpg", "png", "gif", "bmp", "jpeg"];
     $check = getimagesize($_FILES["cc_pni"]["tmp_name"]);
 
     if ($check !== false || in_array($fileExtension, $allowed_doc_extensions)) {
@@ -311,7 +311,7 @@ if (isset($_POST['nombre_completo_pni'])) {
     $fileExtension = pathinfo($_FILES["carta_ex_pni"]["name"], PATHINFO_EXTENSION);
     $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
     $allowed_image_extensions = ["jpg", "png", "gif", "bmp", "jpeg"];
-    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt"];
+    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt", "jpg", "png", "gif", "bmp", "jpeg"];
     $check = getimagesize($_FILES["carta_ex_pni"]["tmp_name"]);
 
     if ($check !== false || in_array($fileExtension, $allowed_doc_extensions)) {
@@ -357,7 +357,7 @@ if (isset($_POST['nombre_completo_pj'])) {
     $fileExtension = pathinfo($_FILES["registro_publico_pj"]["name"], PATHINFO_EXTENSION);
     $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
     $allowed_image_extensions = ["jpg", "png", "gif", "bmp", "jpeg"];
-    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt"];
+    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt", "jpg", "png", "gif", "bmp", "jpeg"];
     $check = getimagesize($_FILES["registro_publico_pj"]["tmp_name"]);
 
     if ($check !== false || in_array($fileExtension, $allowed_doc_extensions)) {
@@ -386,7 +386,7 @@ if (isset($_POST['nombre_completo_pj'])) {
     $fileExtension = pathinfo($_FILES["cedula_pj"]["name"], PATHINFO_EXTENSION);
     $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
     $allowed_image_extensions = ["jpg", "png", "gif", "bmp", "jpeg"];
-    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt"];
+    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt", "jpg", "png", "gif", "bmp", "jpeg"];
     $check = getimagesize($_FILES["cedula_pj"]["tmp_name"]);
 
     if ($check !== false || in_array($fileExtension, $allowed_doc_extensions)) {
@@ -415,7 +415,7 @@ if (isset($_POST['nombre_completo_pj'])) {
     $fileExtension = pathinfo($_FILES["aviso_op_pj"]["name"], PATHINFO_EXTENSION);
     $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
     $allowed_image_extensions = ["jpg", "png", "gif", "bmp", "jpeg"];
-    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt"];
+    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt", "jpg", "png", "gif", "bmp", "jpeg"];
     $check = getimagesize($_FILES["aviso_op_pj"]["tmp_name"]);
 
     if ($check !== false || in_array($fileExtension, $allowed_doc_extensions)) {
@@ -444,7 +444,7 @@ if (isset($_POST['nombre_completo_pj'])) {
     $fileExtension = pathinfo($_FILES["servicios_pj"]["name"], PATHINFO_EXTENSION);
     $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
     $allowed_image_extensions = ["jpg", "png", "gif", "bmp", "jpeg"];
-    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt"];
+    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt", "jpg", "png", "gif", "bmp", "jpeg"];
     $check = getimagesize($_FILES["servicios_pj"]["tmp_name"]);
 
     if ($check !== false || in_array($fileExtension, $allowed_doc_extensions)) {
@@ -473,7 +473,7 @@ if (isset($_POST['nombre_completo_pj'])) {
     $fileExtension = pathinfo($_FILES["cc_pj"]["name"], PATHINFO_EXTENSION);
     $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
     $allowed_image_extensions = ["jpg", "png", "gif", "bmp", "jpeg"];
-    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt"];
+    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt", "jpg", "png", "gif", "bmp", "jpeg"];
     $check = getimagesize($_FILES["cc_pj"]["tmp_name"]);
 
     if ($check !== false || in_array($fileExtension, $allowed_doc_extensions)) {
@@ -502,7 +502,7 @@ if (isset($_POST['nombre_completo_pj'])) {
     $fileExtension = pathinfo($_FILES["carta_ex_pj"]["name"], PATHINFO_EXTENSION);
     $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
     $allowed_image_extensions = ["jpg", "png", "gif", "bmp", "jpeg"];
-    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt"];
+    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt", "jpg", "png", "gif", "bmp", "jpeg"];
     $check = getimagesize($_FILES["carta_ex_pj"]["tmp_name"]);
 
     if ($check !== false || in_array($fileExtension, $allowed_doc_extensions)) {
