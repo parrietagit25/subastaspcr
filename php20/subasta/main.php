@@ -23,7 +23,7 @@ try {
 
     $insert = $pdo -> query("UPDATE cc_subastas SET codigo = '".$codigo."', stat = 2 WHERE id = '".$_POST['id_aprobar']."'");
     
-    $datos_user = $pdo -> query("SELECT * FROM cc_subastas WHERE stat =1 and id = '".$_POST['id_aprobar']."");
+    $datos_user = $pdo -> query("SELECT * FROM cc_subastas WHERE stat =2 and id = '".$_POST['id_aprobar']."");
     $rowss = $datos_user->fetchAll(PDO::FETCH_ASSOC);
 
     foreach ($rowss as $rows) {
