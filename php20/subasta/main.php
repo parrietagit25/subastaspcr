@@ -22,14 +22,14 @@ try {
     $codigo = $_POST['id_aprobar'].rand(1, 100000);
 
     $insert = $pdo -> query("UPDATE cc_subastas SET codigo = '".$codigo."', stat = 2 WHERE id = '".$_POST['id_aprobar']."'");
-    /*
+    
     $datos_user = $pdo -> query("SELECT * FROM cc_subastas WHERE stat =1 and id = '".$_POST['id_aprobar']."");
     $rowss = $datos_user->fetchAll(PDO::FETCH_ASSOC);
 
     foreach ($rowss as $rows) {
 
       $nombre=$rows['nombre_completo'];
-      $email = $rows['email'];
+      $email_destinatario = $rows['email'];
 
      }
 
@@ -39,16 +39,18 @@ try {
         // Configuración del servidor
         $mail->SMTPDebug = 0; // Habilita la salida de depuración detallada (0 para desactivar)
         $mail->isSMTP();
-        $mail->Host       = 'smtp.ejemplo.com';
+        $mail->Host       = 'smtp-mail.outlook.com';
         $mail->SMTPAuth   = true;
-        $mail->Username   = 'tu_email@ejemplo.com';
-        $mail->Password   = 'tu_contraseña';
+        $mail->Username   = 'subastas@grupopcr.com.pa';
+        $mail->Password   = 'Law70344';
         $mail->SMTPSecure = 'tls';
         $mail->Port       = 587;
 
+        $email_origen = 'subastas@grupopcr.com.pa';
+
         // Destinatarios
-        $mail->setFrom($email, $nombre);
-        $mail->addAddress('destinatario@ejemplo.com', 'Nombre del Destinatario');
+        $mail->setFrom($email_origen, 'Subastas Grupo PCR');
+        $mail->addAddress($email_destinatario, $nombre);
 
         // Contenido del correo
         $mail->isHTML(true);
@@ -65,13 +67,13 @@ try {
         El Equipo del Grupo PCR';
 
         $mail->send();
-        echo 'El mensaje ha sido enviado';
+        //echo 'El mensaje ha sido enviado';
     } catch (Exception $e) {
         echo "El mensaje no se pudo enviar. Error: {$mail->ErrorInfo}";
-    } */
+    } 
     
     $mensaje = '<div class="alert alert-success alert-dismissible fade show" role="alert">
-                  <strong>Perspona Aprobada!</strong>
+                  <strong>Perspona Aprobada! Codigo enviado por correo</strong>
                   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>';
     
