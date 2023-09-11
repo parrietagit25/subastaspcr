@@ -1,3 +1,30 @@
+<?php 
+session_start();
+if (isset($_POST['enviar_codigo'])) {
+
+  try {
+    $pdo = new PDO('mysql:host=db;dbname=subastas;charset=utf8mb4', 'root', 'rootpass');
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+  } catch (PDOException $e) {
+    echo "Error de conexión: " . $e->getMessage();
+  }
+
+  $datos_user = $pdo -> query("SELECT count(*) as contar FROM cc_subastas WHERE code = '".$_POST['codigo_acceso']."'");
+  $rowss = $datos_user->fetchAll(PDO::FETCH_ASSOC);
+
+  foreach ($rowss as $rows) {
+
+    $contar=$rows['contar'];
+
+   }
+   
+   if (isset($contar) && $contar > 0) {
+      $_SESSION['activacion_code']
+   }
+  
+}
+
+?>
 <!doctype html>
 <html lang="en" data-bs-theme="auto">
   <head><script src="https://getbootstrap.com/docs/5.3/assets/js/color-modes.js"></script>
@@ -181,7 +208,7 @@
         <main class="container">
             <div class="container">
             <h2>Subastas</h2>
-                <div class="modal fade show" id="codeon" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: block; background-color:#000000; opacity: .4;">
+                <div class="modal fade show" id="codeon" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: block;">
                   <div class="modal-dialog">
                     <div class="modal-content">
                       <div class="modal-header">
