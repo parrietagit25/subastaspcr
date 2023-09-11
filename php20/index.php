@@ -181,7 +181,7 @@
         <main class="container">
             <div class="container">
             <h2>Subastas</h2>
-                <div class="modal fade show" style="display: block;" id="codeon" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal fade show" id="codeon" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: block;">
                   <div class="modal-dialog">
                     <div class="modal-content">
                       <div class="modal-header">
