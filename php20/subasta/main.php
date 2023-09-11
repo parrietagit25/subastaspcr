@@ -63,7 +63,7 @@ try {
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
           </head>
           <body> 
-            <img src="cid:logosubastas" alt="Logo 1" />
+            <img src="cid:logosubastas" width="250" alt="Logo 1" />
             <br>
             <p>Estimado, '.$nombre.'</p>
             <p>Esperamos que este mensaje le encuentre bien. Nos complace informarle que su proceso de registro con el Grupo PCR ha sido aprobado exitosamente.</p>
@@ -77,7 +77,7 @@ try {
             <br>
             El Equipo del Grupo PCR
             <br>
-            <img src="cid:logogrupopcr" alt="Logo 2" />
+            <img src="cid:logogrupopcr" width="250" alt="Logo 2" />
           </body>
         </html>
         ';
@@ -477,3 +477,4 @@ try {
 </script>
     </body>
 </html>
+

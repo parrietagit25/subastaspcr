@@ -181,9 +181,32 @@
         <main class="container">
             <div class="container">
             <h2>Subastas</h2>
-                
+                <div class="modal fade" style="display: block;" id="codeon" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                  <div class="modal-dialog">
+                    <div class="modal-content">
+                      <div class="modal-header">
+                        <h1 class="modal-title fs-5" id="exampleModalLabel">Ingrese el Código</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                      </div>
+                      <form action="" method="post">
+                        <div class="modal-body">
+                          <input type="text" class="form-control" id="" name="codigo_acceso">
+                        </div>
+                        <div class="modal-footer">
+                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+                          <button type="submit" class="btn btn-primary" name="enviar_codigo">Enviar Código</button>
+                        </div>
+                      </form>
+                    </div>
+                  </div>
+                </div>
             </div>
         </main>
         <script src="https://getbootstrap.com/docs/5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
-    </body>
+        <script>
+          $(document).ready(function(){
+            $("#codeon").modal({backdrop: "static", keyboard: false});
+          });
+        </script>
+      </body>
 </html>
