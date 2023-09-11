@@ -92,7 +92,7 @@ try {
     } 
     
     $mensaje = '<div class="alert alert-success alert-dismissible fade show" role="alert">
-                  <strong>Perspona Aprobada! Codigo enviado por correo</strong>
+                  <strong>Persona Aprobada! Codigo enviado por correo</strong>
                   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>';
     
@@ -299,8 +299,8 @@ try {
             <div class="modal-body" id="aprobar">
             </div>
             <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-              <button type="submit" class="btn btn-primary" name="aprobar_final">Aprobar</button>
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelar">Cerrar</button>
+              <button type="submit" class="btn btn-primary" name="aprobar_final" id="enviar">Aprobar</button>
             </div>
           </form>
         </div>
@@ -473,6 +473,23 @@ try {
         });
 
     }
+
+
+    document.addEventListener('DOMContentLoaded', function() {
+
+      const form = document.querySelector('form');
+      const enviar = document.getElementById('enviar');
+      const cancelar = document.getElementById('cancelar');
+
+      form.addEventListener('submit', function(event) {
+
+        enviar.disabled = true;
+        enviar.value = 'Aprobando...'; 
+        cancelar.disabled = true;
+        cancelar.value = 'Aprobando...'; 
+
+      });
+    });
 
 </script>
     </body>
