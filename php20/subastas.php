@@ -1,33 +1,7 @@
 <?php 
 session_start();
-
-if (isset($_SESSION['activacion_code'])) {
-  header('Location: subastas.php');
-}
-
-if (isset($_POST['enviar_codigo'])) {
-
-  try {
-    $pdo = new PDO('mysql:host=db;dbname=subastas;charset=utf8mb4', 'root', 'rootpass');
-    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-  } catch (PDOException $e) {
-    echo "Error de conexión: " . $e->getMessage();
-  }
-
-  $datos_user = $pdo -> query("SELECT count(*) as contar FROM cc_subastas WHERE codigo = '".$_POST['codigo_acceso']."'");
-  $rowss = $datos_user->fetchAll(PDO::FETCH_ASSOC);
-
-  foreach ($rowss as $rows) {
-
-    $contar=$rows['contar'];
-
-   }
-   
-   if (isset($contar) && $contar > 0) {
-      $_SESSION['activacion_code'] = 1;
-      header('Location: subastas.php');
-   }
-  
+if (!isset($_SESSION['activacion_code'])) {
+    header('Location: index.php');
 }
 
 ?>
@@ -213,35 +187,18 @@ if (isset($_POST['enviar_codigo'])) {
         </nav>
         <main class="container">
             <div class="container">
-              <h2>Subastas PCR</h2>
-                <?php if (!isset($_SESSION['activacion_code'])) { ?>
-                <div class="modal fade show" id="codeon" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: block;">
-                  <div class="modal-dialog">
-                    <div class="modal-content">
-                      <div class="modal-header">
-                        <h1 class="modal-title fs-5" id="exampleModalLabel">Ingrese el Código</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                      </div>
-                      <form action="" method="post">
-                        <div class="modal-body">
-                          <input type="text" class="form-control" id="" name="codigo_acceso">
-                        </div>
-                        <div class="modal-footer">
-                          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
-                          <button type="submit" class="btn btn-primary" name="enviar_codigo">Enviar Código</button>
-                        </div>
-                      </form>
-                    </div>
-                  </div>
-                </div>
-                <?php } ?>
+              <div id="blx-base-node">
+                <div id="generado_pcr"></div>
+              </div>
             </div>
         </main>
         <script src="https://getbootstrap.com/docs/5.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-HwwvtgBNo3bZJJLYd8oVXjrBZt8cqVSpeBNS5n7C8IVInixGAoxmnlMuBnhbgrkm" crossorigin="anonymous"></script>
-        <script>
-          $(document).ready(function(){
-            $("#codeon").modal({backdrop: "static", keyboard: false});
-          });
+        <script type="text/javascript">
+            let woaid = "grupopcr";
+            let woablxel = document.createElement("script");
+            let woasfx = "?t=" + Date.now().toString().substr(0, 7);
+            woablxel.src = "https://woa-zone-us-ohio.s3-us-east-2.amazonaws.com/_dist/local.js" + woasfx;
+            document.getElementById("generado_pcr").appendChild(woablxel);
         </script>
       </body>
 </html>
