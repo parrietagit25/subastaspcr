@@ -213,3 +213,6 @@ if (!isset($_COOKIE["grupopcr"])) {
         </script>
       </body>
 </html>
+*/ ?>
+
+
