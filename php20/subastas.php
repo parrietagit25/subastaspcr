@@ -1,6 +1,6 @@
 <?php 
 session_start();
-if (!isset($_COOKIE["grupopcr"]) || !isset($_SESSION['activacion_code'])) {
+if (!isset($_COOKIE["grupopcr"])) {
     header('Location: index.php');
 }else{
     $cookieValue = $_COOKIE["grupopcr"];
