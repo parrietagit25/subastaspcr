@@ -2,8 +2,7 @@
 session_start();
 
 if (isset($_SESSION['activacion_code']) || isset($_COOKIE["grupopcr"])) {
-  //header('Location: subastas.php');
-  echo 'session '.$_SESSION['activacion_code'].' cookie '.$_COOKIE["grupopcr"];
+  header('Location: subastas.php');
 }
 
 if (isset($_POST['enviar_codigo'])) {

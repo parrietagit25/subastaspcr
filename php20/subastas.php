@@ -1,20 +1,12 @@
 <?php 
 session_start();
-if (!isset($_COOKIE["grupopcr"])) {
-    header('Location: index.php');
-}elseif (!isset($_SESSION['activacion_code'])) {
+if (!isset($_COOKIE["grupopcr"]) || !isset($_SESSION['activacion_code'])) {
     header('Location: index.php');
 }else{
-
-    echo $_COOKIE["grupopcr"];
-     
-    /* $cookieValue = $_COOKIE["grupopcr"];
+    $cookieValue = $_COOKIE["grupopcr"];
     $expirationTime = time() + 365 * 24 * 60 * 60;
-    setcookie("grupopcr", $cookieValue, $expirationTime, "/"); */
-
+    setcookie("grupopcr", $cookieValue, $expirationTime, "/"); 
 }
-/*
-
 ?>
 <!doctype html>
 <html lang="en" data-bs-theme="auto">
@@ -213,6 +205,5 @@ if (!isset($_COOKIE["grupopcr"])) {
         </script>
       </body>
 </html>
-*/ ?>
 
 
