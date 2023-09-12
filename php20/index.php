@@ -1,7 +1,7 @@
 <?php 
 session_start();
 
-if (isset($_SESSION['activacion_code'])) {
+if (isset($_SESSION['activacion_code']) || isset($_COOKIE["grupopcr"])) {
   header('Location: subastas.php');
 }
 
@@ -25,6 +25,12 @@ if (isset($_POST['enviar_codigo'])) {
    
    if (isset($contar) && $contar > 0) {
       $_SESSION['activacion_code'] = 1;
+
+      $cookieName = "grupopcr";
+      $cookieValue = $_POST['codigo_acceso'];
+      $expirationTime = time() + 365 * 24 * 60 * 60;
+      setcookie($cookieName, $cookieValue, $expirationTime, "/");
+
       header('Location: subastas.php');
    }
   
