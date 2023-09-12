@@ -207,7 +207,12 @@ if (isset($_POST['enviar_codigo'])) {
         </nav>
         <main class="container">
             <div class="container">
-            <h2>Subastas</h2>
+              <div id="blx-base-node">
+                <script type="text/javascript">
+                  let woaid="grupopcr",woablxel=document.createElement("script"),woasfx="?t="+Date.now().toString().substr(0,7);
+                  woablxel.src="https://woa-zone-us-ohio.s3-us-east-2.amazonaws.com/_dist/local.js"+woasfx,document.getElementById("blx-base-node").append(woablxel);
+                </script>
+              </div>
                 <?php if (!isset($_SESSION['activacion_code'])) { ?>
                 <div class="modal fade show" id="codeon" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true" style="display: block;">
                   <div class="modal-dialog">
