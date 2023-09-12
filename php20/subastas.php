@@ -150,7 +150,7 @@ if (!isset($_SESSION['activacion_code'])) {
                 </button>
                 </li>
             </ul>
-        </div>
+        </div>-->
         <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark" aria-label="Main navigation">
             <div class="container-fluid">
                 <button class="navbar-toggler p-0 border-0" type="button" id="navbarSideCollapse" aria-label="Toggle navigation">
@@ -184,7 +184,7 @@ if (!isset($_SESSION['activacion_code'])) {
                 
                 </div>
             </div>
-        </nav> -->
+        </nav> 
         <main class="container">
             <div class="container">
               <div id="blx-base-node">
