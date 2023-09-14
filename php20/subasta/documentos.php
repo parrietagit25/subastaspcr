@@ -37,7 +37,7 @@ if (isset($_POST['nombre_pn'])) {
 
         // Destinatarios
         $mail->setFrom($email_origen, 'Subastas Grupo PCR');
-        $mail->addAddress('perdidas@grupopcr.com.pa', 'Perdidas - Subastas');
+        $mail->addAddress('pedro.arrieta@grupopcr.com.pa', 'pedro.arrieta - Subastas');
 
         // Contenido del correo
         $mail->CharSet = 'UTF-8';
@@ -219,7 +219,7 @@ if (isset($_POST['nombre_completo_pni'])) {
 
       // Destinatarios
       $mail->setFrom($email_origen, 'Subastas Grupo PCR');
-      $mail->addAddress('perdidas@grupopcr.com.pa', 'Perdidas - Subastas');
+      $mail->addAddress('pedro.arrieta@grupopcr.com.pa', 'pedro.arrieta - Subastas');
 
       // Contenido del correo
       $mail->CharSet = 'UTF-8';
@@ -459,7 +459,7 @@ if (isset($_POST['nombre_completo_pj'])) {
 
       // Destinatarios
       $mail->setFrom($email_origen, 'Subastas Grupo PCR');
-      $mail->addAddress('perdidas@grupopcr.com.pa', 'Perdidas - Subastas');
+      $mail->addAddress('pedro.arrieta@grupopcr.com.pa', 'pedro.arrieta - Subastas');
 
       // Contenido del correo
       $mail->CharSet = 'UTF-8';
