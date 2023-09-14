@@ -223,6 +223,7 @@ try {
                     <th>NOMBRE</th>
                     <th>EMAIL</th>
                     <th>TELEFONO</th>
+                    <th>FECHA</th>
                     <th>ACCIONES</th>
                 </tr>
             </thead>
@@ -234,6 +235,7 @@ try {
                     <td><?php echo $row['nombre_completo']; ?></td>
                     <td><?php echo $row['email']; ?></td>
                     <td><?php echo $row['telefono']; ?></td>
+                    <td><?php echo $row['date_time']; ?></td>
                     <td>
                       
                       <a type="button" class="btn btn-warning btn-icon" data-bs-toggle="modal" data-bs-target="#adjuntos" onclick="adjuntos(<?php echo $row['id']; ?>)">
@@ -254,6 +256,7 @@ try {
                     <th>NOMBRE</th>
                     <th>EMAIL</th>
                     <th>TELEFONO</th>
+                    <th>FECHA</th>
                     <th>ACCIONES</th>
                 </tr>
             </tfoot>
