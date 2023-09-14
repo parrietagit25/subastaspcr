@@ -1,5 +1,8 @@
 <?php
 $mensaje = "";
+require 'vendor/autoload.php';
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 try {
   $pdo = new PDO('mysql:host=db;dbname=subastas;charset=utf8mb4', 'root', 'rootpass');
@@ -16,6 +19,55 @@ if (isset($_POST['nombre_pn'])) {
                   <strong>Registro Realizado!</strong>
                   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                 </div>';
+
+    $mail = new PHPMailer(true);
+
+    try {
+        // Configuración del servidor
+        $mail->SMTPDebug = 0; // Habilita la salida de depuración detallada (0 para desactivar)
+        $mail->isSMTP();
+        $mail->Host       = 'smtp-mail.outlook.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'subastas@grupopcr.com.pa';
+        $mail->Password   = 'Law70344';
+        $mail->SMTPSecure = 'tls';
+        $mail->Port       = 587;
+
+        $email_origen = 'subastas@grupopcr.com.pa';
+
+        // Destinatarios
+        $mail->setFrom($email_origen, 'Subastas Grupo PCR');
+        $mail->addAddress('perdidas@grupopcr.com.pa', 'Perdidas - Subastas');
+
+        // Contenido del correo
+        $mail->CharSet = 'UTF-8';
+        $mail->IsHTML(true);
+
+        $mail->Subject = 'App Subastas - Nuevo Registro: '.$_POST['nombre_pn'];
+        $mail->Body    = '
+        <html>
+          <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+          </head>
+          <body> 
+            <img src="cid:logosubastas" width="250" alt="Logo 1" />
+            <br>
+            <p>Se ha registrado una nueva persona, <strong style="font-size: 18px;">'.$_POST['nombre_pn'].'</strong></p>
+            <p>Ingrese en la zona administrativa para verificar los docuemntos <a href="https://subastas.grupopcr.com.pa/subasta/">https://subastas.grupopcr.com.pa/subasta/</a></p>
+            <br>
+            <img src="cid:logogrupopcr" width="250" alt="Logo 2" />
+          </body>
+        </html>
+        ';
+
+        $mail->AddEmbeddedImage('../img/logo20años.png', 'logogrupopcr');
+        $mail->AddEmbeddedImage('../img/logosubastas.png', 'logosubastas');
+
+        $mail->send();
+        //echo 'El mensaje ha sido enviado';
+    } catch (Exception $e) {
+        echo "El mensaje no se pudo enviar. Error: {$mail->ErrorInfo}";
+    } 
     
     $ultimo_id = $pdo -> query("SELECT MAX(id) as id FROM cc_subastas");
     $rows = $ultimo_id->fetchAll(PDO::FETCH_ASSOC);
@@ -149,6 +201,55 @@ if (isset($_POST['nombre_completo_pni'])) {
                 <strong>Registro Realizado!</strong>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
               </div>';
+
+  $mail = new PHPMailer(true);
+
+  try {
+      // Configuración del servidor
+      $mail->SMTPDebug = 0; // Habilita la salida de depuración detallada (0 para desactivar)
+      $mail->isSMTP();
+      $mail->Host       = 'smtp-mail.outlook.com';
+      $mail->SMTPAuth   = true;
+      $mail->Username   = 'subastas@grupopcr.com.pa';
+      $mail->Password   = 'Law70344';
+      $mail->SMTPSecure = 'tls';
+      $mail->Port       = 587;
+
+      $email_origen = 'subastas@grupopcr.com.pa';
+
+      // Destinatarios
+      $mail->setFrom($email_origen, 'Subastas Grupo PCR');
+      $mail->addAddress('perdidas@grupopcr.com.pa', 'Perdidas - Subastas');
+
+      // Contenido del correo
+      $mail->CharSet = 'UTF-8';
+      $mail->IsHTML(true);
+
+      $mail->Subject = 'App Subastas - Nuevo Registro: '.$_POST['nombre_completo_pni'];
+      $mail->Body    = '
+      <html>
+        <head>
+          <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        </head>
+        <body> 
+          <img src="cid:logosubastas" width="250" alt="Logo 1" />
+          <br>
+          <p>Se ha registrado una nueva persona, <strong style="font-size: 18px;">'.$_POST['nombre_completo_pni'].'</strong></p>
+          <p>Ingrese en la zona administrativa para verificar los docuemntos <a href="https://subastas.grupopcr.com.pa/subasta/">https://subastas.grupopcr.com.pa/subasta/</a></p>
+          <br>
+          <img src="cid:logogrupopcr" width="250" alt="Logo 2" />
+        </body>
+      </html>
+      ';
+
+      $mail->AddEmbeddedImage('../img/logo20años.png', 'logogrupopcr');
+      $mail->AddEmbeddedImage('../img/logosubastas.png', 'logosubastas');
+
+      $mail->send();
+      //echo 'El mensaje ha sido enviado';
+  } catch (Exception $e) {
+      echo "El mensaje no se pudo enviar. Error: {$mail->ErrorInfo}";
+  } 
   
   $ultimo_id = $pdo -> query("SELECT MAX(id) as id FROM cc_subastas");
   $rows = $ultimo_id->fetchAll(PDO::FETCH_ASSOC);
@@ -340,6 +441,56 @@ if (isset($_POST['nombre_completo_pj'])) {
                 <strong>Registro Realizado!</strong>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
               </div>';
+
+  $mail = new PHPMailer(true);
+
+  try {
+      // Configuración del servidor
+      $mail->SMTPDebug = 0; // Habilita la salida de depuración detallada (0 para desactivar)
+      $mail->isSMTP();
+      $mail->Host       = 'smtp-mail.outlook.com';
+      $mail->SMTPAuth   = true;
+      $mail->Username   = 'subastas@grupopcr.com.pa';
+      $mail->Password   = 'Law70344';
+      $mail->SMTPSecure = 'tls';
+      $mail->Port       = 587;
+
+      $email_origen = 'subastas@grupopcr.com.pa';
+
+      // Destinatarios
+      $mail->setFrom($email_origen, 'Subastas Grupo PCR');
+      $mail->addAddress('perdidas@grupopcr.com.pa', 'Perdidas - Subastas');
+
+      // Contenido del correo
+      $mail->CharSet = 'UTF-8';
+      $mail->IsHTML(true);
+
+      $mail->Subject = 'App Subastas - Nuevo Registro: '.$_POST['nombre_completo_pj'];
+      $mail->Body    = '
+      <html>
+        <head>
+          <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+        </head>
+        <body> 
+          <img src="cid:logosubastas" width="250" alt="Logo 1" />
+          <br>
+          <p>Se ha registrado una nueva persona, <strong style="font-size: 18px;">'.$_POST['nombre_completo_pj'].'</strong></p>
+          <p>Ingrese en la zona administrativa para verificar los docuemntos <a href="https://subastas.grupopcr.com.pa/subasta/">https://subastas.grupopcr.com.pa/subasta/</a></p>
+          <br>
+          <img src="cid:logogrupopcr" width="250" alt="Logo 2" />
+        </body>
+      </html>
+      ';
+
+      $mail->AddEmbeddedImage('../img/logo20años.png', 'logogrupopcr');
+      $mail->AddEmbeddedImage('../img/logosubastas.png', 'logosubastas');
+
+      $mail->send();
+      //echo 'El mensaje ha sido enviado';
+  } catch (Exception $e) {
+      echo "El mensaje no se pudo enviar. Error: {$mail->ErrorInfo}";
+  } 
+  
   
   $ultimo_id = $pdo -> query("SELECT MAX(id) as id FROM cc_subastas");
   $rows = $ultimo_id->fetchAll(PDO::FETCH_ASSOC);
