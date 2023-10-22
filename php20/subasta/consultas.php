@@ -89,4 +89,9 @@ if (isset($_GET['eliminar'])) {
 
 }
 
-?>
+if (isset($_GET['reenviar_codigo'])) {  ?>
+
+    <h2>Quieres reenviar el codigo?</h2>
+    <input type="hidden" value="<?php echo $_GET['id']; ?>" name="id_reenviar">   
+  
+<?php } ?>

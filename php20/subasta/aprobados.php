@@ -6,6 +6,8 @@ if(!isset($_SESSION["email"])) {
     exit();
 }
 
+$mensaje="";
+
 try {
     $pdo = new PDO('mysql:host=db;dbname=subastas;charset=utf8mb4', 'root', 'rootpass');
     $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -15,6 +17,85 @@ try {
 
   $ultimo_id = $pdo -> query("SELECT * FROM cc_subastas WHERE stat =2");
   $rows = $ultimo_id->fetchAll(PDO::FETCH_ASSOC);
+
+  if (isset($_POST['reenviar_codigo'])) {
+
+    $datos_user = $pdo -> query("SELECT * FROM cc_subastas WHERE id = '".$_POST['id_reenviar']."'");
+    $rowss = $datos_user->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($rowss as $rows) {
+
+      $nombre=$rows['nombre_completo'];
+      $email_destinatario = $rows['email'];
+      $codigo = $rows['codigo'];
+
+     }
+
+    $mail = new PHPMailer(true);
+
+    try {
+        // Configuración del servidor
+        $mail->SMTPDebug = 0; // Habilita la salida de depuración detallada (0 para desactivar)
+        $mail->isSMTP();
+        $mail->Host       = 'smtp-mail.outlook.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'subastas@grupopcr.com.pa';
+        $mail->Password   = 'Law70344';
+        $mail->SMTPSecure = 'tls';
+        $mail->Port       = 587;
+
+        $email_origen = 'subastas@grupopcr.com.pa';
+
+        // Destinatarios
+        $mail->setFrom($email_origen, 'Subastas Grupo PCR');
+        $mail->addAddress($email_destinatario, $nombre);
+
+        // Contenido del correo
+        $mail->CharSet = 'UTF-8';
+        $mail->IsHTML(true);
+
+        $mail->Subject = 'GRUPO PCR - APROBADO';
+        $mail->Body    = '
+        <html>
+          <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+          </head>
+          <body> 
+            <img src="cid:logosubastas" width="250" alt="Logo 1" />
+            <br>
+            <p>Estimado, '.$nombre.'</p>
+            <p>Esperamos que este mensaje le encuentre bien. Nos complace informarle que su proceso de registro con el Grupo PCR ha sido aprobado exitosamente.</p>
+            <p><strong style="font-size: 18px;">Código de Continuación de Registro: '.$codigo.'</strong></p>
+            <p>Por favor, utilice el código proporcionado para continuar con las siguientes etapas de su registro en nuestra plataforma web <a href="https://subastas.grupopcr.com.pa/">https://subastas.grupopcr.com.pa/</a> entra en nuestra pagina e ingresa el codigo.</p>
+            <p>Si tiene alguna pregunta o necesita más información, no dude en ponerse en contacto con nosotros. Estamos aquí para ayudarle en todo </p>
+            <p>lo que necesite para asegurar una transición fluida.</p>
+            <p>¡Muchas gracias por elegir el Grupo PCR! Esperamos tener una relación larga y fructífera con usted.</p>
+            <br>
+            Atentamente,
+            <br>
+            El Equipo del Grupo PCR
+            <br>
+            <img src="cid:logogrupopcr" width="250" alt="Logo 2" />
+          </body>
+        </html>
+        ';
+
+        $mail->AddEmbeddedImage('../img/logo20años.png', 'logogrupopcr');
+        $mail->AddEmbeddedImage('../img/logosubastas.png', 'logosubastas');
+
+        $mail->send();
+        //echo 'El mensaje ha sido enviado';
+    } catch (Exception $e) {
+        echo "El mensaje no se pudo enviar. Error: {$mail->ErrorInfo}";
+    } 
+    
+    $mensaje = '<div class="alert alert-success alert-dismissible fade show" role="alert">
+                  <strong>Persona Aprobada! Codigo enviado por correo</strong>
+                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>';
+    
+  }
+
 
 ?>
 <!doctype html>
@@ -211,9 +292,29 @@ try {
       </div>
     </div>
 
-    
+    <!-- Modal reenviar codigo -->
+    <div class="modal fade" id="reenviar_codigo" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Reenviar Codigo</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form action="" method="post">
+            <div class="modal-body" id="codigo_conte">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+              <button type="submit" class="btn btn-primary" name="reenviar_codigo">Aprobar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
 <main class="container">
     <div class="container">
+     <?php echo $mensaje; ?>
         <h2>Aprobados</h2>
         <table id="example" class="display" style="width:100%">
             <thead>
@@ -245,7 +346,7 @@ try {
                         </svg>
                       </a>
 
-                      <a type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#adjuntos" onclick="adjuntos(<?php echo $row['id']; ?>)">
+                      <a type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#reenviar_codigo" onclick="reenviar_codigo(<?php echo $row['id']; ?>)">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-paper-plane" viewBox="0 0 16 16">
                           <path d="M0 4.5l8 3.8 3.7 8.2H16v-1.5l-7.3-5 7.3-5V6h-4.3L8 1.8 0 4.5z"/>
                         </svg>
@@ -294,6 +395,27 @@ try {
         });
 
     }
+
+    function reenviar_codigo(x){
+
+      fetch('consultas.php?reenviar_codigo=1&id=' + x)
+        .then(response => {
+          
+          if (!response.ok) {
+            throw new Error('Error de red al intentar fetch.');
+          }
+          return response.text();
+        })
+        .then(data => {
+          
+          document.querySelector("#codigo_conte").innerHTML = data;
+        })
+        .catch(error => {
+          
+          console.error("Hubo un problema con la operación fetch:", error);
+        });
+
+      }
 
 </script>
     </body>
