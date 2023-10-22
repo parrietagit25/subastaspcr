@@ -18,9 +18,6 @@ try {
     echo "Error de conexión: " . $e->getMessage();
   }
 
-  $ultimo_id = $pdo -> query("SELECT * FROM cc_subastas WHERE stat =2");
-  $rows = $ultimo_id->fetchAll(PDO::FETCH_ASSOC);
-
   if (isset($_POST['reenviar_codigo'])) {
 
     $datos_user = $pdo -> query("SELECT * FROM cc_subastas WHERE id = '".$_POST['id_reenviar']."'");
@@ -98,6 +95,9 @@ try {
                 </div>';
     
   }
+
+  $ultimo_id = $pdo -> query("SELECT * FROM cc_subastas WHERE stat =2");
+  $rows = $ultimo_id->fetchAll(PDO::FETCH_ASSOC);
 
 
 ?>
