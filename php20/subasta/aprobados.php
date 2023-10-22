@@ -245,6 +245,12 @@ try {
                         </svg>
                       </a>
 
+                      <a type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#adjuntos" onclick="adjuntos(<?php echo $row['id']; ?>)">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-paper-plane" viewBox="0 0 16 16">
+                          <path d="M0 4.5l8 3.8 3.7 8.2H16v-1.5l-7.3-5 7.3-5V6h-4.3L8 1.8 0 4.5z"/>
+                        </svg>
+                      </a>
+
                     </td>
                 </tr>
                 <?php } ?>
