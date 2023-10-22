@@ -1,5 +1,8 @@
 <?php 
 session_start();
+require 'vendor/autoload.php';
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 if(!isset($_SESSION["email"])) {
     header("Location: index.php");
