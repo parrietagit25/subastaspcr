@@ -94,4 +94,23 @@ if (isset($_GET['reenviar_codigo'])) {  ?>
     <h2>Quieres reenviar el codigo?</h2>
     <input type="hidden" value="<?php echo $_GET['id']; ?>" name="id_reenviar">   
   
-<?php } ?>
+<?php } 
+
+if (isset($_GET['edit_reg'])) {
+
+    foreach ($rows as $row) { ?>
+
+        <label for="">Tipo de Persona</label>
+        <input type="text" value="<?php echo $row['tipo_persona']; ?>" class="form-control" name="edit_tipo_persona">
+        <label for="">Nombre completo</label>
+        <input type="text" value="<?php echo $row['nombre_completo']; ?>" class="form-control" name="edit_nombre_completo">
+        <label for="">Email</label>
+        <input type="text" value="<?php echo $row['email']; ?>" class="form-control" name="edit_email">
+        <label for="">Telefono</label>
+        <input type="text" value="<?php echo $row['telefono']; ?>" class="form-control" name="edit_telefono">
+
+   <?php  }
+    
+}
+
+?>

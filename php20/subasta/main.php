@@ -277,6 +277,7 @@ try {
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="#">Solicitud</a></li>
                     <li><a class="dropdown-item" href="aprobados.php">Aprobados</a></li>
+                    <li><a class="dropdown-item" href="#">Notificaciones</a></li>
                     <li><a class="dropdown-item" href="#">API</a></li>
                 </ul>
                 </li>
