@@ -376,7 +376,7 @@ try {
                         </svg>
                       </a>
 
-                      <a type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#editar_reg" onclick="editar_reg(<?php echo $row['id']; ?>)">
+                      <a type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editar_reg" onclick="editar_reg(<?php echo $row['id']; ?>)">
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-pencil" viewBox="0 0 16 16">
                               <path d="M12.146.854a.5.5 0 0 1 .708 0l2.292 2.292a.5.5 0 0 1 0 .708L7.207 11.293l-2.5.5a.5.5 0 0 1-.605-.605l.5-2.5 7.646-7.646zM11.207 3L6.5 7.707l-.5 2.5 2.5-.5L13 4.793 11.207 3z"/>
                               <path fill-rule="evenodd" d="M1 13.5V16h2.5L14.207 5.793l-2.5-2.5L1 13.5zm1 1H2v-1h.5v.5a.5.5 0 0 1-.5.5z"/>
@@ -448,7 +448,7 @@ try {
 
       }
 
-      function reenviar_codigo(x){
+      function editar_reg(x){
 
         fetch('consultas.php?edit_reg=1&id=' + x)
           .then(response => {
