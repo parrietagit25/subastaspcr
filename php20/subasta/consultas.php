@@ -108,6 +108,7 @@ if (isset($_GET['edit_reg'])) {
         <input type="text" value="<?php echo $row['email']; ?>" class="form-control" name="edit_email">
         <label for="">Telefono</label>
         <input type="text" value="<?php echo $row['telefono']; ?>" class="form-control" name="edit_telefono">
+        <input type="hidden" value="<?php echo $_GET['id']; ?>" name="id_user_edit">
 
    <?php  }
     
