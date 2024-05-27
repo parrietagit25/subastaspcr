@@ -96,6 +96,28 @@ try {
     
   }
 
+  
+
+
+
+
+
+if (isset($_POST['edit_user'])) {
+
+  $update_user = $pdo -> query("UPDATE cc_subastas SET tipo_persona = '".$_POST['edit_tipo_persona']."', 
+                                                        nombre_completo = '".$_POST['edit_nombre_completo']."', 
+                                                        email = '".$_POST['edit_email']."', 
+                                                        telefono = '".$_POST['edit_telefono']."' 
+                                                        WHERE 
+                                                        id = '".$_POST['id_user_edit']."' ");
+
+  $mensaje = '<div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Persona Actualizada!</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>';
+  
+}
+
   $ultimo_id = $pdo -> query("SELECT * FROM cc_subastas WHERE stat =2");
   $rows = $ultimo_id->fetchAll(PDO::FETCH_ASSOC);
 
