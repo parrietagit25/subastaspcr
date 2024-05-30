@@ -286,7 +286,7 @@ if (isset($_POST['edit_user'])) {
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="main.php">Solicitud</a></li>
                     <li><a class="dropdown-item" href="#">Aprobados</a></li>
-                    <li><a class="dropdown-item" href="#">Notificaciones</a></li>
+                    <li><a class="dropdown-item" href="notificacion.php">Notificaciones</a></li>
                     <li><a class="dropdown-item" href="#">API</a></li>
                 </ul>
                 </li>
