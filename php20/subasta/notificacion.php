@@ -23,7 +23,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (isset($_POST['email_send']) && $_POST['email_send'] == 'todos') {
 
-    $ultimo_id = $pdo -> query("SELECT * FROM cc_subastas");
+    $ultimo_id = $pdo -> query("SELECT email FROM cc_subastas group by email");
     $rows = $ultimo_id->fetchAll(PDO::FETCH_ASSOC);
 
       foreach ($rows as $key => $value) {
