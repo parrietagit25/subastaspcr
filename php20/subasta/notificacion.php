@@ -1,6 +1,6 @@
 <?php 
 session_start();
-
+$mensaje = "";
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -13,30 +13,31 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $mail = new PHPMailer(true);
 
     try {
-        // Configuración del servidor de correo
         $mail->isSMTP();
-        $mail->Host = 'smtp.office365.com'; // Cambia esto por el host de tu servidor SMTP
+        $mail->Host = 'smtp.office365.com'; 
         $mail->SMTPAuth = true;
-        $mail->Username = 'pedro.arrieta@grupopcr.com.pa'; // Cambia esto por tu dirección de correo
-        $mail->Password = 'Chicho1787$$$'; // Cambia esto por tu contraseña
+        $mail->Username = 'pedro.arrieta@grupopcr.com.pa'; 
+        $mail->Password = 'Chicho1787$$$'; 
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 
-        // Configuración del correo
-        $mail->setFrom('pedro.arrieta@grupopcr.com.pa', 'Pitrus');
-        $mail->addAddress('pedroarrieta25@hotmail.com', 'papachan'); // Cambia esto por la dirección del destinatario
+        $mail->setFrom('pedro.arrieta@grupopcr.com.pa', 'Notificaciones PCR');
+        $mail->addAddress('pedroarrieta25@hotmail.com', 'papachan'); 
 
         $mail->isHTML(true);
         $mail->Subject = $asunto;
         $mail->Body = $contenido;
 
         $mail->send();
-        echo 'El correo ha sido enviado';
+
+        $mensaje = '<div class="alert alert-success alert-dismissible fade show" role="alert">
+                      <strong>El correo ha sido enviado</strong>
+                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>';
+
     } catch (Exception $e) {
         echo "Error al enviar el correo: {$mail->ErrorInfo}";
     }
-} else {
-    echo 'Método no permitido';
 }
 
 if(!isset($_SESSION["email"])) {
@@ -232,9 +233,9 @@ if(!isset($_SESSION["email"])) {
 
                 <div class="form-group">
                   <label for="">Todos</label>
-                  <input type="radio" name="email_send" value="todos" id="todos" class="form-control" onclick="email_inv()">
+                  <input type="radio" name="email_send" value="todos" id="todos" onclick="email_inv()">
                   <label for="">Individual</label>
-                  <input type="radio" name="email_send" value="ind" id="ind" class="form-control" onclick="mostrar_email_inv()">
+                  <input type="radio" name="email_send" value="ind" id="ind" onclick="mostrar_email_inv()">
                 </div>
                 <div class="form-group" id="email_indiv" style="display:none;">
                     <label for="asunto">Ingrese el email:</label>
