@@ -12,7 +12,46 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $mail = new PHPMailer(true);
 
-    try {
+    if (isset($_POST['email_send']) && $_POST['email_send'] == 'todos') {
+
+    $ultimo_id = $pdo -> query("SELECT * FROM cc_subastas WHERE id ='".$_GET['id']."'");
+    $rows = $ultimo_id->fetchAll(PDO::FETCH_ASSOC);
+
+      foreach ($rows as $key => $value) {
+
+        echo $row['email'].'<br>';
+
+        /*
+        try {
+            $mail->isSMTP();
+            $mail->Host = 'smtp.office365.com'; 
+            $mail->SMTPAuth = true;
+            $mail->Username = 'pedro.arrieta@grupopcr.com.pa'; 
+            $mail->Password = 'Chicho1787$$$'; 
+            $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
+            $mail->Port = 587;
+
+            $mail->setFrom('pedro.arrieta@grupopcr.com.pa', 'Notificaciones PCR');
+            $mail->addAddress($row['email'], ''); 
+
+            $mail->isHTML(true);
+            $mail->Subject = $asunto;
+            $mail->Body = $contenido;
+
+            $mail->send();
+
+            $mensaje = '<div class="alert alert-success alert-dismissible fade show" role="alert">
+                          <strong>El correo ha sido enviado</strong>
+                          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>';
+
+        } catch (Exception $e) {
+            echo "Error al enviar el correo: {$mail->ErrorInfo}";
+        } */
+      }
+    }elseif (isset($_POST['email_send']) && $_POST['email_send'] == 'ind') {
+      
+      try {
         $mail->isSMTP();
         $mail->Host = 'smtp.office365.com'; 
         $mail->SMTPAuth = true;
@@ -22,7 +61,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $mail->Port = 587;
 
         $mail->setFrom('pedro.arrieta@grupopcr.com.pa', 'Notificaciones PCR');
-        $mail->addAddress('pedroarrieta25@hotmail.com', 'papachan'); 
+        $mail->addAddress($_POST['email'], ''); 
 
         $mail->isHTML(true);
         $mail->Subject = $asunto;
@@ -35,9 +74,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>';
 
-    } catch (Exception $e) {
-        echo "Error al enviar el correo: {$mail->ErrorInfo}";
+      } catch (Exception $e) {
+          echo "Error al enviar el correo: {$mail->ErrorInfo}";
+      }
+
     }
+
 }
 
 if(!isset($_SESSION["email"])) {
@@ -150,9 +192,9 @@ if(!isset($_SESSION["email"])) {
 
     <main class="container">
         <div class="container">
-        <?php echo $mensaje; ?>
+        
             <h2>Enviar Correo</h2>
-
+            <?php echo $mensaje; ?>
             <form method="post" action="">
 
                 <div class="form-group">
