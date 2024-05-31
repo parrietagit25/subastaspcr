@@ -194,6 +194,7 @@ if(!isset($_SESSION["email"])) {
       </ul>
     </div>
 
+    <?php /* ?>
     <nav class="navbar navbar-expand-lg fixed-top navbar-dark bg-dark" aria-label="Main navigation">
         <div class="container-fluid">
             <a class="navbar-brand" href="#">Subastas</a>
@@ -223,6 +224,7 @@ if(!isset($_SESSION["email"])) {
             </div>
         </div>
     </nav>
+    <?php */ ?>
 
     <main class="container">
         <div class="container">
