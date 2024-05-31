@@ -96,11 +96,6 @@ try {
     
   }
 
-  
-
-
-
-
 
 if (isset($_POST['edit_user'])) {
 

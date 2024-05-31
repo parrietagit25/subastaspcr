@@ -228,8 +228,18 @@ if(!isset($_SESSION["email"])) {
         <?php echo $mensaje; ?>
             <h2>Enviar Correo</h2>
 
-            <form method="post" action="enviar_correo.php">
+            <form method="post" action="">
 
+                <div class="form-group">
+                  <label for="">Todos</label>
+                  <input type="radio" name="email_send" value="todos" id="todos" class="form-control" onclick="email_inv()">
+                  <label for="">Individual</label>
+                  <input type="radio" name="email_send" value="ind" id="ind" class="form-control" onclick="mostrar_email_inv()">
+                </div>
+                <div class="form-group" id="email_indiv" style="display:none;">
+                    <label for="asunto">Ingrese el email:</label>
+                    <input type="text" class="form-control" id="email" name="email" required>
+                </div>
                 <div class="form-group">
                     <label for="asunto">Asunto:</label>
                     <input type="text" class="form-control" id="asunto" name="asunto" required>
@@ -253,6 +263,15 @@ if(!isset($_SESSION["email"])) {
                 height: 200
             });
         });
+    </script>
+    <script>
+      function mostrar_email_inv(){
+        document.querySelector("#email_indiv").style.display = "block";
+      }
+
+      function email_inv(){
+        document.querySelector("#email_indiv").style.display = "none";
+      }
     </script>
 
     </body>
