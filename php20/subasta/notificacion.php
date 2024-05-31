@@ -205,7 +205,7 @@ if(!isset($_SESSION["email"])) {
                 </div>
                 <div class="form-group" id="email_indiv" style="display:none;">
                     <label for="asunto">Ingrese el email:</label>
-                    <input type="text" class="form-control" id="email" name="email" required>
+                    <input type="text" class="form-control" id="email" name="email">
                 </div>
                 <div class="form-group">
                     <label for="asunto">Asunto:</label>
