@@ -28,7 +28,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
       foreach ($rows as $key => $value) {
 
-        echo $row['email'].'<br>';
+        echo $value['email'].'<br>';
 
         /*
         try {
