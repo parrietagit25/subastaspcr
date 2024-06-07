@@ -23,14 +23,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (isset($_POST['email_send']) && $_POST['email_send'] == 'todos') {
 
-    $ultimo_id = $pdo -> query("SELECT email FROM cc_subastas group by email");
-    $rows = $ultimo_id->fetchAll(PDO::FETCH_ASSOC);
+      $ultimo_id = $pdo -> query("SELECT email FROM cc_subastas group by email");
+      $rows = $ultimo_id->fetchAll(PDO::FETCH_ASSOC);
 
       foreach ($rows as $key => $value) {
-
-        echo $value['email'].'<br>';
-
-        /*
+        
+        $mail = new PHPMailer(true);
+    
         try {
             $mail->isSMTP();
             $mail->Host = 'smtp.office365.com'; 
@@ -39,25 +38,30 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->Password = 'Chicho1787$$$'; 
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port = 587;
-
+    
             $mail->setFrom('pedro.arrieta@grupopcr.com.pa', 'Notificaciones PCR');
-            $mail->addAddress($row['email'], ''); 
-
+            $mail->addAddress($value['email']); 
+    
             $mail->isHTML(true);
             $mail->Subject = $asunto;
             $mail->Body = $contenido;
-
+    
             $mail->send();
-
+    
             $mensaje = '<div class="alert alert-success alert-dismissible fade show" role="alert">
-                          <strong>El correo ha sido enviado</strong>
+                          <strong>El correo ha sido enviado a '.$value['email'].'</strong>
                           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>';
-
+    
         } catch (Exception $e) {
-            echo "Error al enviar el correo: {$mail->ErrorInfo}";
-        } */
-      }
+            
+            echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Error al enviar el correo a '.$value['email'].': '.$mail->ErrorInfo.'</strong>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                  </div>';
+        }
+  }
+  
     }elseif (isset($_POST['email_send']) && $_POST['email_send'] == 'ind') {
       
       try {
