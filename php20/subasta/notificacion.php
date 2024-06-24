@@ -190,8 +190,8 @@ if(!isset($_SESSION["email"])) {
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item" href="main.php">Solicitud</a></li>
                     <li><a class="dropdown-item" href="aprobados.php">Aprobados</a></li>
-                    <li><a class="dropdown-item" href="#">Notificaciones</a></li>
-                    <li><a class="dropdown-item" href="#">API</a></li>
+                    <li><a class="dropdown-item" href="#">Notificacion email</a></li>
+                    <li><a class="dropdown-item" href="notificaciones_sms.php">Notificacion msm</a></li>
                 </ul>
                 </li>
                 <li class="nav-item">
