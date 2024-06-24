@@ -60,7 +60,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                   </div>';
         }
-  }
+      }
   
     }elseif (isset($_POST['email_send']) && $_POST['email_send'] == 'ind') {
       
@@ -68,12 +68,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $mail->isSMTP();
         $mail->Host = 'smtp.office365.com'; 
         $mail->SMTPAuth = true;
-        $mail->Username = 'pedro.arrieta@grupopcr.com.pa'; 
-        $mail->Password = 'Chicho1787$$$'; 
+        $mail->Username = 'notificaciones@grupopcr.com.pa'; 
+        $mail->Password = 'ghhpsqstqbfyscpc'; 
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 
-        $mail->setFrom('pedro.arrieta@grupopcr.com.pa', 'Notificaciones PCR');
+        $mail->setFrom('notificaciones@grupopcr.com.pa', 'Notificaciones PCR');
         $mail->addAddress($_POST['email'], ''); 
 
         $mail->isHTML(true);
