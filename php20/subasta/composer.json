@@ -1,0 +1,19 @@
+{
+    "name": "pedro.arrieta/subasta",
+    "autoload": {
+        "psr-4": {
+            "PedroArrieta\\Subasta\\": "src/"
+        }
+    },
+    "authors": [
+        {
+            "name": "pedro arrieta"
+        }
+    ],
+    "require": {
+        "phpmailer/phpmailer": "^6.8",
+        "setasign/fpdf": "^1.8",
+        "vlucas/phpdotenv": "^5.6",
+        "twilio/sdk": "^8.2"
+    }
+}
