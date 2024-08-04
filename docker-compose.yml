@@ -1,0 +1,32 @@
+version: '3.1'
+
+services:
+  php:
+    build: .
+    volumes:
+      - ./php20:/var/www/html
+    ports:
+      - 8082:80  
+      - 4443:443  
+    restart: always
+
+  db:
+    image: mysql:8.0
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    volumes:
+      - ./my_database.sql:/docker-entrypoint-initdb.d/masterdd.sql
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: subastas  
+      MYSQL_USER: parrieta
+      MYSQL_PASSWORD: Subastas2023
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - 8083:80  
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: rootpass
