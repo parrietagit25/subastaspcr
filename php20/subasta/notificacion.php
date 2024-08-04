@@ -170,8 +170,8 @@ if(!isset($_SESSION["email"])) {
         </li>
       </ul>
     </div>
-
-    <?php include('manu.php'); ?>
+    
+    <?php include('menu.php'); ?>
 
     <main class="container">
         <div class="container">
