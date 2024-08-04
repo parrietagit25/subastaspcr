@@ -15,9 +15,9 @@
             <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Registros</a>
             <ul class="dropdown-menu">
                 <li><a class="dropdown-item" href="main.php">Solicitud</a></li>
-                <li><a class="dropdown-item" href="#">Aprobados</a></li>
-                <li><a class="dropdown-item" href="notificacion.php">Notificaciones</a></li>
-                <li><a class="dropdown-item" href="#">API</a></li>
+                <li><a class="dropdown-item" href="aprobados.php">Aprobados</a></li>
+                <li><a class="dropdown-item" href="notificacion.php">Notificaciones email</a></li>
+                <li><a class="dropdown-item" href="notificaciones_sms.php">Notificaciones msn</a></li>
             </ul>
             </li>
             <li class="nav-item">
