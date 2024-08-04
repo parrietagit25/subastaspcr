@@ -263,7 +263,7 @@ if (isset($_POST['edit_user'])) {
       </ul>
     </div>
 
-      <?php include('manu.php'); ?>
+    <?php include('menu.php'); ?>
 
     <!-- Modal adjuntos -->
     <div class="modal fade" id="adjuntos" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
