@@ -35,7 +35,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->Host = 'smtp.office365.com'; 
             $mail->SMTPAuth = true;
             $mail->Username = 'notificaciones@grupopcr.com.pa'; 
-            $mail->Password = 'ghhpsqstqbfyscpc'; 
+            $mail->Password = 'Admin254812%'; 
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port = 587;
     
