@@ -1,0 +1,10 @@
+.env
+subasta/aviso_op_pj/*.pdf
+subasta/aviso_pni/*.pdf
+subasta/cedula_pni/*.jpeg
+subasta/cedula_pni/*.jpg
+subasta/ficha_pn/*.pdf
+subasta/recibo_pn/*.pdf
+subasta/referencia_pni/*.pdf
+subasta/registro_publico_pj/*.pdf
+subasta/servicios_pj/*.pdf
