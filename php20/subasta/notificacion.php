@@ -34,12 +34,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             $mail->isSMTP();
             $mail->Host = 'smtp.office365.com'; 
             $mail->SMTPAuth = true;
-            $mail->Username = 'notificaciones@grupopcr.com.pa'; 
+            $mail->Username = 'subastas@grupopcr.com.pa'; 
             $mail->Password = 'Admin254812%'; 
             $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
             $mail->Port = 587;
     
-            $mail->setFrom('notificaciones@grupopcr.com.pa', 'Notificaciones PCR');
+            $mail->setFrom('subastas@grupopcr.com.pa', 'Notificaciones PCR');
             $mail->addAddress($value['email']); 
     
             $mail->isHTML(true);
@@ -68,12 +68,12 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $mail->isSMTP();
         $mail->Host = 'smtp.office365.com'; 
         $mail->SMTPAuth = true;
-        $mail->Username = 'notificaciones@grupopcr.com.pa'; 
-        $mail->Password = 'ghhpsqstqbfyscpc'; 
+        $mail->Username = 'subastas@grupopcr.com.pa'; 
+        $mail->Password = 'Admin254812%'; 
         $mail->SMTPSecure = PHPMailer::ENCRYPTION_STARTTLS;
         $mail->Port = 587;
 
-        $mail->setFrom('notificaciones@grupopcr.com.pa', 'Notificaciones PCR');
+        $mail->setFrom('subastas@grupopcr.com.pa', 'Notificaciones PCR');
         $mail->addAddress($_POST['email'], ''); 
 
         $mail->isHTML(true);

@@ -42,7 +42,7 @@ try {
         $mail->Host       = 'smtp-mail.outlook.com';
         $mail->SMTPAuth   = true;
         $mail->Username   = 'subastas@grupopcr.com.pa';
-        $mail->Password   = 'Law70344';
+        $mail->Password   = 'Admin254812%';
         $mail->SMTPSecure = 'tls';
         $mail->Port       = 587;
 
