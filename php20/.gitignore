@@ -8,3 +8,4 @@ subasta/recibo_pn/*.pdf
 subasta/referencia_pni/*.pdf
 subasta/registro_publico_pj/*.pdf
 subasta/servicios_pj/*.pdf
+notificaciones_sms.php
