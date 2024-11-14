@@ -104,10 +104,10 @@ if (isset($_POST['nombre_pn'])) {
                       </div>';
       }
     } else {
-      $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+      /* $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <strong>No se ha seleccionado un archivo o el archivo no es válido.</strong>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>';
+                  </div>'; */
     }
 
     // ficha
@@ -134,10 +134,11 @@ if (isset($_POST['nombre_pn'])) {
                       </div>';
       }
     } else {
+      /*
       $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <strong>No se ha seleccionado un archivo o el archivo no es válido.</strong>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>';
+                  </div>'; */
     }
 
     // cc_pn
@@ -164,10 +165,11 @@ if (isset($_POST['nombre_pn'])) {
                       </div>';
       }
     } else {
+      /*
       $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <strong>No se ha seleccionado un archivo o el archivo no es válido.</strong>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>';
+                  </div>';*/
     }
 
     // carta_exo_pn
@@ -194,10 +196,11 @@ if (isset($_POST['nombre_pn'])) {
                       </div>';
       }
     } else {
+      /*
       $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
                     <strong>No se ha seleccionado un archivo o el archivo no es válido.</strong>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>';
+                  </div>'; */
     }
 
 
