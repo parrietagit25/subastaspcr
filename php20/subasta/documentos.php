@@ -78,7 +78,52 @@ if (isset($_POST['nombre_pn'])) {
       $id_ult = $row['id'];
     }
 
-    // recibo
+    $maxSize = 10 * 1024 * 1024; // Tamaño máximo permitido: 10 MB
+    $archivos = ['recibo_pn', 'ficha_pn', 'cc_pn'];
+    $mensajeError = '';
+
+    foreach ($archivos as $archivo) {
+        if (!empty($_FILES[$archivo]["tmp_name"]) && file_exists($_FILES[$archivo]["tmp_name"])) {
+            $fileSize = $_FILES[$archivo]["size"];
+
+            if ($fileSize > $maxSize) {
+                $mensajeError = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>El archivo ' . $archivo . ' es demasiado grande. El tamaño máximo permitido es de 10 MB.</strong>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>';
+                break; // Salimos del bucle si encontramos un archivo que excede el tamaño permitido
+            }
+        }
+    }
+
+    if (!empty($mensajeError)) {
+        $mensaje = $mensajeError;
+    } else {
+        // Aquí continúa la lógica existente para procesar los archivos si todos cumplen con el tamaño
+        foreach ($archivos as $archivo) {
+            if (!empty($_FILES[$archivo]["tmp_name"]) && file_exists($_FILES[$archivo]["tmp_name"])) {
+                $target_dir = $archivo . "/"; // Directorio específico para cada archivo
+                $uniqueFileName = uniqid() . "-" . time();
+                $fileExtension = pathinfo($_FILES[$archivo]["name"], PATHINFO_EXTENSION);
+                $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
+                $allowed_doc_extensions = ["pdf", "doc", "docx", "txt", "jpg", "png", "gif", "bmp", "jpeg", "xlsx", "xls"];
+
+                if (move_uploaded_file($_FILES[$archivo]["tmp_name"], $target_file)) {
+                    $campoBD = "pn_" . $archivo; // Campo en la base de datos correspondiente al archivo
+                    $update = $pdo->query("UPDATE cc_subastas SET $campoBD = '" . $target_file . "' WHERE id = '" . $id_ult . "'");
+                } else {
+                    $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>Lo siento, ha ocurrido un error al subir el archivo ' . $archivo . '.</strong>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>';
+                }
+            }
+        }
+    }
+
+
+    // recibo 
+    /*
     if (!empty($_FILES["recibo_pn"]["tmp_name"]) && file_exists($_FILES["recibo_pn"]["tmp_name"])) {
       $target_dir = "recibo_pn/";
       $uniqueFileName = uniqid() . "-" . time();
@@ -108,9 +153,10 @@ if (isset($_POST['nombre_pn'])) {
                     <strong>No se ha seleccionado un archivo o el archivo no es válido.</strong>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                   </div>'; */
-    }
+    //}
 
     // ficha
+    /*
     if (!empty($_FILES["ficha_pn"]["tmp_name"]) && file_exists($_FILES["ficha_pn"]["tmp_name"])) {
       $target_dir = "ficha_pn/";
       $uniqueFileName = uniqid() . "-" . time();
@@ -139,9 +185,10 @@ if (isset($_POST['nombre_pn'])) {
                     <strong>No se ha seleccionado un archivo o el archivo no es válido.</strong>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                   </div>'; */
-    }
+    //}
 
     // cc_pn
+    /*
     if (!empty($_FILES["cc_pn"]["tmp_name"]) && file_exists($_FILES["cc_pn"]["tmp_name"])) {
       $target_dir = "cc_pn/";
       $uniqueFileName = uniqid() . "-" . time();
@@ -170,7 +217,9 @@ if (isset($_POST['nombre_pn'])) {
                     <strong>No se ha seleccionado un archivo o el archivo no es válido.</strong>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                   </div>';*/
-    }
+    //}
+
+    // fin de la verificacion del tama;o maximo
 
     // carta_exo_pn
     if (!empty($_FILES["carta_exo_pn"]["tmp_name"]) && file_exists($_FILES["carta_exo_pn"]["tmp_name"])) {
