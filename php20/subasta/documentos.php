@@ -97,30 +97,41 @@ if (isset($_POST['nombre_pn'])) {
         }
     }
 
-    if (!empty($mensajeError)) {
-        $mensaje = $mensajeError;
-    } else {
-        // Aquí continúa la lógica existente para procesar los archivos si todos cumplen con el tamaño
-        foreach ($archivos as $archivo) {
-            if (!empty($_FILES[$archivo]["tmp_name"]) && file_exists($_FILES[$archivo]["tmp_name"])) {
-                $target_dir = $archivo . "/"; // Directorio específico para cada archivo
-                $uniqueFileName = uniqid() . "-" . time();
-                $fileExtension = pathinfo($_FILES[$archivo]["name"], PATHINFO_EXTENSION);
-                $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
-                $allowed_doc_extensions = ["pdf", "doc", "docx", "txt", "jpg", "png", "gif", "bmp", "jpeg", "xlsx", "xls"];
+    // recibo 
 
-                if (move_uploaded_file($_FILES[$archivo]["tmp_name"], $target_file)) {
-                    $campoBD = "pn_" . $archivo; // Campo en la base de datos correspondiente al archivo
-                    $update = $pdo->query("UPDATE cc_subastas SET $campoBD = '" . $target_file . "' WHERE id = '" . $id_ult . "'");
-                } else {
-                    $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    <strong>Lo siento, ha ocurrido un error al subir el archivo ' . $archivo . '.</strong>
-                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                                </div>';
-                }
-            }
-        }
-    }
+    if (!empty($mensajeError)) {
+      $mensaje = $mensajeError;
+      } else {
+          // Aquí continúa la lógica existente para procesar los archivos si todos cumplen con el tamaño
+          foreach ($archivos as $archivo) {
+              if (!empty($_FILES[$archivo]["tmp_name"]) && file_exists($_FILES[$archivo]["tmp_name"])) {
+                  $target_dir = $archivo . "/"; // Directorio específico para cada archivo
+                  $uniqueFileName = uniqid() . "-" . time();
+                  $fileExtension = pathinfo($_FILES[$archivo]["name"], PATHINFO_EXTENSION);
+                  $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
+                  $allowed_doc_extensions = ["pdf", "doc", "docx", "txt", "jpg", "png", "gif", "bmp", "jpeg", "xlsx", "xls"];
+      
+                  if (move_uploaded_file($_FILES[$archivo]["tmp_name"], $target_file)) {
+                      // Mapear los nombres de archivo a las columnas reales en la base de datos
+                      $campoBD = '';
+                      if ($archivo == 'recibo_pn') $campoBD = 'pn_recibo_servicios';
+                      if ($archivo == 'ficha_pn') $campoBD = 'pn_ficha';
+                      if ($archivo == 'cc_pn') $campoBD = 'pn_cc';
+      
+                      // Solo intentamos actualizar si el campo está correctamente mapeado
+                      if (!empty($campoBD)) {
+                          $update = $pdo->query("UPDATE cc_subastas SET $campoBD = '" . $target_file . "' WHERE id = '" . $id_ult . "'");
+                      }
+                  } else {
+                      $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                      <strong>Lo siento, ha ocurrido un error al subir el archivo ' . $archivo . '.</strong>
+                                      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                  </div>';
+                  }
+              }
+          }
+      }
+  
 
 
     // recibo 
@@ -550,7 +561,7 @@ if (isset($_POST['nombre_completo_pj'])) {
       $mail->AddEmbeddedImage('../img/logosubastas.png', 'logosubastas');
 
       #$mail->send();
-      
+
       //echo 'El mensaje ha sido enviado';
   } catch (Exception $e) {
       echo "El mensaje no se pudo enviar. Error: {$mail->ErrorInfo}";
