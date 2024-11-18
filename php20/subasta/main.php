@@ -61,6 +61,7 @@ try {
         <html>
           <head>
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
           </head>
           <body> 
             <img src="cid:logosubastas" width="250" alt="Logo 1" />
@@ -203,6 +204,7 @@ try {
       .bd-mode-toggle {
         z-index: 1500;
       }
+
     </style>
 
     
@@ -324,6 +326,7 @@ try {
     <div class="container">
       <?php echo $mensaje; ?>
       <h2>Solicitudes</h2>
+	<div class="table-container">
         <table id="example" class="display" style="width:100%">
             <thead>
                 <tr>
@@ -380,6 +383,7 @@ try {
                 </tr>
             </tfoot>
         </table>
+	</div>
     </div>
 </main>
 <script src="https://getbootstrap.com/docs/5.3/dist/js/bootstrap.bundle.min.js"></script>
