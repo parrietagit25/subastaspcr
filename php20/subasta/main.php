@@ -322,12 +322,11 @@ try {
     </div>
 
     
-<main class="container">
-    <div class="container">
-      <?php echo $mensaje; ?>
-      <h2>Solicitudes</h2>
-	<div class="table-container">
-        <table id="example" class="display" style="width:100%">
+<main class="d-flex align-items-center justify-content-center vh-100 bg-light">
+    <div class="table-responsive" style="max-height: 100%; overflow-y: auto; width: 100%;">
+        <?php echo $mensaje; ?>
+        <h2 class="text-center">Solicitudes</h2>
+        <table id="example" class="table table-striped table-bordered text-center">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -383,7 +382,6 @@ try {
                 </tr>
             </tfoot>
         </table>
-	</div>
     </div>
 </main>
 <script src="https://getbootstrap.com/docs/5.3/dist/js/bootstrap.bundle.min.js"></script>
