@@ -66,7 +66,8 @@ if (isset($_POST['nombre_pn'])) {
         $mail->AddEmbeddedImage('../img/logo20años.png', 'logogrupopcr');
         $mail->AddEmbeddedImage('../img/logosubastas.png', 'logosubastas');
 
-        $mail->send();
+        #$mail->send();
+        
         //echo 'El mensaje ha sido enviado';
     } catch (Exception $e) {
         echo "El mensaje no se pudo enviar. Error: {$mail->ErrorInfo}";
@@ -307,7 +308,8 @@ if (isset($_POST['nombre_completo_pni'])) {
       $mail->AddEmbeddedImage('../img/logo20años.png', 'logogrupopcr');
       $mail->AddEmbeddedImage('../img/logosubastas.png', 'logosubastas');
 
-      $mail->send();
+      #$mail->send();
+
       //echo 'El mensaje ha sido enviado';
   } catch (Exception $e) {
       echo "El mensaje no se pudo enviar. Error: {$mail->ErrorInfo}";
@@ -547,7 +549,8 @@ if (isset($_POST['nombre_completo_pj'])) {
       $mail->AddEmbeddedImage('../img/logo20años.png', 'logogrupopcr');
       $mail->AddEmbeddedImage('../img/logosubastas.png', 'logosubastas');
 
-      $mail->send();
+      #$mail->send();
+      
       //echo 'El mensaje ha sido enviado';
   } catch (Exception $e) {
       echo "El mensaje no se pudo enviar. Error: {$mail->ErrorInfo}";
