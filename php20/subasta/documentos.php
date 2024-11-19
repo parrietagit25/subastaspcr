@@ -97,7 +97,7 @@ if (isset($_POST['nombre_pn'])) {
         }
     }
 
-    // recibo 
+    // recibo , ficha, cc
 
     if (!empty($mensajeError)) {
       $mensaje = $mensajeError;
@@ -131,139 +131,8 @@ if (isset($_POST['nombre_pn'])) {
               }
           }
       }
-  
-
-
-    // recibo 
-    /*
-    if (!empty($_FILES["recibo_pn"]["tmp_name"]) && file_exists($_FILES["recibo_pn"]["tmp_name"])) {
-      $target_dir = "recibo_pn/";
-      $uniqueFileName = uniqid() . "-" . time();
-      $fileExtension = pathinfo($_FILES["recibo_pn"]["name"], PATHINFO_EXTENSION);
-      $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
-      $allowed_image_extensions = ["jpg", "png", "gif", "bmp", "jpeg"];
-      $allowed_doc_extensions = ["pdf", "doc", "docx", "txt", "jpg", "png", "gif", "bmp", "jpeg", "xlsx", "xls"];
-      $check = getimagesize($_FILES["recibo_pn"]["tmp_name"]);
-
-      if ($check !== false || in_array($fileExtension, $allowed_doc_extensions)) {
-          if (move_uploaded_file($_FILES["recibo_pn"]["tmp_name"], $target_file)) {
-              $update = $pdo->query("UPDATE cc_subastas SET pn_recibo_servicios = '".$target_file."' WHERE id = '".$id_ult."'");
-          } else {
-              $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <strong>Lo siento, ha ocurrido un error al subir tu archivo.</strong>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                          </div>';
-          }
-      } else {
-          $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <strong>El archivo no es una imagen o documento válido.</strong>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                      </div>';
-      }
-    } else {
-      /* $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <strong>No se ha seleccionado un archivo o el archivo no es válido.</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>'; */
-    //}
-
-    // ficha
-    /*
-    if (!empty($_FILES["ficha_pn"]["tmp_name"]) && file_exists($_FILES["ficha_pn"]["tmp_name"])) {
-      $target_dir = "ficha_pn/";
-      $uniqueFileName = uniqid() . "-" . time();
-      $fileExtension = pathinfo($_FILES["ficha_pn"]["name"], PATHINFO_EXTENSION);
-      $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
-      $check = getimagesize($_FILES["ficha_pn"]["tmp_name"]);
-
-      if ($check !== false || in_array($fileExtension, $allowed_doc_extensions)) {
-          if (move_uploaded_file($_FILES["ficha_pn"]["tmp_name"], $target_file)) {
-              $update = $pdo->query("UPDATE cc_subastas SET pn_ficha = '".$target_file."' WHERE id = '".$id_ult."'");
-            } else {
-              $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <strong>Lo siento, ha ocurrido un error al subir tu archivo.</strong>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                          </div>';
-          }
-      } else {
-          $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <strong>El archivo no es una imagen o documento válido.</strong>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                      </div>';
-      }
-    } else {
-      /*
-      $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <strong>No se ha seleccionado un archivo o el archivo no es válido.</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>'; */
-    //}
-
-    // cc_pn
-    /*
-    if (!empty($_FILES["cc_pn"]["tmp_name"]) && file_exists($_FILES["cc_pn"]["tmp_name"])) {
-      $target_dir = "cc_pn/";
-      $uniqueFileName = uniqid() . "-" . time();
-      $fileExtension = pathinfo($_FILES["cc_pn"]["name"], PATHINFO_EXTENSION);
-      $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
-      $check = getimagesize($_FILES["cc_pn"]["tmp_name"]);
-
-      if ($check !== false || in_array($fileExtension, $allowed_doc_extensions)) {
-          if (move_uploaded_file($_FILES["cc_pn"]["tmp_name"], $target_file)) {
-              $update = $pdo->query("UPDATE cc_subastas SET pn_cc = '".$target_file."' WHERE id = '".$id_ult."'");
-            } else {
-              $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <strong>Lo siento, ha ocurrido un error al subir tu archivo.</strong>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                          </div>';
-          }
-      } else {
-          $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <strong>El archivo no es una imagen o documento válido.</strong>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                      </div>';
-      }
-    } else {
-      /*
-      $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <strong>No se ha seleccionado un archivo o el archivo no es válido.</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>';*/
-    //}
 
     // fin de la verificacion del tama;o maximo
-
-    // carta_exo_pn
-    if (!empty($_FILES["carta_exo_pn"]["tmp_name"]) && file_exists($_FILES["carta_exo_pn"]["tmp_name"])) {
-      $target_dir = "carta_exo_pn/";
-      $uniqueFileName = uniqid() . "-" . time();
-      $fileExtension = pathinfo($_FILES["carta_exo_pn"]["name"], PATHINFO_EXTENSION);
-      $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
-      $check = getimagesize($_FILES["carta_exo_pn"]["tmp_name"]);
-
-      if ($check !== false || in_array($fileExtension, $allowed_doc_extensions)) {
-          if (move_uploaded_file($_FILES["carta_exo_pn"]["tmp_name"], $target_file)) {
-              $update = $pdo->query("UPDATE cc_subastas SET pn_carta_ex = '".$target_file."' WHERE id = '".$id_ult."'");
-            } else {
-              $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                            <strong>Lo siento, ha ocurrido un error al subir tu archivo.</strong>
-                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                          </div>';
-          }
-      } else {
-          $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                        <strong>El archivo no es una imagen o documento válido.</strong>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                      </div>';
-      }
-    } else {
-      /*
-      $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <strong>No se ha seleccionado un archivo o el archivo no es válido.</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                  </div>'; */
-    }
-
 
 } 
 
@@ -334,6 +203,63 @@ if (isset($_POST['nombre_completo_pni'])) {
 
   // recibo
 
+
+  $maxSize = 10 * 1024 * 1024; // Tamaño máximo permitido: 10 MB
+  $archivos = ['recibo_pni', 'cedula_pni', 'aviso_pni', 'referencia_pni', 'cc_pni'];
+  $mensajeError = '';
+
+  foreach ($archivos as $archivo) {
+      if (!empty($_FILES[$archivo]["tmp_name"]) && file_exists($_FILES[$archivo]["tmp_name"])) {
+          $fileSize = $_FILES[$archivo]["size"];
+
+          if ($fileSize > $maxSize) {
+              $mensajeError = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                  <strong>El archivo ' . $archivo . ' es demasiado grande. El tamaño máximo permitido es de 10 MB.</strong>
+                                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                              </div>';
+              break; // Salimos del bucle si encontramos un archivo que excede el tamaño permitido
+          }
+      }
+  }
+
+  // recibo , ficha, cc
+
+  if (!empty($mensajeError)) {
+    $mensaje = $mensajeError;
+    } else {
+        // Aquí continúa la lógica existente para procesar los archivos si todos cumplen con el tamaño
+        foreach ($archivos as $archivo) {
+            if (!empty($_FILES[$archivo]["tmp_name"]) && file_exists($_FILES[$archivo]["tmp_name"])) {
+                $target_dir = $archivo . "/"; // Directorio específico para cada archivo
+                $uniqueFileName = uniqid() . "-" . time();
+                $fileExtension = pathinfo($_FILES[$archivo]["name"], PATHINFO_EXTENSION);
+                $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
+                $allowed_doc_extensions = ["pdf", "doc", "docx", "txt", "jpg", "png", "gif", "bmp", "jpeg", "xlsx", "xls"];
+    
+                if (move_uploaded_file($_FILES[$archivo]["tmp_name"], $target_file)) {
+                    // Mapear los nombres de archivo a las columnas reales en la base de datos
+                    $campoBD = '';
+                    if ($archivo == 'recibo_pni') $campoBD = 'pni_servicios';
+                    if ($archivo == 'cedula_pni') $campoBD = 'pni_cedula';
+                    if ($archivo == 'aviso_pni') $campoBD = 'pni_aviso_op';
+                    if ($archivo == 'referencia_pni') $campoBD = 'pni_referencia';
+                    if ($archivo == 'cc_pni') $campoBD = 'pni_cc';
+    
+                    // Solo intentamos actualizar si el campo está correctamente mapeado
+                    if (!empty($campoBD)) {
+                        $update = $pdo->query("UPDATE cc_subastas SET $campoBD = '" . $target_file . "' WHERE id = '" . $id_ult . "'");
+                    }
+                } else {
+                    $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>Lo siento, ha ocurrido un error al subir el archivo ' . $archivo . '.</strong>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>';
+                }
+            }
+        }
+    }
+
+/*
   if (!empty($_FILES["recibo_pni"]["name"])) {
 
     $target_dir = "recibo_pni/";  
@@ -504,7 +430,7 @@ if (isset($_POST['nombre_completo_pni'])) {
       echo "El archivo no es una imagen.";
     }
 
-  }
+  } */
 
 }
 
