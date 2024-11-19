@@ -258,180 +258,6 @@ if (isset($_POST['nombre_completo_pni'])) {
             }
         }
     }
-
-/*
-  if (!empty($_FILES["recibo_pni"]["name"])) {
-
-    $target_dir = "recibo_pni/";  
-
-    $uniqueFileName = uniqid() . "-" . time();
-    $fileExtension = pathinfo($_FILES["recibo_pni"]["name"], PATHINFO_EXTENSION);
-    $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
-    $allowed_image_extensions = ["jpg", "png", "gif", "bmp", "jpeg"];
-    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt", "jpg", "png", "gif", "bmp", "jpeg", "xlsx", "xls"];
-    $check = getimagesize($_FILES["recibo_pni"]["tmp_name"]);
-
-    if ($check !== false || in_array($fileExtension, $allowed_doc_extensions)) {
-
-      if (move_uploaded_file($_FILES["recibo_pni"]["tmp_name"], $target_file)) {
-
-        $update = $pdo -> query("UPDATE cc_subastas SET pni_servicios = '".$target_file."' WHERE id = '".$id_ult."'");
-        
-      } else {
-        echo "Lo siento, ha ocurrido un error al subir tu archivo.";
-      }
-  
-    } else {
-      echo "El archivo no es una imagen.";
-    }
-
-  }
-
-  // cedula pasaporte
-
-  if (!empty($_FILES["cedula_pni"]["name"])) {
-
-    $target_dir = "cedula_pni/";  
-
-    $uniqueFileName = uniqid() . "-" . time();
-    $fileExtension = pathinfo($_FILES["cedula_pni"]["name"], PATHINFO_EXTENSION);
-    $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
-    $allowed_image_extensions = ["jpg", "png", "gif", "bmp", "jpeg"];
-    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt", "jpg", "png", "gif", "bmp", "jpeg", "xlsx", "xls"];
-    $check = getimagesize($_FILES["cedula_pni"]["tmp_name"]);
-
-    if ($check !== false || in_array($fileExtension, $allowed_doc_extensions)) {
-
-      if (move_uploaded_file($_FILES["cedula_pni"]["tmp_name"], $target_file)) {
-
-        $update = $pdo -> query("UPDATE cc_subastas SET pni_cedula = '".$target_file."' WHERE id = '".$id_ult."'");
-        
-      } else {
-        echo "Lo siento, ha ocurrido un error al subir tu archivo.";
-      }
-  
-    } else {
-      echo "El archivo no es una imagen.";
-    }
-
-  }
-
-  // aviso operaciones
-
-  if (!empty($_FILES["aviso_pni"]["name"])) {
-
-    $target_dir = "aviso_pni/";  
-
-    $uniqueFileName = uniqid() . "-" . time();
-    $fileExtension = pathinfo($_FILES["aviso_pni"]["name"], PATHINFO_EXTENSION);
-    $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
-    $allowed_image_extensions = ["jpg", "png", "gif", "bmp", "jpeg"];
-    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt", "jpg", "png", "gif", "bmp", "jpeg", "xlsx", "xls"];
-    $check = getimagesize($_FILES["aviso_pni"]["tmp_name"]);
-
-    if ($check !== false || in_array($fileExtension, $allowed_doc_extensions)) {
-
-      if (move_uploaded_file($_FILES["aviso_pni"]["tmp_name"], $target_file)) {
-
-        $update = $pdo -> query("UPDATE cc_subastas SET pni_aviso_op = '".$target_file."' WHERE id = '".$id_ult."'");
-        
-      } else {
-        echo "Lo siento, ha ocurrido un error al subir tu archivo.";
-      }
-  
-    } else {
-      echo "El archivo no es una imagen.";
-    }
-
-  }
-
-  // referencia
-
-  if (!empty($_FILES["referencia_pni"]["name"])) {
-
-    $target_dir = "referencia_pni/";  
-
-    $uniqueFileName = uniqid() . "-" . time();
-    $fileExtension = pathinfo($_FILES["referencia_pni"]["name"], PATHINFO_EXTENSION);
-    $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
-    $allowed_image_extensions = ["jpg", "png", "gif", "bmp", "jpeg"];
-    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt", "jpg", "png", "gif", "bmp", "jpeg", "xlsx", "xls"];
-    $check = getimagesize($_FILES["referencia_pni"]["tmp_name"]);
-
-    if ($check !== false || in_array($fileExtension, $allowed_doc_extensions)) {
-
-      if (move_uploaded_file($_FILES["referencia_pni"]["tmp_name"], $target_file)) {
-
-        $update = $pdo -> query("UPDATE cc_subastas SET pni_referencia = '".$target_file."' WHERE id = '".$id_ult."'");
-        
-      } else {
-        echo "Lo siento, ha ocurrido un error al subir tu archivo.";
-      }
-  
-    } else {
-      echo "El archivo no es una imagen.";
-    }
-
-  }
-
-  // conosca a su cliente
-
-  if (!empty($_FILES["cc_pni"]["name"])) {
-
-    $target_dir = "cc_pni/";  
-
-    $uniqueFileName = uniqid() . "-" . time();
-    $fileExtension = pathinfo($_FILES["cc_pni"]["name"], PATHINFO_EXTENSION);
-    $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
-    $allowed_image_extensions = ["jpg", "png", "gif", "bmp", "jpeg"];
-    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt", "jpg", "png", "gif", "bmp", "jpeg", "xlsx", "xls"];
-    $check = getimagesize($_FILES["cc_pni"]["tmp_name"]);
-
-    if ($check !== false || in_array($fileExtension, $allowed_doc_extensions)) {
-
-      if (move_uploaded_file($_FILES["cc_pni"]["tmp_name"], $target_file)) {
-
-        $update = $pdo -> query("UPDATE cc_subastas SET pni_cc = '".$target_file."' WHERE id = '".$id_ult."'");
-        
-      } else {
-        echo "Lo siento, ha ocurrido un error al subir tu archivo.";
-      }
-  
-    } else {
-      echo "El archivo no es una imagen.";
-    }
-
-  }
-
-  // carta 
-
-  if (!empty($_FILES["carta_ex_pni"]["name"])) {
-
-    $target_dir = "carta_ex_pni/";  
-
-    $uniqueFileName = uniqid() . "-" . time();
-    $fileExtension = pathinfo($_FILES["carta_ex_pni"]["name"], PATHINFO_EXTENSION);
-    $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
-    $allowed_image_extensions = ["jpg", "png", "gif", "bmp", "jpeg"];
-    $allowed_doc_extensions = ["pdf", "doc", "docx", "txt", "jpg", "png", "gif", "bmp", "jpeg", "xlsx", "xls"];
-    $check = getimagesize($_FILES["carta_ex_pni"]["tmp_name"]);
-
-    if ($check !== false || in_array($fileExtension, $allowed_doc_extensions)) {
-
-      if (move_uploaded_file($_FILES["carta_ex_pni"]["tmp_name"], $target_file)) {
-
-        $update = $pdo -> query("UPDATE cc_subastas SET pni_carta_ex = '".$target_file."' WHERE id = '".$id_ult."'");
-        
-      } else {
-        echo "Lo siento, ha ocurrido un error al subir tu archivo.";
-      }
-  
-    } else {
-      echo "El archivo no es una imagen.";
-    }
-
-  } */
-
 }
 
 if (isset($_POST['nombre_completo_pj'])) {
@@ -501,6 +327,63 @@ if (isset($_POST['nombre_completo_pj'])) {
   }
 
   // registro publico
+
+  $maxSize = 10 * 1024 * 1024; // Tamaño máximo permitido: 10 MB
+  $archivos = ['registro_publico_pj', 'aviso_op_pj', 'cedula_pj', 'servicios_pj', 'cc_pj'];
+  $mensajeError = '';
+
+  foreach ($archivos as $archivo) {
+      if (!empty($_FILES[$archivo]["tmp_name"]) && file_exists($_FILES[$archivo]["tmp_name"])) {
+          $fileSize = $_FILES[$archivo]["size"];
+
+          if ($fileSize > $maxSize) {
+              $mensajeError = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                  <strong>El archivo ' . $archivo . ' es demasiado grande. El tamaño máximo permitido es de 10 MB.</strong>
+                                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                              </div>';
+              break; // Salimos del bucle si encontramos un archivo que excede el tamaño permitido
+          }
+      }
+  }
+
+  // recibo , ficha, cc
+
+  if (!empty($mensajeError)) {
+    $mensaje = $mensajeError;
+    } else {
+        // Aquí continúa la lógica existente para procesar los archivos si todos cumplen con el tamaño
+        foreach ($archivos as $archivo) {
+            if (!empty($_FILES[$archivo]["tmp_name"]) && file_exists($_FILES[$archivo]["tmp_name"])) {
+                $target_dir = $archivo . "/"; // Directorio específico para cada archivo
+                $uniqueFileName = uniqid() . "-" . time();
+                $fileExtension = pathinfo($_FILES[$archivo]["name"], PATHINFO_EXTENSION);
+                $target_file = $target_dir . $uniqueFileName . "." . $fileExtension;
+                $allowed_doc_extensions = ["pdf", "doc", "docx", "txt", "jpg", "png", "gif", "bmp", "jpeg", "xlsx", "xls"];
+    
+                if (move_uploaded_file($_FILES[$archivo]["tmp_name"], $target_file)) {
+                    // Mapear los nombres de archivo a las columnas reales en la base de datos
+                    $campoBD = '';
+                    if ($archivo == 'registro_publico_pj') $campoBD = 'pj_registro_publico';
+                    if ($archivo == 'aviso_op_pj') $campoBD = 'pj_aviso_ope';
+                    if ($archivo == 'cedula_pj') $campoBD = 'pj_cedula_pass';
+                    if ($archivo == 'servicios_pj') $campoBD = 'pj_servicios';
+                    if ($archivo == 'cc_pj') $campoBD = 'pj_cc';
+    
+                    // Solo intentamos actualizar si el campo está correctamente mapeado
+                    if (!empty($campoBD)) {
+                        $update = $pdo->query("UPDATE cc_subastas SET $campoBD = '" . $target_file . "' WHERE id = '" . $id_ult . "'");
+                    }
+                } else {
+                    $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                    <strong>Lo siento, ha ocurrido un error al subir el archivo ' . $archivo . '.</strong>
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                </div>';
+                }
+            }
+        }
+    }
+
+    /*
 
   if (!empty($_FILES["registro_publico_pj"]["name"])) {
 
@@ -672,7 +555,9 @@ if (isset($_POST['nombre_completo_pj'])) {
       echo "El archivo no es una imagen.";
     }
 
-  }
+  } 
+
+  */
 
 }
 
