@@ -9,10 +9,11 @@ try {
   echo "Error de conexión: " . $e->getMessage();
 }
 
+/*
 require 'vendor/autoload.php';
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
 $dotenv->load();
-use Twilio\Rest\Client;
+use Twilio\Rest\Client; */
 
 if (isset($_POST['msn_send']) && $_POST['msn_send'] == 'ind') {
 
