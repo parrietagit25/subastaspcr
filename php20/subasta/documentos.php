@@ -79,7 +79,7 @@ if (isset($_POST['nombre_pn'])) {
       $id_ult = $row['id'];
     }
 
-    $maxSize = 50 * 1024 * 1024; // Tamaño máximo permitido: 10 MB
+    $maxSize = 50 * 1024 * 1024; // Tamaño máximo permitido: 50 MB
     $archivos = ['recibo_pn', 'ficha_pn', 'cc_pn'];
     $mensajeError = '';
 
@@ -89,7 +89,7 @@ if (isset($_POST['nombre_pn'])) {
 
             if ($fileSize > $maxSize) {
                 $mensajeError = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                    <strong>El archivo ' . $archivo . ' es demasiado grande. El tamaño máximo permitido es de 10 MB.</strong>
+                                    <strong>El archivo ' . $archivo . ' es demasiado grande. El tamaño máximo permitido es de 50 MB.</strong>
                                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                                 </div>';
                 break; // Salimos del bucle si encontramos un archivo que excede el tamaño permitido
@@ -204,7 +204,7 @@ if (isset($_POST['nombre_completo_pni'])) {
   // recibo
 
 
-  $maxSize = 50 * 1024 * 1024; // Tamaño máximo permitido: 10 MB
+  $maxSize = 50 * 1024 * 1024; // Tamaño máximo permitido: 50 MB
   $archivos = ['recibo_pni', 'cedula_pni', 'aviso_pni', 'referencia_pni', 'cc_pni'];
   $mensajeError = '';
 
@@ -214,7 +214,7 @@ if (isset($_POST['nombre_completo_pni'])) {
 
           if ($fileSize > $maxSize) {
               $mensajeError = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                  <strong>El archivo ' . $archivo . ' es demasiado grande. El tamaño máximo permitido es de 10 MB.</strong>
+                                  <strong>El archivo ' . $archivo . ' es demasiado grande. El tamaño máximo permitido es de 50 MB.</strong>
                                   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                               </div>';
               break; // Salimos del bucle si encontramos un archivo que excede el tamaño permitido
@@ -328,7 +328,7 @@ if (isset($_POST['nombre_completo_pj'])) {
 
   // registro publico
 
-  $maxSize = 50 * 1024 * 1024; // Tamaño máximo permitido: 10 MB
+  $maxSize = 50 * 1024 * 1024; // Tamaño máximo permitido: 50 MB
   $archivos = ['registro_publico_pj', 'aviso_op_pj', 'cedula_pj', 'servicios_pj', 'cc_pj'];
   $mensajeError = '';
 
@@ -338,7 +338,7 @@ if (isset($_POST['nombre_completo_pj'])) {
 
           if ($fileSize > $maxSize) {
               $mensajeError = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                                  <strong>El archivo ' . $archivo . ' es demasiado grande. El tamaño máximo permitido es de 10 MB.</strong>
+                                  <strong>El archivo ' . $archivo . ' es demasiado grande. El tamaño máximo permitido es de 50 MB.</strong>
                                   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                               </div>';
               break; // Salimos del bucle si encontramos un archivo que excede el tamaño permitido

@@ -16,7 +16,11 @@ if (isset($_GET['aprobar'])) {
 
     foreach ($rows as $row) {
 
-        echo ' Desea aprobar a <b>'.$row['nombre_completo'].'</b> Se le enviara un correo a con el codigo de aprobacion.';
+        echo ' Desea aprobar a <b>'.$row['nombre_completo'].'</b> Se le enviara un correo a con el codigo de aprobacion.<br>
+                <h3 style="color:red;">ANTES DE APROBAR, VERIFIQUE LOS DOCUMENTOS ADJUNTOS</h3>
+                <b style="color:red;">Verifique si todos los documentos adjuntos se pueden visualizar. Si no es el caso, 
+                por favor contacte al cliente y solicítele que vuelva a subir los documentos solicitados.</b>
+        ';
 
     }
 
