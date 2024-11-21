@@ -21,6 +21,9 @@ if (isset($_POST['msn_send']) && $_POST['msn_send'] == 'ind') {
     $numero_telefono = $_POST['telefono'];
 
     // aqui van los apis
+
+    $sid = '';
+    $token = '';
 	
     $twilio = new Client($sid, $token);
 
