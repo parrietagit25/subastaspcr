@@ -79,7 +79,7 @@ if (isset($_POST['nombre_pn'])) {
       $id_ult = $row['id'];
     }
 
-    $maxSize = 10 * 1024 * 1024; // Tamaño máximo permitido: 10 MB
+    $maxSize = 50 * 1024 * 1024; // Tamaño máximo permitido: 10 MB
     $archivos = ['recibo_pn', 'ficha_pn', 'cc_pn'];
     $mensajeError = '';
 
@@ -204,7 +204,7 @@ if (isset($_POST['nombre_completo_pni'])) {
   // recibo
 
 
-  $maxSize = 10 * 1024 * 1024; // Tamaño máximo permitido: 10 MB
+  $maxSize = 50 * 1024 * 1024; // Tamaño máximo permitido: 10 MB
   $archivos = ['recibo_pni', 'cedula_pni', 'aviso_pni', 'referencia_pni', 'cc_pni'];
   $mensajeError = '';
 
@@ -328,7 +328,7 @@ if (isset($_POST['nombre_completo_pj'])) {
 
   // registro publico
 
-  $maxSize = 10 * 1024 * 1024; // Tamaño máximo permitido: 10 MB
+  $maxSize = 50 * 1024 * 1024; // Tamaño máximo permitido: 10 MB
   $archivos = ['registro_publico_pj', 'aviso_op_pj', 'cedula_pj', 'servicios_pj', 'cc_pj'];
   $mensajeError = '';
 
