@@ -34,27 +34,42 @@ if (isset($_GET['adjuntos'])) {
 
         if ($row['tipo_persona'] == 'NATURAL') {
 
-            echo '<a href="'.$row['pn_recibo_servicios'].'" target="_blank">Recibo / Servicio</a><br>';
+            if($row['pn_recibo_servicios'] != ''){
+                echo '<a href="'.$row['pn_recibo_servicios'].'" target="_blank">Recibo / Servicio</a><br>';
+            }
 
-            echo '<a href="'.$row['pn_ficha'].'" target="_blank">Ficha</a><br>';
+            if($row['pn_ficha'] != ''){
+                echo '<a href="'.$row['pn_ficha'].'" target="_blank">Ficha</a><br>';
+            }
 
             // echo '<a href="'.$row['pn_carta_ex'].'" target="_blank">Carta</a><br>';
 
-            echo '<a href="'.$row['pn_cc'].'" target="_blank">Conosca a su cliente</a><br>';
-
+            if($row['pn_cc'] != ''){
+                echo '<a href="'.$row['pn_cc'].'" target="_blank">Conosca a su cliente</a><br>';
+            }
         }
 
         if ($row['tipo_persona'] == 'NATURAL INDEPENDIENTE') {
 
-            echo '<a href="'.$row['pni_cedula'].'" target="_blank">Ceduka / Pasaporte</a><br>';
+            if($row['pni_cedula'] != ''){
+                echo '<a href="'.$row['pni_cedula'].'" target="_blank">Ceduka / Pasaporte</a><br>';
+            }
 
-            echo '<a href="'.$row['pni_aviso_op'].'" target="_blank">Aviso de Operaciones</a><br>';
+            if($row['pni_aviso_op'] != ''){
+                echo '<a href="'.$row['pni_aviso_op'].'" target="_blank">Aviso de Operaciones</a><br>';
+            }
 
-            echo '<a href="'.$row['pni_servicios'].'" target="_blank">Servicios</a><br>';
+            if($row['pni_servicios'] != ''){
+                echo '<a href="'.$row['pni_servicios'].'" target="_blank">Servicios</a><br>';
+            }
 
-            echo '<a href="'.$row['pni_referencia'].'" target="_blank">Referencia</a><br>';
+            if($row['pni_referencia'] != ''){
+                echo '<a href="'.$row['pni_referencia'].'" target="_blank">Referencia</a><br>';
+            }
 
-            echo '<a href="'.$row['pni_cc'].'" target="_blank">Conosca a su cliente</a><br>';
+            if($row['pni_cc'] != ''){
+                echo '<a href="'.$row['pni_cc'].'" target="_blank">Conosca a su cliente</a><br>';
+            }
 
             //echo '<a href="'.$row['pni_carta_ex'].'" target="_blank">Carta</a><br>';
 
@@ -62,16 +77,21 @@ if (isset($_GET['adjuntos'])) {
 
         if ($row['tipo_persona'] == 'JURIDICA') {
 
+            if($row['pj_registro_publico'] != ''){
             echo '<a href="'.$row['pj_registro_publico'].'" target="_blank">Registro Publico</a><br>';
-
+            }
+            if($row['pj_aviso_ope'] != ''){
             echo '<a href="'.$row['pj_aviso_ope'].'" target="_blank">Aviso de Operaciones</a><br>';
-
+            }
+            if($row['pj_cedula_pass'] != ''){
             echo '<a href="'.$row['pj_cedula_pass'].'" target="_blank">Cedula / Pasaporte</a><br>';
-
+            }
+            if($row['pj_servicios'] != ''){
             echo '<a href="'.$row['pj_servicios'].'" target="_blank">Servicios</a><br>';
-
-            echo '<a href="'.$row['pj_cc'].'" target="_blank">Conosca a su cliente</a><br>';
-
+            }
+            if($row['pj_cc'] != ''){
+                echo '<a href="'.$row['pj_cc'].'" target="_blank">Conosca a su cliente</a><br>';
+            }
             //echo '<a href="'.$row['pj_carta_exo'].'" target="_blank">Carta</a><br>';
 
         }
