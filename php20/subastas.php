@@ -1,4 +1,5 @@
 <?php 
+/*
 session_start();
 if (!isset($_COOKIE["grupopcr"])) {
     header('Location: index.php');
@@ -6,7 +7,8 @@ if (!isset($_COOKIE["grupopcr"])) {
     $cookieValue = $_COOKIE["grupopcr"];
     $expirationTime = time() + 365 * 24 * 60 * 60;
     setcookie("grupopcr", $cookieValue, $expirationTime, "/"); 
-}
+    
+}*/
 ?>
 <!doctype html>
 <html lang="en" data-bs-theme="auto">
