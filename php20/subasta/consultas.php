@@ -36,16 +36,22 @@ if (isset($_GET['adjuntos'])) {
 
             if (!empty($row['pn_recibo_servicios'])) {
                 echo '<a href="'.$row['pn_recibo_servicios'].'" target="_blank">Recibo / Servicio</a><br>';
+            }else {
+                echo '<span style="color:red;"> El archivo recibo no se ha subido correctamente, por favor contactar con el cliente </span> <br>';
             }
 
             if (!empty($row['pn_ficha'])) {
                 echo '<a href="'.$row['pn_ficha'].'" target="_blank">Ficha</a><br>';
+            }else {
+                echo '<span style="color:red;"> El archivo ficha no se ha subido correctamente, por favor contactar con el cliente </span> <br>';
             }
 
             // echo '<a href="'.$row['pn_carta_ex'].'" target="_blank">Carta</a><br>';
 
             if (!empty($row['pn_cc'])) {
                 echo '<a href="'.$row['pn_cc'].'" target="_blank">Conosca a su cliente</a><br>';
+            }else {
+                echo '<span style="color:red;"> El archivo conosca a su cliente no se ha subido  correctamente, por favor contactar con el cliente </span> <br>';
             }
         }
 
@@ -53,22 +59,32 @@ if (isset($_GET['adjuntos'])) {
 
             if (!empty($row['pni_cedula'])) {
                 echo '<a href="'.$row['pni_cedula'].'" target="_blank">Cédula / Pasaporte</a><br>';
+            }else {
+                echo '<span style="color:red;"> El Archivo cedula no se ha subido correctamente, por favor contactar con el cliente </span> <br>';
             }
 
             if (!empty($row['pni_aviso_op'])) {
                 echo '<a href="'.$row['pni_aviso_op'].'" target="_blank">Aviso de Operaciones</a><br>';
+            }else {
+                echo '<span style="color:red;"> El archivo aviso de operaciones no se ha subido correctamente, por favor contactar con el cliente </span> <br>';
             }
 
             if (!empty($row['pni_servicios'])) {
                 echo '<a href="'.$row['pni_servicios'].'" target="_blank">Servicios</a><br>';
+            }else {
+                echo '<span style="color:red;"> El archivo de servicios no se ha subido correctamente, por favor contactar con el cliente </span> <br>';
             }
 
             if (!empty($row['pni_referencia'])) {
                 echo '<a href="'.$row['pni_referencia'].'" target="_blank">Referencia</a><br>';
+            }else {
+                echo '<span style="color:red;"> El archivo Referencia no se ha subido correctamente, por favor contactar con el cliente </span> <br>';
             }
 
             if (!empty($row['pni_cc'])) {
                 echo '<a href="'.$row['pni_cc'].'" target="_blank">Conosca a su cliente</a><br>';
+            }else {
+                echo '<span style="color:red;"> El archivo conosca a su cliente no se ha subido correctamente, por favor contactar con el cliente </span> <br>';
             }
 
             //echo '<a href="'.$row['pni_carta_ex'].'" target="_blank">Carta</a><br>';
@@ -79,22 +95,32 @@ if (isset($_GET['adjuntos'])) {
 
             if (!empty($row['pj_registro_publico'])) {
                 echo '<a href="'.$row['pj_registro_publico'].'" target="_blank">Registro Público</a><br>';
+            }else {
+                echo '<span style="color:red;"> El archivo Registro Público no se ha subido correctamente, por favor contactar con el cliente </span> <br>';
             }
 
             if (!empty($row['pj_aviso_ope'])) {
                 echo '<a href="'.$row['pj_aviso_ope'].'" target="_blank">Aviso de Operaciones</a><br>';
+            }else {
+                echo '<span style="color:red;"> El archivo aviso de operaciones no se ha subido correctamente, por favor contactar con el cliente </span> <br>';
             }
 
             if (!empty($row['pj_cedula_pass'])) {
                 echo '<a href="'.$row['pj_cedula_pass'].'" target="_blank">Cédula / Pasaporte</a><br>';
+            }else {
+                echo '<span style="color:red;"> El archivo Cédula / Pasaporte no se ha subido correctamente, por favor contactar con el cliente </span> <br>';
             }
 
             if (!empty($row['pj_servicios'])) {
                 echo '<a href="'.$row['pj_servicios'].'" target="_blank">Servicios</a><br>';
+            }else {
+                echo '<span style="color:red;"> El archivo Servicios no se ha subido correctamente, por favor contactar con el cliente </span> <br>';
             }
 
             if (!empty($row['pj_cc'])) {
                 echo '<a href="'.$row['pj_cc'].'" target="_blank">Conosca a su cliente</a><br>';
+            }else {
+                echo '<span style="color:red;"> El archivo Conosca a su cliente no se ha subido correctamente, por favor contactar con el cliente </span> <br>';
             }
 
             //echo '<a href="'.$row['pj_carta_exo'].'" target="_blank">Carta</a><br>';
