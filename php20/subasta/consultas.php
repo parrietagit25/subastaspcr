@@ -49,9 +49,9 @@ if (isset($_GET['adjuntos'])) {
             // echo '<a href="'.$row['pn_carta_ex'].'" target="_blank">Carta</a><br>';
 
             if (!empty($row['pn_cc'])) {
-                echo '<a href="'.$row['pn_cc'].'" target="_blank">Conosca a su cliente</a><br>';
+                echo '<a href="'.$row['pn_cc'].'" target="_blank">conozca a su cliente</a><br>';
             }else {
-                echo '<span style="color:red;"> El archivo conosca a su cliente no se ha subido  correctamente, por favor contactar con el cliente </span> <br>';
+                echo '<span style="color:red;"> El archivo conozca a su cliente no se ha subido  correctamente, por favor contactar con el cliente </span> <br>';
             }
         }
 
@@ -82,9 +82,9 @@ if (isset($_GET['adjuntos'])) {
             }
 
             if (!empty($row['pni_cc'])) {
-                echo '<a href="'.$row['pni_cc'].'" target="_blank">Conosca a su cliente</a><br>';
+                echo '<a href="'.$row['pni_cc'].'" target="_blank">conozca a su cliente</a><br>';
             }else {
-                echo '<span style="color:red;"> El archivo conosca a su cliente no se ha subido correctamente, por favor contactar con el cliente </span> <br>';
+                echo '<span style="color:red;"> El archivo conozca a su cliente no se ha subido correctamente, por favor contactar con el cliente </span> <br>';
             }
 
             //echo '<a href="'.$row['pni_carta_ex'].'" target="_blank">Carta</a><br>';
@@ -118,9 +118,9 @@ if (isset($_GET['adjuntos'])) {
             }
 
             if (!empty($row['pj_cc'])) {
-                echo '<a href="'.$row['pj_cc'].'" target="_blank">Conosca a su cliente</a><br>';
+                echo '<a href="'.$row['pj_cc'].'" target="_blank">conozca a su cliente</a><br>';
             }else {
-                echo '<span style="color:red;"> El archivo Conosca a su cliente no se ha subido correctamente, por favor contactar con el cliente </span> <br>';
+                echo '<span style="color:red;"> El archivo conozca a su cliente no se ha subido correctamente, por favor contactar con el cliente </span> <br>';
             }
 
             //echo '<a href="'.$row['pj_carta_exo'].'" target="_blank">Carta</a><br>';
