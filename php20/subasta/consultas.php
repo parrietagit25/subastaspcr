@@ -28,6 +28,21 @@ if (isset($_GET['aprobar'])) {
 
 }
 
+if (isset($_GET['enviar_email'])) {
+
+    foreach ($rows as $row) {
+
+        echo ' Desea Enviar un correo a <b>'.$row['nombre_completo'].'</b>.<br>
+             <textarea name="mensaje_send_email" id="" cols="30" rows="10" class="form-control"></textarea>
+        ';
+
+    }
+
+    echo '<input type="hidden" value="'.$_GET['id'].'" name="id_aprobar">';
+    echo '<input type="hidden" value="'.$row['email'].'" name="email_send_email">';
+
+}
+
 if (isset($_GET['adjuntos'])) {
 
     foreach ($rows as $row) {

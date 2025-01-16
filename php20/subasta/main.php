@@ -17,6 +17,61 @@ try {
   echo "Error de conexión: " . $e->getMessage();
 }
 
+if (isset($_POST['send_email'])) {
+
+  $mail = new PHPMailer(true);
+
+  try {
+      // Configuración del servidor
+      $mail->SMTPDebug = 0; // Habilita la salida de depuración detallada (0 para desactivar)
+      $mail->isSMTP();
+      $mail->Host       = 'smtp-mail.outlook.com';
+      $mail->SMTPAuth   = true;
+      $mail->Username   = 'subastas@grupopcr.com.pa';
+      $mail->Password   = 'Admin254812%';
+      $mail->SMTPSecure = 'tls';
+      $mail->Port       = 587;
+
+      $email_origen = 'subastas@grupopcr.com.pa';
+
+      // Destinatarios
+      $mail->setFrom($email_origen, 'Subastas Grupo PCR');
+      $mail->addAddress($_POST['email_send_email']);
+
+      // Contenido del correo
+      $mail->CharSet = 'UTF-8';
+      $mail->IsHTML(true);
+
+      $mail->Subject = 'GRUPO PCR - Revicion de Documentos';
+      $mail->Body    = '
+      <html>
+        <head>
+          <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+        </head>
+        <body> 
+          <p>Buen dia, el siguiente mensaje fue enviado por parte del personal administrativo, el mensaje enviado es:</p>
+          " - '.$_POST['mensaje_send_email'].' - "
+        </body>
+      </html>
+      ';
+
+      $mail->AddEmbeddedImage('../img/logo20años.png', 'logogrupopcr');
+      $mail->AddEmbeddedImage('../img/logosubastas.png', 'logosubastas');
+
+      $mail->send();
+      //echo 'El mensaje ha sido enviado';
+  } catch (Exception $e) {
+      echo "El mensaje no se pudo enviar. Error: {$mail->ErrorInfo}";
+  } 
+  
+  $mensaje = '<div class="alert alert-success alert-dismissible fade show" role="alert">
+                <strong>Mensaje Enviado!</strong>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>';
+  
+}
+
   if (isset($_POST['id_aprobar'])) {
 
     $codigo = $_POST['id_aprobar'].rand(1, 100000);
@@ -282,6 +337,25 @@ try {
       </div>
     </div>
 
+    <div class="modal fade" id="send_email" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Enviar Email</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form action="" method="post">
+            <div class="modal-body" id="enviar_email_cont">
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelar">Cerrar</button>
+              <button type="submit" class="btn btn-primary" name="send_email" id="enviar">Enviar Email</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
     <!-- Modal adjuntos -->
     <div class="modal fade" id="adjuntos" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
@@ -349,7 +423,7 @@ try {
                     <td><?php echo $row['date_time']; ?></td>
                     <td>
 
-                    <a type="button" class="btn btn-primary btn-icon" data-bs-toggle="modal" data-bs-target="#aprobacion" onclick="aprobar(<?php echo $row['id']; ?>)">
+                    <a type="button" class="btn btn-primary btn-icon" data-bs-toggle="modal" data-bs-target="#send_email" onclick="enviar_email(<?php echo $row['id']; ?>)">
                       <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-envelope" viewBox="0 0 16 16">
                         <path d="M0 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V4zm2-.5A.5.5 0 0 0 1.5 4v.217l6 3.6 6-3.6V4a.5.5 0 0 0-.5-.5H2zm13 2.383L8.566 9.21a.5.5 0 0 1-.632 0L1 5.883V12a.5.5 0 0 0 .5.5h12a.5.5 0 0 0 .5-.5V5.883z"/>
                       </svg>
@@ -413,6 +487,27 @@ try {
         .then(data => {
           
           document.querySelector("#aprobar").innerHTML = data;
+        })
+        .catch(error => {
+          
+          console.error("Hubo un problema con la operación fetch:", error);
+        });
+
+    }
+
+    function enviar_email(x){
+
+      fetch('consultas.php?enviar_email=1&id=' + x)
+        .then(response => {
+          
+          if (!response.ok) {
+            throw new Error('Error de red al intentar fetch.');
+          }
+          return response.text();
+        })
+        .then(data => {
+          
+          document.querySelector("#enviar_email_cont").innerHTML = data;
         })
         .catch(error => {
           
