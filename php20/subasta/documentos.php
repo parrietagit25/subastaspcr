@@ -41,6 +41,7 @@ if (isset($_POST['nombre_pn'])) {
         // Destinatarios
         $mail->setFrom($email_origen, 'Subastas Grupo PCR');
         $mail->addAddress('perdidas@grupopcr.com.pa', 'Perdidas - Subastas');
+        $mail->addAddress('yamileth.rodriguez@grupopcr.com.pa', 'Yamileth Rodriguez');
 
         // Contenido del correo
         $mail->CharSet = 'UTF-8';
