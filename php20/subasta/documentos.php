@@ -82,7 +82,7 @@ if (isset($_POST['nombre_pn'])) {
     }
 
     $maxSize = 50 * 1024 * 1024; // Tamaño máximo permitido: 50 MB
-    $archivos = ['recibo_pn', 'ficha_pn', 'cc_pn'];
+    $archivos = ['recibo_pn', 'ficha_pn', 'cc_pn', 'pn_cedula'];
     $mensajeError = '';
 
     foreach ($archivos as $archivo) {
@@ -119,6 +119,7 @@ if (isset($_POST['nombre_pn'])) {
                       if ($archivo == 'recibo_pn') $campoBD = 'pn_recibo_servicios';
                       if ($archivo == 'ficha_pn') $campoBD = 'pn_ficha';
                       if ($archivo == 'cc_pn') $campoBD = 'pn_cc';
+                      if ($archivo == 'pn_cedula') $campoBD = 'pn_cedula';
       
                       // Solo intentamos actualizar si el campo está correctamente mapeado
                       if (!empty($campoBD)) {
@@ -733,6 +734,12 @@ if (isset($_POST['nombre_completo_pj'])) {
               Descargalo <a href="ExpResumenCtcPn.pdf" target="_blank" rel="noopener noreferrer"> aqui </a>, y llena todo el documento. <a href="ExpResumenCtcPn.pdf" target="_blank" rel="noopener noreferrer"> Descargar</a>
             </p>
           </div>
+          <div class="d-flex text-body-secondary pt-3">
+            <svg class="bd-placeholder-img flex-shrink-0 me-2 rounded" width="32" height="32" role="img" aria-label="Placeholder: 32x32" focusable="false"><title>Ficha o talonario o carta de trabajo</title><rect width="100%" height="100%" fill="#007bff"/><text x="50%" y="50%" fill="#007bff" dy=".3em">32x32</text></svg>
+            <p class="pb-3 mb-0 small lh-sm border-bottom">
+              <strong class="d-block text-gray-dark">Cedula o Pasaporte(extranjero)</strong>
+            </p>
+          </div>
           <!--<div class="d-flex text-body-secondary pt-3">
             <svg class="bd-placeholder-img flex-shrink-0 me-2 rounded" width="32" height="32" role="img" aria-label="Placeholder: 32x32" focusable="false"><title>Carta de exoneración de responsabilidad con firma y huella</title><rect width="100%" height="100%" fill="#007bff"/><text x="50%" y="50%" fill="#007bff" dy=".3em">32x32</text></svg>
             <p class="pb-3 mb-0 small lh-sm border-bottom">
@@ -755,6 +762,8 @@ if (isset($_POST['nombre_completo_pj'])) {
             <input type="file" name="ficha_pn" id=""class="form-control" required>
             <label for=""><b>Formulario Conoce tu Cliente </b><span style="color:red;">*</span></label>
             <input type="file" name="cc_pn" id=""class="form-control" required>
+            <label for=""><b>Cedula o Pasaporte(extranjero) </b><span style="color:red;">*</span></label>
+            <input type="file" name="pn_cedula" id=""class="form-control" required>
             <!--<label for=""><b>Carta de exoneración </b></label>
             <input type="file" name="carta_exo_pn" name="" id=""class="form-control">-->
             <br>
