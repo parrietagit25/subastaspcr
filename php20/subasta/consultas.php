@@ -68,6 +68,12 @@ if (isset($_GET['adjuntos'])) {
             }else {
                 echo '<span style="color:red;"> El archivo conozca a su cliente no se ha subido  correctamente, por favor contactar con el cliente </span> <br>';
             }
+
+            if (!empty($row['pn_cedula'])) {
+                echo '<a href="'.$row['pn_cedula'].'" target="_blank">Cedula o Pasaporte</a><br>';
+            }else {
+                echo '<span style="color:red;"> El archivo Cedula o Pasaporte no se ha subido  correctamente, por favor contactar con el cliente </span> <br>';
+            }
         }
 
         if ($row['tipo_persona'] == 'NATURAL INDEPENDIENTE') {
