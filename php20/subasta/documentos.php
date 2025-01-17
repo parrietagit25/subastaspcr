@@ -82,7 +82,7 @@ if (isset($_POST['nombre_pn'])) {
     }
 
     $maxSize = 50 * 1024 * 1024; // Tamaño máximo permitido: 50 MB
-    $archivos = ['recibo_pn', 'ficha_pn', 'cc_pn', 'pn_cedula'];
+    $archivos = ['recibo_pn', 'ficha_pn', 'cc_pn', 'cedula_pn'];
     $mensajeError = '';
 
     foreach ($archivos as $archivo) {
@@ -119,7 +119,7 @@ if (isset($_POST['nombre_pn'])) {
                       if ($archivo == 'recibo_pn') $campoBD = 'pn_recibo_servicios';
                       if ($archivo == 'ficha_pn') $campoBD = 'pn_ficha';
                       if ($archivo == 'cc_pn') $campoBD = 'pn_cc';
-                      if ($archivo == 'pn_cedula') $campoBD = 'pn_cedula';
+                      if ($archivo == 'cedula_pn') $campoBD = 'pn_cedula';
       
                       // Solo intentamos actualizar si el campo está correctamente mapeado
                       if (!empty($campoBD)) {
@@ -763,7 +763,7 @@ if (isset($_POST['nombre_completo_pj'])) {
             <label for=""><b>Formulario Conoce tu Cliente </b><span style="color:red;">*</span></label>
             <input type="file" name="cc_pn" id=""class="form-control" required>
             <label for=""><b>Cedula o Pasaporte(extranjero) </b><span style="color:red;">*</span></label>
-            <input type="file" name="pn_cedula" id=""class="form-control" required>
+            <input type="file" name="cedula_pn" id=""class="form-control" required>
             <!--<label for=""><b>Carta de exoneración </b></label>
             <input type="file" name="carta_exo_pn" name="" id=""class="form-control">-->
             <br>
