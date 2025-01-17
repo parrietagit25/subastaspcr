@@ -38,7 +38,7 @@ if (isset($_GET['enviar_email'])) {
 
     }
 
-    echo '<input type="hidden" value="'.$_GET['id'].'" name="id_aprobar">';
+    echo '<input type="hidden" value="'.$_GET['id'].'" name="id_aprobar_send_email">';
     echo '<input type="hidden" value="'.$row['email'].'" name="email_send_email">';
 
 }
