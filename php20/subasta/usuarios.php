@@ -59,7 +59,7 @@ if (isset($_POST['editar_usuario'])) {
 
   if (isset($_POST['id_eliminar'])) {
 
-    $insert = $pdo -> query("UPDATE cc_subastas SET stat = 3 WHERE id = '".$_POST['id_eliminar']."'");
+    $insert = $pdo -> query("UPDATE usuarios SET stat = 3 WHERE id = '".$_POST['id_eliminar']."'");
 
     $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
                   <strong>Registro Eliminado!</strong>
@@ -427,7 +427,7 @@ if (isset($_POST['editar_usuario'])) {
 
     function eliminar(x){
 
-      fetch('consultas.php?eliminar=1&id=' + x)
+      fetch('consultas.php?eliminar_usuario=1&id=' + x)
         .then(response => {
           
           if (!response.ok) {

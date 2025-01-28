@@ -216,6 +216,21 @@ if (isset($_GET['eliminar'])) {
 
 }
 
+if (isset($_GET['eliminar_usuario'])) {
+
+    $ultimo_id = $pdo -> query("SELECT * FROM usuarios WHERE id ='".$_GET['id']."'");
+    $rows = $ultimo_id->fetchAll(PDO::FETCH_ASSOC);
+
+    foreach ($rows as $row) {
+
+        echo '<p style="color:red;"> Desea Eliminar el usuairo <b>'.$row['nombre'].'<p>.';
+
+    }
+
+    echo '<input type="hidden" value="'.$_GET['id'].'" name="id_eliminar">';
+
+}
+
 if (isset($_GET['reenviar_codigo'])) {  ?>
 
     <h2>Quieres reenviar el codigo?</h2>
@@ -239,6 +254,18 @@ if (isset($_GET['edit_reg'])) {
 
    <?php  }
     
+}
+
+if (isset($_GET['aprobar_supervisor'])) {
+
+    foreach ($rows as $row) {
+
+        echo ' Se le enviara al supervisor a <b>'.$row['nombre_completo'].'</b> Se le enviara al supervisor para su revision y su posterior aprobacion.<br>';
+
+    }
+
+    echo '<input type="hidden" value="'.$_GET['id'].'" name="id_aprobar_supervisor">';
+
 }
 
 ?>

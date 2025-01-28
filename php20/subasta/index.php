@@ -19,11 +19,12 @@ if (isset($_POST['email'])) {
     $email = $_POST['email'];
     $password = $_POST['password'];
 
-    $comprobar_user = $pdo -> query("SELECT id, password FROM usuarios WHERE email  = '".$email."'");
+    $comprobar_user = $pdo -> query("SELECT id, password, tipo_user FROM usuarios WHERE email  = '".$email."'");
     $rows = $comprobar_user->fetchAll(PDO::FETCH_ASSOC);
     foreach ($rows as $row) {
       $id = $row['id'];
       $pass = $row['password'];
+      $tipo_user = $row['tipo_user'];
     }
 
     if (isset($pass)) {
@@ -33,6 +34,7 @@ if (isset($_POST['email'])) {
             $_SESSION["loggedin"] = true;
             $_SESSION["id"] = $id;
             $_SESSION["email"] = $email;
+            $_SESSION["tipo_user"] = $tipo_user;
             header("Location: main.php");
         } else {
             $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
