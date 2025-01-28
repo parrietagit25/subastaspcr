@@ -13,16 +13,54 @@ $rows = $ultimo_id->fetchAll(PDO::FETCH_ASSOC);
 
 if (isset($_GET['aprobar'])) {
 
+    $ultimo_id = $pdo -> query("SELECT * FROM usuarios WHERE id ='".$_GET['id']."'");
+    $rows = $ultimo_id->fetchAll(PDO::FETCH_ASSOC);
 
-    foreach ($rows as $row) {
 
-        echo ' Desea aprobar a <b>'.$row['nombre_completo'].'</b> Se le enviara un correo a con el codigo de aprobacion.<br>
-                <h3 style="color:red;">ANTES DE APROBAR, VERIFIQUE LOS DOCUMENTOS ADJUNTOS</h3>
-                <b style="color:red;">Verifique si todos los documentos adjuntos se pueden visualizar. Si no es el caso, 
-                por favor contacte al cliente y solicítele que vuelva a subir los documentos solicitados.</b>
-        ';
+    foreach ($rows as $row) { ?>
 
-    }
+            <form action="editar_usuario.php" method="POST">
+                <div class="modal-body">
+                  <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+                  <div class="mb-3">
+                    <label for="nombre" class="form-label">Nombre</label>
+                    <input type="text" class="form-control" id="nombre" name="nombre" value="<?php echo $row['nombre']; ?>" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" value="<?php echo $row['email']; ?>" required>
+                  </div>
+                  <div class="mb-3">
+                    <label for="edad" class="form-label">Edad</label>
+                    <input type="number" class="form-control" id="edad" name="edad" value="<?php echo $row['edad']; ?>">
+                  </div>
+                  <div class="mb-3">
+                    <label for="password" class="form-label">Password</label>
+                    <input type="password" class="form-control" id="password" name="password">
+                  </div>
+                  <div class="mb-3">
+                    <label for="tipo_user" class="form-label">Tipo de Usuario</label>
+                    <select class="form-control" id="tipo_user" name="tipo_user">
+                      <option value="admin" <?php echo $row['tipo_user'] == 'admin' ? 'selected' : ''; ?>>Admin</option>
+                      <option value="vendedor" <?php echo $row['tipo_user'] == 'vendedor' ? 'selected' : ''; ?>>Vendedor</option>
+                      <option value="supervisor" <?php echo $row['tipo_user'] == 'supervisor' ? 'selected' : ''; ?>>Supervisor</option>
+                    </select>
+                  </div>
+                  <div class="mb-3">
+                    <label for="stat" class="form-label">Estado</label>
+                    <select class="form-control" id="stat" name="stat">
+                      <option value="1" <?php echo $row['stat'] == 1 ? 'selected' : ''; ?>>Activo</option>
+                      <option value="0" <?php echo $row['stat'] == 0 ? 'selected' : ''; ?>>Inactivo</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                  <button type="submit" class="btn btn-primary">Guardar Cambios</button>
+                </div>
+            </form>
+
+    <?php }
 
     echo '<input type="hidden" value="'.$_GET['id'].'" name="id_aprobar">';
 

@@ -12,13 +12,19 @@
             </li>
             
             <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Registros</a>
-            <ul class="dropdown-menu">
-                <li><a class="dropdown-item" href="main.php">Solicitud</a></li>
-                <li><a class="dropdown-item" href="aprobados.php">Aprobados</a></li>
-                <li><a class="dropdown-item" href="notificacion.php">Notificaciones email</a></li>
-                <li><a class="dropdown-item" href="notificaciones_sms.php">Notificaciones msn</a></li>
-            </ul>
+                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Registros</a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="main.php">Solicitud</a></li>
+                    <li><a class="dropdown-item" href="aprobados.php">Aprobados</a></li>
+                    <li><a class="dropdown-item" href="notificacion.php">Notificaciones email</a></li>
+                    <li><a class="dropdown-item" href="notificaciones_sms.php">Notificaciones msn</a></li>
+                </ul>
+            </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" data-bs-toggle="dropdown" aria-expanded="false">Mantenimiento</a>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item" href="usuarios.php">Usuarios</a></li>
+                </ul>
             </li>
             <li class="nav-item">
             <a class="nav-link" href="#">Salir</a>
