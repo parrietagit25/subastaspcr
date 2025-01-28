@@ -250,7 +250,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_subir_adjunto'])) 
                     <td><?php echo $row2['id']; ?></td>
                     <td><?php echo $row2['nombre']; ?></td>
                     <td><?php echo $row2['fecha_log']; ?></td>
-                    <td><?php echo $row2['adjunto']; ?></td>
+                    <td><?php echo '<a href="'.$row2['adjunto'].'" target="_blank">Ver adjunto</a>'; ?></td>
                     <td><?php echo $row2['descripcion']; ?></td>
                     
                     <td>
