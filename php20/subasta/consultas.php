@@ -11,7 +11,7 @@ $ultimo_id = $pdo -> query("SELECT * FROM cc_subastas WHERE id ='".$_GET['id']."
 $rows = $ultimo_id->fetchAll(PDO::FETCH_ASSOC);
 
 
-if (isset($_GET['aprobar'])) {
+if (isset($_GET['editar_usuario'])) {
 
     $ultimo_id = $pdo -> query("SELECT * FROM usuarios WHERE id ='".$_GET['id']."'");
     $rows = $ultimo_id->fetchAll(PDO::FETCH_ASSOC);
@@ -55,6 +55,24 @@ if (isset($_GET['aprobar'])) {
                 </div>
 
     <?php }
+
+    echo '<input type="hidden" value="'.$_GET['id'].'" name="id_aprobar">';
+
+}
+
+
+if (isset($_GET['aprobar'])) {
+
+
+    foreach ($rows as $row) {
+
+        echo ' Desea aprobar a <b>'.$row['nombre_completo'].'</b> Se le enviara un correo a con el codigo de aprobacion.<br>
+                <h3 style="color:red;">ANTES DE APROBAR, VERIFIQUE LOS DOCUMENTOS ADJUNTOS</h3>
+                <b style="color:red;">Verifique si todos los documentos adjuntos se pueden visualizar. Si no es el caso, 
+                por favor contacte al cliente y solicítele que vuelva a subir los documentos solicitados.</b>
+        ';
+
+    }
 
     echo '<input type="hidden" value="'.$_GET['id'].'" name="id_aprobar">';
 

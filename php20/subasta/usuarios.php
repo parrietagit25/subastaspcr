@@ -307,6 +307,7 @@ if (isset($_POST['editar_usuario'])) {
             <thead>
                 <tr>
                     <th>ID</th>
+                    <th>NOMBRE</th>
                     <th>TIPO USUARIO</th>
                     <th>EMAIL</th>
                     <th>STATUS</th>
@@ -317,6 +318,7 @@ if (isset($_POST['editar_usuario'])) {
                 <?php foreach ($rows as $row) { ?>
                 <tr>
                     <td><?php echo $row['id']; ?></td>
+                    <td><?php echo $row['nombre']; ?></td>
                     <td><?php echo $row['tipo_user']; ?></td>
                     <td><?php echo $row['email']; ?></td>
                     <td><?php echo $row['stat']; ?></td>\
@@ -345,6 +347,7 @@ if (isset($_POST['editar_usuario'])) {
             <tfoot>
                 <tr>
                     <th>ID</th>
+                    <th>NOMBRE</th>
                     <th>TIPO USUARIO</th>
                     <th>EMAIL</th>
                     <th>STATUS</th>
@@ -361,7 +364,7 @@ if (isset($_POST['editar_usuario'])) {
 
     function aprobar(x){
 
-      fetch('consultas.php?aprobar=1&id=' + x)
+      fetch('consultas.php?editar_usuario=1&id=' + x)
         .then(response => {
           
           if (!response.ok) {
