@@ -29,11 +29,11 @@ try {
 
     if ($password) {
         $sql = "UPDATE usuarios SET nombre = ?, email = ?, edad = ?, password = ?, tipo_user = ?, stat = ? WHERE id = ?";
-        $stmt = $conn->prepare($sql);
+        $stmt = $pdo->prepare($sql);
         $stmt->bind_param("ssissii", $nombre, $email, $edad, $password, $tipo_user, $stat, $id);
     } else {
         $sql = "UPDATE usuarios SET nombre = ?, email = ?, edad = ?, tipo_user = ?, stat = ? WHERE id = ?";
-        $stmt = $conn->prepare($sql);
+        $stmt = $pdo->prepare($sql);
         $stmt->bind_param("ssissi", $nombre, $email, $edad, $tipo_user, $stat, $id);
     }
 
@@ -46,7 +46,7 @@ try {
 
     } else {
 
-        echo "Error al actualizar: " . $conn->error;
+        echo "Error al actualizar: " . $pdo->error;
 
     }
 
