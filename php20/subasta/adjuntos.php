@@ -1,6 +1,6 @@
 <?php 
 session_start();
-
+$mensaje = '';
 if (!isset($_SESSION["email"])) {
     header("Location: index.php");
     exit();
