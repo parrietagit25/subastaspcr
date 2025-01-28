@@ -1,61 +1,54 @@
 <?php 
 session_start();
-$id_subir_adjunto = $_GET['id_subir'];
-$mensaje = "";
-require 'vendor/autoload.php';
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
 
-if(!isset($_SESSION["email"])) {
+if (!isset($_SESSION["email"])) {
     header("Location: index.php");
     exit();
 }
 
 try {
-  $pdo = new PDO('mysql:host=db;dbname=subastas;charset=utf8mb4', 'root', 'rootpass');
-  $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    $pdo = new PDO('mysql:host=db;dbname=subastas;charset=utf8mb4', 'root', 'rootpass');
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 } catch (PDOException $e) {
-  echo "Error de conexión: " . $e->getMessage();
+    die("Error de conexión: " . $e->getMessage());
 }
 
-$ultimo_id = $pdo -> query("SELECT * FROM cc_subastas WHERE id = '".$id_subir_adjunto."'");
-$rows = $ultimo_id->fetchAll(PDO::FETCH_ASSOC);
+$id_subir_adjunto = $_GET['id_subir'] ?? 0;
 
-while ($row = $ultimo_id->fetch(PDO::FETCH_ASSOC)) {
-    $nombre = $row['nombre_completo'];
-}
+$stmt = $pdo->prepare("SELECT nombre_completo FROM cc_subastas WHERE id = ?");
+$stmt->execute([$id_subir_adjunto]);
+$row = $stmt->fetch(PDO::FETCH_ASSOC);
+$nombre = $row ? $row['nombre_completo'] : 'Desconocido';
 
-if (isset($_POST['id_subir_adjunto'])) {
-
-    $id_user = $_POST['id_subir_adjunto']; // ID del usuario
-    $descripcion = $_POST['descripcion'];
-    $adjunto = $_FILES['adjunto']['name'];
-    $adjunto_temp = $_FILES['adjunto']['tmp_name'];
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id_subir_adjunto'])) {
+    $id_user = $_POST['id_subir_adjunto'];
+    $descripcion = $_POST['descripcion'] ?? '';
+    $adjunto = $_FILES['adjunto']['name'] ?? null;
+    $adjunto_temp = $_FILES['adjunto']['tmp_name'] ?? null;
 
     $upload_dir = 'adjuntos_users_cc/';
     if (!file_exists($upload_dir)) {
-        mkdir($upload_dir, 0777, true); // Crear el directorio si no existe
+        mkdir($upload_dir, 0777, true);
     }
 
-    $adjunto_destino = $upload_dir . basename($adjunto);
-    if (move_uploaded_file($adjunto_temp, $adjunto_destino)) {
-
-        $insert_stmt = $pdo->query("INSERT INTO cc_adjuntos_user (id_user, nombre, adjunto, descripcion) 
-                                    VALUES ('".$id_user."', '".$nombre."', '".$adjunto_destino."', '".$descripcion."')");
-
-        if ($insert_result) {
-            echo '<div class="alert alert-success" role="alert">Adjunto subido correctamente.</div>';
+    if ($adjunto_temp) {
+        $adjunto_destino = $upload_dir . basename($adjunto);
+        if (move_uploaded_file($adjunto_temp, $adjunto_destino)) {
+            $insert_stmt = $pdo->prepare("INSERT INTO cc_adjuntos_user (id_user, nombre, adjunto, descripcion) VALUES (?, ?, ?, ?)");
+            if ($insert_stmt->execute([$id_user, $nombre, $adjunto_destino, $descripcion])) {
+                echo '<div class="alert alert-success" role="alert">Adjunto subido correctamente.</div>';
+            } else {
+                echo '<div class="alert alert-danger" role="alert">Error al guardar los datos en la base de datos.</div>';
+            }
         } else {
-            echo '<div class="alert alert-danger" role="alert">Error al subir el adjunto.</div>';
+            echo '<div class="alert alert-danger" role="alert">Error al mover el archivo.</div>';
         }
-        
     } else {
-        echo '<div class="alert alert-danger" role="alert">Error al subir el archivo.</div>';
+        echo '<div class="alert alert-danger" role="alert">No se seleccionó ningún archivo.</div>';
     }
-    
 }
-
 ?>
+
 <!doctype html>
 <html lang="en" data-bs-theme="auto">
   <head><script src="https://getbootstrap.com/docs/5.3/assets/js/color-modes.js"></script>
