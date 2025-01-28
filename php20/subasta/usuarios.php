@@ -17,28 +17,39 @@ try {
   echo "Error de conexión: " . $e->getMessage();
 }
 
-  if (isset($_POST['id_aprobar'])) {
+  if (isset($_POST['editar_usuairo'])) {
 
-    $codigo = $_POST['id_aprobar'].rand(1, 100000);
+    $id = $_POST['id'];
+    $nombre = $_POST['nombre'];
+    $email = $_POST['email'];
+    $edad = $_POST['edad'];
+    $password = !empty($_POST['password']) ? password_hash($_POST['password'], PASSWORD_DEFAULT) : null;
+    $tipo_user = $_POST['tipo_user'];
+    $stat = $_POST['stat'];
 
-    $insert = $pdo -> query("UPDATE cc_subastas SET codigo = '".$codigo."', stat = 2 WHERE id = '".$_POST['id_aprobar']."'");
-    
-    $datos_user = $pdo -> query("SELECT * FROM cc_subastas WHERE id = '".$_POST['id_aprobar']."'");
-    $rowss = $datos_user->fetchAll(PDO::FETCH_ASSOC);
+    if ($password) {
+        $sql = "UPDATE usuarios SET nombre = ?, email = ?, edad = ?, password = ?, tipo_user = ?, stat = ? WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ssissii", $nombre, $email, $edad, $password, $tipo_user, $stat, $id);
+    } else {
+        $sql = "UPDATE usuarios SET nombre = ?, email = ?, edad = ?, tipo_user = ?, stat = ? WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ssissi", $nombre, $email, $edad, $tipo_user, $stat, $id);
+    }
 
-    foreach ($rowss as $rows) {
+    if ($stmt->execute()) {
 
-      $nombre=$rows['nombre_completo'];
-      $email_destinatario = $rows['email'];
+        $mensaje = '<div class="alert alert-success alert-dismissible fade show" role="alert">
+                        <strong>Usuario actualizado</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>';
 
-     }
+    } else {
 
-    
-    $mensaje = '<div class="alert alert-success alert-dismissible fade show" role="alert">
-                  <strong>Persona Aprobada! Codigo enviado por correo</strong>
-                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>';
-    
+        echo "Error al actualizar: " . $conn->error;
+
+    }
+
   }
 
   if (isset($_POST['id_eliminar'])) {
@@ -209,7 +220,7 @@ try {
       <div class="modal-dialog">
         <div class="modal-content">
           <div class="modal-header">
-            <h1 class="modal-title fs-5" id="exampleModalLabel">Aprobar</h1>
+            <h1 class="modal-title fs-5" id="exampleModalLabel">Editar Usuario</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <form action="" method="post">
@@ -217,7 +228,7 @@ try {
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelar">Cerrar</button>
-              <button type="submit" class="btn btn-primary" name="aprobar_final" id="enviar">Aprobar</button>
+              <button type="submit" class="btn btn-primary" name="editar_usuairo" id="">Guardar cambios</button>
             </div>
           </form>
         </div>
@@ -286,7 +297,7 @@ try {
 <main class="d-flex align-items-center justify-content-center vh-100 bg-light">
     <div class="table-responsive" style="max-height: 100%; overflow-y: auto; width: 100%;">
         <?php echo $mensaje; ?>
-        <h2 class="text-center">Solicitudes</h2>
+        <h2 class="text-center">Mantenimineto de Usuarios</h2>
         <table id="example" class="table table-striped table-bordered text-center">
             <thead>
                 <tr>
