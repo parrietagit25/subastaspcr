@@ -17,7 +17,7 @@ try {
   echo "Error de conexión: " . $e->getMessage();
 }
 
-  if (isset($_POST['editar_usuairo'])) {
+if (isset($_POST['editar_usuario'])) {
 
     $id = $_POST['id'];
     $nombre = $_POST['nombre'];
@@ -27,30 +27,35 @@ try {
     $tipo_user = $_POST['tipo_user'];
     $stat = $_POST['stat'];
 
-    if ($password) {
-        $sql = "UPDATE usuarios SET nombre = ?, email = ?, edad = ?, password = ?, tipo_user = ?, stat = ? WHERE id = ?";
-        $stmt = $pdo->prepare($sql);
-        $stmt->bind_param("ssissii", $nombre, $email, $edad, $password, $tipo_user, $stat, $id);
-    } else {
-        $sql = "UPDATE usuarios SET nombre = ?, email = ?, edad = ?, tipo_user = ?, stat = ? WHERE id = ?";
-        $stmt = $pdo->prepare($sql);
-        $stmt->bind_param("ssissi", $nombre, $email, $edad, $tipo_user, $stat, $id);
+    try {
+        // Construir la consulta dinámica según si hay password o no
+        if ($password) {
+            $sql = "UPDATE usuarios 
+                    SET nombre = '$nombre', email = '$email', edad = '$edad', password = '$password', tipo_user = '$tipo_user', stat = '$stat' 
+                    WHERE id = '$id'";
+        } else {
+            $sql = "UPDATE usuarios 
+                    SET nombre = '$nombre', email = '$email', edad = '$edad', tipo_user = '$tipo_user', stat = '$stat' 
+                    WHERE id = '$id'";
+        }
+
+        // Ejecutar la consulta
+        $insert = $pdo->query($sql);
+
+        if ($insert) {
+            $mensaje = '<div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>Usuario actualizado</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>';
+        } else {
+            echo '<div class="alert alert-danger" role="alert">Error al actualizar el usuario.</div>';
+        }
+
+    } catch (PDOException $e) {
+        echo '<div class="alert alert-danger" role="alert">Error: ' . $e->getMessage() . '</div>';
     }
+}
 
-    if ($stmt->execute()) {
-
-        $mensaje = '<div class="alert alert-success alert-dismissible fade show" role="alert">
-                        <strong>Usuario actualizado</strong>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>';
-
-    } else {
-
-        echo "Error al actualizar: " . $pdo->error;
-
-    }
-
-  }
 
   if (isset($_POST['id_eliminar'])) {
 
