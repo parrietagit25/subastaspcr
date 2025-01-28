@@ -19,7 +19,6 @@ if (isset($_GET['aprobar'])) {
 
     foreach ($rows as $row) { ?>
 
-            <form action="editar_usuario.php" method="POST">
                 <div class="modal-body">
                   <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
                   <div class="mb-3">
@@ -54,7 +53,6 @@ if (isset($_GET['aprobar'])) {
                     </select>
                   </div>
                 </div>
-            </form>
 
     <?php }
 
