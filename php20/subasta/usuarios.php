@@ -233,7 +233,7 @@ if (isset($_POST['editar_usuario'])) {
             </div>
             <div class="modal-footer">
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal" id="cancelar">Cerrar</button>
-              <button type="submit" class="btn btn-primary" name="editar_usuairo" id="">Guardar cambios</button>
+              <button type="submit" class="btn btn-primary" name="editar_usuario" id="">Guardar cambios</button>
             </div>
           </form>
         </div>
