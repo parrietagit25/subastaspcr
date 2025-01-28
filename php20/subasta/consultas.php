@@ -260,7 +260,10 @@ if (isset($_GET['aprobar_supervisor'])) {
 
     foreach ($rows as $row) {
 
-        echo ' Se le enviara al supervisor a <b>'.$row['nombre_completo'].'</b> Se le enviara al supervisor para su revision y su posterior aprobacion.<br>';
+        echo ' Se le enviara al supervisor a <b>'.$row['nombre_completo'].'</b> Se le enviara al supervisor para su revision y su posterior aprobacion.<br>
+                <h3 style="color:red;">ANTES DE APROBAR, VERIFIQUE LOS DOCUMENTOS ADJUNTOS</h3>
+                <b style="color:red;">Verifique si todos los documentos adjuntos se pueden visualizar. Si no es el caso, 
+                por favor contacte al cliente y solicítele que vuelva a subir los documentos solicitados.</b>';
 
     }
 
