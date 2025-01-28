@@ -509,19 +509,11 @@ if (isset($_POST['send_email'])) {
                         </svg>
                       </a>
                       <?php } ?>
-
-                      <form action="" method="post">
-                        <input type="hidden" name="id_subasta_subir" value="<?php echo $row['id']; ?>">
-                        <button type="submit" class="btn btn-warning btn-icon">
+                        <a type="submit" class="btn btn-warning btn-icon" href="adjuntos.phpid_subir=<?php echo $row['id']; ?>">
                           <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-upload" viewBox="0 0 16 16">
                             <path d="M.5 9.9a.5.5 0 0 1 .5-.5h4.793V1.5a.5.5 0 0 1 1 0v7.9h4.793a.5.5 0 0 1 .5.5v.6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-.6zm7.354-.5-.353-.354L5.5 7.354 6.646 6.5l1.707 1.707V0h1v8.207L10.354 6.5l1.146 1.146-2.5 2.5-.146.146-.354-.354-.354.354z"/>
                           </svg>
-                        </button>
-                      </form>
-
-                      
-
-
+                        </a>
                     </td>
                 </tr>
                 <?php } ?>
