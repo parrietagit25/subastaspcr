@@ -1,5 +1,6 @@
 <?php 
 session_start();
+$id_subir_adjunto = $_GET['id_subir'];
 $mensaje = "";
 require 'vendor/autoload.php';
 use PHPMailer\PHPMailer\PHPMailer;
@@ -17,174 +18,42 @@ try {
   echo "Error de conexión: " . $e->getMessage();
 }
 
-if (isset($_POST['send_email'])) {
+$ultimo_id = $pdo -> query("SELECT * FROM cc_subastas WHERE id = '".$id_subir_adjunto."'");
+$rows = $ultimo_id->fetchAll(PDO::FETCH_ASSOC);
 
-  $mail = new PHPMailer(true);
-
-  try {
-      // Configuración del servidor
-      $mail->SMTPDebug = 0; // Habilita la salida de depuración detallada (0 para desactivar)
-      $mail->isSMTP();
-      $mail->Host       = 'smtp-mail.outlook.com';
-      $mail->SMTPAuth   = true;
-      $mail->Username   = 'subastas@grupopcr.com.pa';
-      $mail->Password   = 'Admin254812%';
-      $mail->SMTPSecure = 'tls';
-      $mail->Port       = 587;
-
-      $email_origen = 'subastas@grupopcr.com.pa';
-
-      // Destinatarios
-      $mail->setFrom($email_origen, 'Subastas Grupo PCR');
-      $mail->addAddress($_POST['email_send_email']);
-
-      // Contenido del correo
-      $mail->CharSet = 'UTF-8';
-      $mail->IsHTML(true);
-
-      $mail->Subject = 'GRUPO PCR - Revicion de Documentos';
-      $mail->Body    = '
-      <html>
-        <head>
-          <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-
-        </head>
-        <body> 
-          <p>Buen dia, el siguiente mensaje fue enviado por parte del personal administrativo, el mensaje enviado es:</p>
-          " - '.$_POST['mensaje_send_email'].' - "
-        </body>
-      </html>
-      ';
-
-      $mail->AddEmbeddedImage('../img/logo20años.png', 'logogrupopcr');
-      $mail->AddEmbeddedImage('../img/logosubastas.png', 'logosubastas');
-
-      $mail->send();
-      //echo 'El mensaje ha sido enviado';
-  } catch (Exception $e) {
-      echo "El mensaje no se pudo enviar. Error: {$mail->ErrorInfo}";
-  } 
-  
-  $mensaje = '<div class="alert alert-success alert-dismissible fade show" role="alert">
-                <strong>Mensaje Enviado!</strong>
-                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-              </div>';
-  
+while ($row = $ultimo_id->fetch(PDO::FETCH_ASSOC)) {
+    $nombre = $row['nombre_completo'];
 }
 
-  if (isset($_POST['id_aprobar'])) {
+if (isset($_POST['id_subir_adjunto'])) {
 
-    $codigo = $_POST['id_aprobar'].rand(1, 100000);
+    $id_user = $_POST['id_subir_adjunto']; // ID del usuario
+    $descripcion = $_POST['descripcion'];
+    $adjunto = $_FILES['adjunto']['name'];
+    $adjunto_temp = $_FILES['adjunto']['tmp_name'];
 
-    $insert = $pdo -> query("UPDATE cc_subastas SET codigo = '".$codigo."', stat = 2 WHERE id = '".$_POST['id_aprobar']."'");
+    $upload_dir = 'adjuntos_users_cc/';
+    if (!file_exists($upload_dir)) {
+        mkdir($upload_dir, 0777, true); // Crear el directorio si no existe
+    }
+
+    $adjunto_destino = $upload_dir . basename($adjunto);
+    if (move_uploaded_file($adjunto_temp, $adjunto_destino)) {
+
+        $insert_stmt = $pdo->query("INSERT INTO cc_adjuntos_user (id_user, nombre, adjunto, descripcion) 
+                                    VALUES ('".$id_user."', '".$nombre."', '".$adjunto_destino."', '".$descripcion."')");
+
+        if ($insert_result) {
+            echo '<div class="alert alert-success" role="alert">Adjunto subido correctamente.</div>';
+        } else {
+            echo '<div class="alert alert-danger" role="alert">Error al subir el adjunto.</div>';
+        }
+        
+    } else {
+        echo '<div class="alert alert-danger" role="alert">Error al subir el archivo.</div>';
+    }
     
-    $datos_user = $pdo -> query("SELECT * FROM cc_subastas WHERE id = '".$_POST['id_aprobar']."'");
-    $rowss = $datos_user->fetchAll(PDO::FETCH_ASSOC);
-
-    foreach ($rowss as $rows) {
-
-      $nombre=$rows['nombre_completo'];
-      $email_destinatario = $rows['email'];
-
-     }
-
-    $mail = new PHPMailer(true);
-
-    try {
-        // Configuración del servidor
-        $mail->SMTPDebug = 0; // Habilita la salida de depuración detallada (0 para desactivar)
-        $mail->isSMTP();
-        $mail->Host       = 'smtp-mail.outlook.com';
-        $mail->SMTPAuth   = true;
-        $mail->Username   = 'subastas@grupopcr.com.pa';
-        $mail->Password   = 'Admin254812%';
-        $mail->SMTPSecure = 'tls';
-        $mail->Port       = 587;
-
-        $email_origen = 'subastas@grupopcr.com.pa';
-
-        // Destinatarios
-        $mail->setFrom($email_origen, 'Subastas Grupo PCR');
-        $mail->addAddress($email_destinatario, $nombre);
-
-        // Contenido del correo
-        $mail->CharSet = 'UTF-8';
-        $mail->IsHTML(true);
-
-        $mail->Subject = 'GRUPO PCR - APROBADO';
-        $mail->Body    = '
-        <html>
-          <head>
-            <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-
-          </head>
-          <body> 
-            <img src="cid:logosubastas" width="250" alt="Logo 1" />
-            <br>
-            <p>Estimado, '.$nombre.'</p>
-            <p>Esperamos que este mensaje le encuentre bien. Nos complace informarle que su proceso de registro con el Grupo PCR ha sido aprobado exitosamente.</p>
-            <p><strong style="font-size: 18px;">Código de Continuación de Registro: '.$codigo.'</strong></p>
-            <p>Por favor, utilice el código proporcionado para continuar con las siguientes etapas de su registro en nuestra plataforma web <a href="https://subastas.grupopcr.com.pa/">https://subastas.grupopcr.com.pa/</a> entra en nuestra pagina e ingresa el codigo.</p>
-            <p>Si tiene alguna pregunta o necesita más información, no dude en ponerse en contacto con nosotros. Estamos aquí para ayudarle en todo </p>
-            <p>lo que necesite para asegurar una transición fluida.</p>
-            <p>¡Muchas gracias por elegir el Grupo PCR! Esperamos tener una relación larga y fructífera con usted.</p>
-            <br>
-            Atentamente,
-            <br>
-            El Equipo del Grupo PCR
-            <br>
-            <img src="cid:logogrupopcr" width="250" alt="Logo 2" />
-          </body>
-        </html>
-        ';
-
-        $mail->AddEmbeddedImage('../img/logo20años.png', 'logogrupopcr');
-        $mail->AddEmbeddedImage('../img/logosubastas.png', 'logosubastas');
-
-        $mail->send();
-        //echo 'El mensaje ha sido enviado';
-    } catch (Exception $e) {
-        echo "El mensaje no se pudo enviar. Error: {$mail->ErrorInfo}";
-    } 
-    
-    $mensaje = '<div class="alert alert-success alert-dismissible fade show" role="alert">
-                  <strong>Persona Aprobada! Codigo enviado por correo</strong>
-                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>';
-    
-  }
-
-  if (isset($_POST['id_eliminar'])) {
-
-    $insert = $pdo -> query("UPDATE cc_subastas SET stat = 3 WHERE id = '".$_POST['id_eliminar']."'");
-
-    $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                  <strong>Registro Eliminado!</strong>
-                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>';
-    
-  }
-
-  if (isset($_POST['id_aprobar_supervisor'])) {
-    # code...
-    $insert = $pdo -> query("UPDATE cc_subastas SET stat = 4 WHERE id = '".$_POST['id_aprobar_supervisor']."'");
-
-    $mensaje = '<div class="alert alert-success alert-dismissible fade show" role="alert">
-                  <strong>Registro enviado al supervisor!</strong>
-                  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>';
-  }
-
-  if($_SESSION["tipo_user"] == 'vendedor'){ 
-    $ultimo_id = $pdo -> query("SELECT * FROM cc_subastas WHERE stat =1");
-    $rows = $ultimo_id->fetchAll(PDO::FETCH_ASSOC);
-  }elseif ($_SESSION["tipo_user"] == 'supervisor') {
-    $ultimo_id = $pdo -> query("SELECT * FROM cc_subastas WHERE stat =4");
-    $rows = $ultimo_id->fetchAll(PDO::FETCH_ASSOC);
-  }elseif ($_SESSION["tipo_user"] == 'admin') {
-    $ultimo_id = $pdo -> query("SELECT * FROM cc_subastas");
-    $rows = $ultimo_id->fetchAll(PDO::FETCH_ASSOC);
-  }
+}
 
 ?>
 <!doctype html>
@@ -346,10 +215,19 @@ if (isset($_POST['send_email'])) {
           </div>
           <form action="" method="post">
             <div class="modal-body" id="adjuntos_conte_subir">
+                <div class="mb-3">
+                    <label for="adjunto" class="form-label">Adjunto</label>
+                    <input type="file" class="form-control" id="adjunto" name="adjunto" required>
+                </div>
+                <div class="mb-3">
+                    <label for="descripcion" class="form-label">Descripcion</label>
+                    <textarea class="form-control" id="descripcion" name="descripcion" required></textarea>
+                </div>
             </div>
             <div class="modal-footer">
               <button type="submit" class="btn btn-primary" name="send_email" id="enviar">Subir adjunto</button>
               <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+              <input type="hidden" name="id_subir_adjunto" value="<?php echo $id_subir_adjunto; ?>">
             </div>
           </form>
         </div>
@@ -359,7 +237,8 @@ if (isset($_POST['send_email'])) {
 <main class="d-flex align-items-center justify-content-center vh-100 bg-light">
     <div class="table-responsive" style="max-height: 100%; overflow-y: auto; width: 100%;">
         <?php echo $mensaje; ?>
-        <h2 class="text-center">Solicitudes</h2>
+        <h2 class="text-center">Subir Adjunto a <?php echo $nombre; ?></h2>
+        <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#subir_adjuntos"> Subir Adjunto</button>
         <table id="example" class="table table-striped table-bordered text-center">
             <thead>
                 <tr>
@@ -372,18 +251,19 @@ if (isset($_POST['send_email'])) {
                 </tr>
             </thead>
             <tbody>
-                <?php foreach ($rows as $row) { ?>
+                <?php $adjuntos = $pdo -> query("SELECT * FROM cc_adjuntos_user WHERE id_user = '".$id_subir_adjunto."'");
+                      foreach ($adjuntos as $row2) { ?>
                 <tr>
-                    <td><?php echo $row['id']; ?></td>
-                    <td><?php echo $row['nombre']; ?></td>
-                    <td><?php echo $row['fecha_log']; ?></td>
-                    <td><?php echo $row['adjunto']; ?></td>
-                    <td><?php echo $row['descripcion']; ?></td>
+                    <td><?php echo $row2['id']; ?></td>
+                    <td><?php echo $row2['nombre']; ?></td>
+                    <td><?php echo $row2['fecha_log']; ?></td>
+                    <td><?php echo $row2['adjunto']; ?></td>
+                    <td><?php echo $row2['descripcion']; ?></td>
                     
                     <td>
 
                       <?php if($_SESSION["tipo_user"] == 'admin' || $_SESSION["tipo_user"] == 'supervisor'){ ?>
-                      <a type="button" class="btn btn-danger btn-icon" data-bs-toggle="modal" data-bs-target="#eliminar" onclick="eliminar(<?php echo $row['id']; ?>)">
+                      <a type="button" class="btn btn-danger btn-icon" data-bs-toggle="modal" data-bs-target="#eliminar" onclick="eliminar(<?php echo $row2['id']; ?>)">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash3-fill" viewBox="0 0 16 16">
                         <path d="M11 1.5v1h3.5a.5.5 0 0 1 0 1h-.538l-.853 10.66A2 2 0 0 1 11.115 16h-6.23a2 2 0 0 1-1.994-1.84L2.038 3.5H1.5a.5.5 0 0 1 0-1H5v-1A1.5 1.5 0 0 1 6.5 0h3A1.5 1.5 0 0 1 11 1.5Zm-5 0v1h4v-1a.5.5 0 0 0-.5-.5h-3a.5.5 0 0 0-.5.5ZM4.5 5.029l.5 8.5a.5.5 0 1 0 .998-.06l-.5-8.5a.5.5 0 1 0-.998.06Zm6.53-.528a.5.5 0 0 0-.528.47l-.5 8.5a.5.5 0 0 0 .998.058l.5-8.5a.5.5 0 0 0-.47-.528ZM8 4.5a.5.5 0 0 0-.5.5v8.5a.5.5 0 0 0 1 0V5a.5.5 0 0 0-.5-.5Z"/>
                         </svg>
