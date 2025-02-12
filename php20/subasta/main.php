@@ -169,6 +169,51 @@ if (isset($_POST['send_email'])) {
     # code...
     $insert = $pdo -> query("UPDATE cc_subastas SET stat = 4 WHERE id = '".$_POST['id_aprobar_supervisor']."'");
 
+    $mail = new PHPMailer(true);
+
+    try {
+        // Configuración del servidor
+        $mail->SMTPDebug = 0; // Habilita la salida de depuración detallada (0 para desactivar)
+        $mail->isSMTP();
+        $mail->Host       = 'smtp-mail.outlook.com';
+        $mail->SMTPAuth   = true;
+        $mail->Username   = 'subastas@grupopcr.com.pa';
+        $mail->Password   = 'Admin254812%';
+        $mail->SMTPSecure = 'tls';
+        $mail->Port       = 587;
+
+        $email_origen = 'subastas@grupopcr.com.pa';
+
+        // Destinatarios
+        $mail->setFrom($email_origen, 'Subastas Grupo PCR');
+        $mail->addAddress('yamileth.rodriguez@grupopcr.com.pa', 'Yamileth Rodriguez');
+
+        // Contenido del correo
+        $mail->CharSet = 'UTF-8';
+        $mail->IsHTML(true);
+
+        $mail->Subject = 'GRUPO PCR - Revicion de Documentos';
+        $mail->Body    = '
+        <html>
+          <head>
+            <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+
+          </head>
+          <body> 
+            <p>Buen dia, se acaba de aprobar unos documentos para su revicion:</p>
+          </body>
+        </html>
+        ';
+
+        $mail->AddEmbeddedImage('../img/logo20años.png', 'logogrupopcr');
+        $mail->AddEmbeddedImage('../img/logosubastas.png', 'logosubastas');
+
+        $mail->send();
+        //echo 'El mensaje ha sido enviado';
+    } catch (Exception $e) {
+        echo "El mensaje no se pudo enviar. Error: {$mail->ErrorInfo}";
+    } 
+
     $mensaje = '<div class="alert alert-success alert-dismissible fade show" role="alert">
                   <strong>Registro enviado al supervisor!</strong>
                   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
