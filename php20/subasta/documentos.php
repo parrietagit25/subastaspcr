@@ -209,7 +209,7 @@ if (isset($_POST['nombre_completo_pni'])) {
 
 
   $maxSize = 50 * 1024 * 1024; // Tamaño máximo permitido: 50 MB
-  $archivos = ['recibo_pni', 'cedula_pni', 'aviso_pni', 'referencia_pni', 'cc_pni'];
+  $archivos = ['recibo_pni', 'cedula_pni', 'aviso_pni', 'referencia_pni', 'cc_pni', 'actividad_economica_pni'];
   $mensajeError = '';
 
   foreach ($archivos as $archivo) {
@@ -248,6 +248,7 @@ if (isset($_POST['nombre_completo_pni'])) {
                     if ($archivo == 'aviso_pni') $campoBD = 'pni_aviso_op';
                     if ($archivo == 'referencia_pni') $campoBD = 'pni_referencia';
                     if ($archivo == 'cc_pni') $campoBD = 'pni_cc';
+                    if ($archivo == 'actividad_economica_pni') $campoBD = 'pni_actividad_economica';
     
                     // Solo intentamos actualizar si el campo está correctamente mapeado
                     if (!empty($campoBD)) {
@@ -844,6 +845,8 @@ if (isset($_POST['nombre_completo_pj'])) {
           <input type="file" name="referencia_pni" id=""class="form-control">
           <label for=""><b>Formulario Conoce tu Cliente</b><span style="color:red;">*</span></label>
           <input type="file" name="cc_pni" id=""class="form-control">
+          <label for=""><b>Declaración de actividad económica</b><span style="color:red;">*</span></label>
+          <input type="file" name="actividad_economica_pni" id=""class="form-control">
           <!--<label for=""><b>Carta de exoneración</b></label>
           <input type="file" name="carta_ex_pni" id=""class="form-control">-->
           <br>
