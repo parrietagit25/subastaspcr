@@ -248,7 +248,7 @@ if (isset($_POST['nombre_completo_pni'])) {
                     if ($archivo == 'aviso_pni') $campoBD = 'pni_aviso_op';
                     if ($archivo == 'referencia_pni') $campoBD = 'pni_referencia';
                     if ($archivo == 'cc_pni') $campoBD = 'pni_cc';
-                    if ($archivo == 'actividad_economica_pni') $campoBD = 'pni_actividad_economica';
+                    if ($archivo == 'actividad_economica_pni') $campoBD = 'actividad_economica_pni';
     
                     // Solo intentamos actualizar si el campo está correctamente mapeado
                     if (!empty($campoBD)) {
