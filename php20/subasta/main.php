@@ -201,7 +201,9 @@ if (isset($_POST['send_email'])) {
 
           </head>
           <body> 
-            <p>Buen dia, se acaba de aprobar unos documentos para su revicion:</p>
+            <p>Buen dia, se acaba de aprobar unos documentos para su revicion: <br>
+              puede ingresar a <a href="https://subastas.grupopcr.com.pa/subasta/main.php" target="_blank">https://subastas.grupopcr.com.pa/subasta/</a> para ver los detalles.</p>
+            </p>
           </body>
         </html>
         ';
