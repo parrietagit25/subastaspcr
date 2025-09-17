@@ -305,6 +305,20 @@ $solicitudes_recientes = $pdo->query("
         padding-bottom: 0.5rem;
         border-bottom: 2px solid #e9ecef;
       }
+
+      .clickable-card {
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .clickable-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+      }
+
+      .clickable-card:active {
+        transform: translateY(-4px);
+      }
     </style>
 
     
@@ -437,7 +451,7 @@ $solicitudes_recientes = $pdo->query("
                 <h4 class="section-title">Solicitudes por Tipo de Persona</h4>
             </div>
             <div class="col-lg-4 col-md-6 mb-3">
-                <div class="stat-card" style="background: linear-gradient(135deg, #FF6384 0%, #FF9A9E 100%);">
+                <div class="stat-card clickable-card" style="background: linear-gradient(135deg, #FF6384 0%, #FF9A9E 100%);" data-bs-toggle="modal" data-bs-target="#modalNatural">
                     <div class="d-flex align-items-center">
                         <div class="me-3">
                             <div class="stat-number"><?php echo number_format($natural); ?></div>
@@ -450,7 +464,7 @@ $solicitudes_recientes = $pdo->query("
                 </div>
             </div>
             <div class="col-lg-4 col-md-6 mb-3">
-                <div class="stat-card" style="background: linear-gradient(135deg, #36A2EB 0%, #4facfe 100%);">
+                <div class="stat-card clickable-card" style="background: linear-gradient(135deg, #36A2EB 0%, #4facfe 100%);" data-bs-toggle="modal" data-bs-target="#modalNaturalIndependiente">
                     <div class="d-flex align-items-center">
                         <div class="me-3">
                             <div class="stat-number"><?php echo number_format($natural_independiente); ?></div>
@@ -463,7 +477,7 @@ $solicitudes_recientes = $pdo->query("
                 </div>
             </div>
             <div class="col-lg-4 col-md-6 mb-3">
-                <div class="stat-card" style="background: linear-gradient(135deg, #FFCE56 0%, #FFE066 100%); color: #333;">
+                <div class="stat-card clickable-card" style="background: linear-gradient(135deg, #FFCE56 0%, #FFE066 100%); color: #333;" data-bs-toggle="modal" data-bs-target="#modalJuridica">
                     <div class="d-flex align-items-center">
                         <div class="me-3">
                             <div class="stat-number"><?php echo number_format($juridica); ?></div>
@@ -483,7 +497,7 @@ $solicitudes_recientes = $pdo->query("
                 <h4 class="section-title">Estado de las Solicitudes</h4>
             </div>
             <div class="col-lg-3 col-md-6 mb-3">
-                <div class="stat-card" style="background: linear-gradient(135deg, #28a745 0%, #38ef7d 100%);">
+                <div class="stat-card clickable-card" style="background: linear-gradient(135deg, #28a745 0%, #38ef7d 100%);" data-bs-toggle="modal" data-bs-target="#modalAprobadas">
                     <div class="d-flex align-items-center">
                         <div class="me-3">
                             <div class="stat-number"><?php echo number_format($aprobadas); ?></div>
@@ -496,7 +510,7 @@ $solicitudes_recientes = $pdo->query("
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 mb-3">
-                <div class="stat-card" style="background: linear-gradient(135deg, #ffc107 0%, #ffe066 100%); color: #333;">
+                <div class="stat-card clickable-card" style="background: linear-gradient(135deg, #ffc107 0%, #ffe066 100%); color: #333;" data-bs-toggle="modal" data-bs-target="#modalPendientes">
                     <div class="d-flex align-items-center">
                         <div class="me-3">
                             <div class="stat-number"><?php echo number_format($pendientes); ?></div>
@@ -509,7 +523,7 @@ $solicitudes_recientes = $pdo->query("
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 mb-3">
-                <div class="stat-card" style="background: linear-gradient(135deg, #dc3545 0%, #ff6b6b 100%);">
+                <div class="stat-card clickable-card" style="background: linear-gradient(135deg, #dc3545 0%, #ff6b6b 100%);" data-bs-toggle="modal" data-bs-target="#modalEliminadas">
                     <div class="d-flex align-items-center">
                         <div class="me-3">
                             <div class="stat-number"><?php echo number_format($eliminadas); ?></div>
@@ -522,7 +536,7 @@ $solicitudes_recientes = $pdo->query("
                 </div>
             </div>
             <div class="col-lg-3 col-md-6 mb-3">
-                <div class="stat-card" style="background: linear-gradient(135deg, #17a2b8 0%, #4facfe 100%);">
+                <div class="stat-card clickable-card" style="background: linear-gradient(135deg, #17a2b8 0%, #4facfe 100%);" data-bs-toggle="modal" data-bs-target="#modalSupervisor">
                     <div class="d-flex align-items-center">
                         <div class="me-3">
                             <div class="stat-number"><?php echo number_format($enviadas_supervisor); ?></div>
@@ -631,6 +645,352 @@ $solicitudes_recientes = $pdo->query("
         </div>
     </div>
 </main>
+
+<!-- Modales para mostrar detalles -->
+<!-- Modal Aprobadas -->
+<div class="modal fade" id="modalAprobadas" tabindex="-1" aria-labelledby="modalAprobadasLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #28a745 0%, #38ef7d 100%); color: white;">
+                <h5 class="modal-title" id="modalAprobadasLabel">Solicitudes Aprobadas</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover" id="tablaAprobadas">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre Completo</th>
+                                <th>Email</th>
+                                <th>Tipo Persona</th>
+                                <th>Teléfono</th>
+                                <th>Fecha Aprobación</th>
+                                <th>Código</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php 
+                            $aprobadas_detalle = $pdo->query("SELECT * FROM cc_subastas WHERE stat = 2 ORDER BY fecha_update DESC")->fetchAll(PDO::FETCH_ASSOC);
+                            foreach ($aprobadas_detalle as $row): 
+                            ?>
+                            <tr>
+                                <td><?php echo $row['id']; ?></td>
+                                <td><?php echo htmlspecialchars($row['nombre_completo']); ?></td>
+                                <td><?php echo htmlspecialchars($row['email']); ?></td>
+                                <td><?php echo $row['tipo_persona']; ?></td>
+                                <td><?php echo htmlspecialchars($row['telefono']); ?></td>
+                                <td><?php echo date('d/m/Y H:i', strtotime($row['fecha_update'])); ?></td>
+                                <td><span class="badge bg-success"><?php echo $row['codigo']; ?></span></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Pendientes -->
+<div class="modal fade" id="modalPendientes" tabindex="-1" aria-labelledby="modalPendientesLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #ffc107 0%, #ffe066 100%); color: #333;">
+                <h5 class="modal-title" id="modalPendientesLabel">Solicitudes Pendientes</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover" id="tablaPendientes">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre Completo</th>
+                                <th>Email</th>
+                                <th>Tipo Persona</th>
+                                <th>Teléfono</th>
+                                <th>Fecha Solicitud</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php 
+                            $pendientes_detalle = $pdo->query("SELECT * FROM cc_subastas WHERE stat = 1 ORDER BY date_time DESC")->fetchAll(PDO::FETCH_ASSOC);
+                            foreach ($pendientes_detalle as $row): 
+                            ?>
+                            <tr>
+                                <td><?php echo $row['id']; ?></td>
+                                <td><?php echo htmlspecialchars($row['nombre_completo']); ?></td>
+                                <td><?php echo htmlspecialchars($row['email']); ?></td>
+                                <td><?php echo $row['tipo_persona']; ?></td>
+                                <td><?php echo htmlspecialchars($row['telefono']); ?></td>
+                                <td><?php echo date('d/m/Y H:i', strtotime($row['date_time'])); ?></td>
+                                <td><span class="badge bg-warning">Pendiente</span></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Eliminadas -->
+<div class="modal fade" id="modalEliminadas" tabindex="-1" aria-labelledby="modalEliminadasLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #dc3545 0%, #ff6b6b 100%); color: white;">
+                <h5 class="modal-title" id="modalEliminadasLabel">Solicitudes Eliminadas</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover" id="tablaEliminadas">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre Completo</th>
+                                <th>Email</th>
+                                <th>Tipo Persona</th>
+                                <th>Teléfono</th>
+                                <th>Fecha Eliminación</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php 
+                            $eliminadas_detalle = $pdo->query("SELECT * FROM cc_subastas WHERE stat = 3 ORDER BY fecha_update DESC")->fetchAll(PDO::FETCH_ASSOC);
+                            foreach ($eliminadas_detalle as $row): 
+                            ?>
+                            <tr>
+                                <td><?php echo $row['id']; ?></td>
+                                <td><?php echo htmlspecialchars($row['nombre_completo']); ?></td>
+                                <td><?php echo htmlspecialchars($row['email']); ?></td>
+                                <td><?php echo $row['tipo_persona']; ?></td>
+                                <td><?php echo htmlspecialchars($row['telefono']); ?></td>
+                                <td><?php echo date('d/m/Y H:i', strtotime($row['fecha_update'])); ?></td>
+                                <td><span class="badge bg-danger">Eliminada</span></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Enviadas al Supervisor -->
+<div class="modal fade" id="modalSupervisor" tabindex="-1" aria-labelledby="modalSupervisorLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #17a2b8 0%, #4facfe 100%); color: white;">
+                <h5 class="modal-title" id="modalSupervisorLabel">Solicitudes Enviadas al Supervisor</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover" id="tablaSupervisor">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre Completo</th>
+                                <th>Email</th>
+                                <th>Tipo Persona</th>
+                                <th>Teléfono</th>
+                                <th>Fecha Envío</th>
+                                <th>Estado</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php 
+                            $supervisor_detalle = $pdo->query("SELECT * FROM cc_subastas WHERE stat = 4 ORDER BY fecha_update DESC")->fetchAll(PDO::FETCH_ASSOC);
+                            foreach ($supervisor_detalle as $row): 
+                            ?>
+                            <tr>
+                                <td><?php echo $row['id']; ?></td>
+                                <td><?php echo htmlspecialchars($row['nombre_completo']); ?></td>
+                                <td><?php echo htmlspecialchars($row['email']); ?></td>
+                                <td><?php echo $row['tipo_persona']; ?></td>
+                                <td><?php echo htmlspecialchars($row['telefono']); ?></td>
+                                <td><?php echo date('d/m/Y H:i', strtotime($row['fecha_update'])); ?></td>
+                                <td><span class="badge bg-info">Enviada al Supervisor</span></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Persona Natural -->
+<div class="modal fade" id="modalNatural" tabindex="-1" aria-labelledby="modalNaturalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #FF6384 0%, #FF9A9E 100%); color: white;">
+                <h5 class="modal-title" id="modalNaturalLabel">Solicitudes - Persona Natural</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover" id="tablaNatural">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre Completo</th>
+                                <th>Email</th>
+                                <th>Teléfono</th>
+                                <th>Estado</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php 
+                            $natural_detalle = $pdo->query("SELECT * FROM cc_subastas WHERE tipo_persona = 'NATURAL' ORDER BY date_time DESC")->fetchAll(PDO::FETCH_ASSOC);
+                            foreach ($natural_detalle as $row): 
+                            ?>
+                            <tr>
+                                <td><?php echo $row['id']; ?></td>
+                                <td><?php echo htmlspecialchars($row['nombre_completo']); ?></td>
+                                <td><?php echo htmlspecialchars($row['email']); ?></td>
+                                <td><?php echo htmlspecialchars($row['telefono']); ?></td>
+                                <td>
+                                    <?php
+                                    $estado = '';
+                                    $clase = '';
+                                    switch($row['stat']) {
+                                        case 1: $estado = 'Pendiente'; $clase = 'bg-warning'; break;
+                                        case 2: $estado = 'Aprobado'; $clase = 'bg-success'; break;
+                                        case 3: $estado = 'Eliminado'; $clase = 'bg-danger'; break;
+                                        case 4: $estado = 'Enviado al Supervisor'; $clase = 'bg-info'; break;
+                                    }
+                                    ?>
+                                    <span class="badge <?php echo $clase; ?>"><?php echo $estado; ?></span>
+                                </td>
+                                <td><?php echo date('d/m/Y H:i', strtotime($row['date_time'])); ?></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Natural Independiente -->
+<div class="modal fade" id="modalNaturalIndependiente" tabindex="-1" aria-labelledby="modalNaturalIndependienteLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #36A2EB 0%, #4facfe 100%); color: white;">
+                <h5 class="modal-title" id="modalNaturalIndependienteLabel">Solicitudes - Natural Independiente</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover" id="tablaNaturalIndependiente">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre Completo</th>
+                                <th>Email</th>
+                                <th>Teléfono</th>
+                                <th>Estado</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php 
+                            $natural_independiente_detalle = $pdo->query("SELECT * FROM cc_subastas WHERE tipo_persona = 'NATURAL INDEPENDIENTE' ORDER BY date_time DESC")->fetchAll(PDO::FETCH_ASSOC);
+                            foreach ($natural_independiente_detalle as $row): 
+                            ?>
+                            <tr>
+                                <td><?php echo $row['id']; ?></td>
+                                <td><?php echo htmlspecialchars($row['nombre_completo']); ?></td>
+                                <td><?php echo htmlspecialchars($row['email']); ?></td>
+                                <td><?php echo htmlspecialchars($row['telefono']); ?></td>
+                                <td>
+                                    <?php
+                                    $estado = '';
+                                    $clase = '';
+                                    switch($row['stat']) {
+                                        case 1: $estado = 'Pendiente'; $clase = 'bg-warning'; break;
+                                        case 2: $estado = 'Aprobado'; $clase = 'bg-success'; break;
+                                        case 3: $estado = 'Eliminado'; $clase = 'bg-danger'; break;
+                                        case 4: $estado = 'Enviado al Supervisor'; $clase = 'bg-info'; break;
+                                    }
+                                    ?>
+                                    <span class="badge <?php echo $clase; ?>"><?php echo $estado; ?></span>
+                                </td>
+                                <td><?php echo date('d/m/Y H:i', strtotime($row['date_time'])); ?></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Persona Jurídica -->
+<div class="modal fade" id="modalJuridica" tabindex="-1" aria-labelledby="modalJuridicaLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header" style="background: linear-gradient(135deg, #FFCE56 0%, #FFE066 100%); color: #333;">
+                <h5 class="modal-title" id="modalJuridicaLabel">Solicitudes - Persona Jurídica</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="table-responsive">
+                    <table class="table table-striped table-hover" id="tablaJuridica">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>ID</th>
+                                <th>Nombre Completo</th>
+                                <th>Email</th>
+                                <th>Teléfono</th>
+                                <th>Estado</th>
+                                <th>Fecha</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php 
+                            $juridica_detalle = $pdo->query("SELECT * FROM cc_subastas WHERE tipo_persona = 'JURIDICA' ORDER BY date_time DESC")->fetchAll(PDO::FETCH_ASSOC);
+                            foreach ($juridica_detalle as $row): 
+                            ?>
+                            <tr>
+                                <td><?php echo $row['id']; ?></td>
+                                <td><?php echo htmlspecialchars($row['nombre_completo']); ?></td>
+                                <td><?php echo htmlspecialchars($row['email']); ?></td>
+                                <td><?php echo htmlspecialchars($row['telefono']); ?></td>
+                                <td>
+                                    <?php
+                                    $estado = '';
+                                    $clase = '';
+                                    switch($row['stat']) {
+                                        case 1: $estado = 'Pendiente'; $clase = 'bg-warning'; break;
+                                        case 2: $estado = 'Aprobado'; $clase = 'bg-success'; break;
+                                        case 3: $estado = 'Eliminado'; $clase = 'bg-danger'; break;
+                                        case 4: $estado = 'Enviado al Supervisor'; $clase = 'bg-info'; break;
+                                    }
+                                    ?>
+                                    <span class="badge <?php echo $clase; ?>"><?php echo $estado; ?></span>
+                                </td>
+                                <td><?php echo date('d/m/Y H:i', strtotime($row['date_time'])); ?></td>
+                            </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <script src="https://getbootstrap.com/docs/5.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
@@ -775,6 +1135,100 @@ new Chart(tendenciasCtx, {
             }
         }
     }
+});
+
+// Inicializar DataTables en los modales
+$(document).ready(function() {
+    // DataTable para Aprobadas
+    $('#modalAprobadas').on('shown.bs.modal', function () {
+        if (!$.fn.DataTable.isDataTable('#tablaAprobadas')) {
+            $('#tablaAprobadas').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+                },
+                "pageLength": 10,
+                "order": [[ 0, "desc" ]]
+            });
+        }
+    });
+
+    // DataTable para Pendientes
+    $('#modalPendientes').on('shown.bs.modal', function () {
+        if (!$.fn.DataTable.isDataTable('#tablaPendientes')) {
+            $('#tablaPendientes').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+                },
+                "pageLength": 10,
+                "order": [[ 0, "desc" ]]
+            });
+        }
+    });
+
+    // DataTable para Eliminadas
+    $('#modalEliminadas').on('shown.bs.modal', function () {
+        if (!$.fn.DataTable.isDataTable('#tablaEliminadas')) {
+            $('#tablaEliminadas').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+                },
+                "pageLength": 10,
+                "order": [[ 0, "desc" ]]
+            });
+        }
+    });
+
+    // DataTable para Supervisor
+    $('#modalSupervisor').on('shown.bs.modal', function () {
+        if (!$.fn.DataTable.isDataTable('#tablaSupervisor')) {
+            $('#tablaSupervisor').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+                },
+                "pageLength": 10,
+                "order": [[ 0, "desc" ]]
+            });
+        }
+    });
+
+    // DataTable para Natural
+    $('#modalNatural').on('shown.bs.modal', function () {
+        if (!$.fn.DataTable.isDataTable('#tablaNatural')) {
+            $('#tablaNatural').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+                },
+                "pageLength": 10,
+                "order": [[ 0, "desc" ]]
+            });
+        }
+    });
+
+    // DataTable para Natural Independiente
+    $('#modalNaturalIndependiente').on('shown.bs.modal', function () {
+        if (!$.fn.DataTable.isDataTable('#tablaNaturalIndependiente')) {
+            $('#tablaNaturalIndependiente').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+                },
+                "pageLength": 10,
+                "order": [[ 0, "desc" ]]
+            });
+        }
+    });
+
+    // DataTable para Jurídica
+    $('#modalJuridica').on('shown.bs.modal', function () {
+        if (!$.fn.DataTable.isDataTable('#tablaJuridica')) {
+            $('#tablaJuridica').DataTable({
+                "language": {
+                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
+                },
+                "pageLength": 10,
+                "order": [[ 0, "desc" ]]
+            });
+        }
+    });
 });
 </script>
     </body>
