@@ -566,6 +566,8 @@ $estadisticas_semana = obtenerEstadisticasPorSemana($pdo, $fecha_inicio, $fecha_
         // Determinar el estado según el tipo
         let estado = '';
         let titulo = '';
+
+        console.log(tipo);
         
         switch(tipo) {
           case 'total':
