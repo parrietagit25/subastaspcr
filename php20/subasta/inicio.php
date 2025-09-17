@@ -415,7 +415,7 @@ $solicitudes_recientes = $pdo->query("
       }
 
 .container-fluid {
-  padding-top: 120px;
+  /*padding-top: 120px;*/
 }
 
       .navbar {
@@ -484,6 +484,9 @@ $solicitudes_recientes = $pdo->query("
         <?php echo $mensaje; ?>
         
         <!-- Header del Dashboard -->
+         <br>
+         <br>
+         <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
         <div class="row mb-4">
             <div class="col-12">
                 <h1 class="display-4 fw-bold text-center mb-0">Dashboard Subastas PCR</h1>
