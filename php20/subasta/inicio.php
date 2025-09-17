@@ -486,7 +486,7 @@ $solicitudes_recientes = $pdo->query("
         <!-- Header del Dashboard -->
          <br>
          <br>
-         <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+         <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
         <div class="row mb-4">
             <div class="col-12">
                 <h1 class="display-4 fw-bold text-center mb-0">Dashboard Subastas PCR</h1>
@@ -527,7 +527,7 @@ $solicitudes_recientes = $pdo->query("
             </div>
         </div>
 
-        <!-- Tarjetas de estadísticas principales -->
+        <!-- Tarjetas de estadísticas principales 
         <div class="row mb-4">
             <div class="col-lg-3 col-md-6 mb-3">
                 <div class="stat-card">
@@ -553,9 +553,9 @@ $solicitudes_recientes = $pdo->query("
                     <div class="stat-label">Eliminadas</div>
                 </div>
             </div>
-        </div>
+        </div>-->
 
-        <!-- Segunda fila de estadísticas -->
+        <!-- Segunda fila de estadísticas 
         <div class="row mb-4">
             <div class="col-lg-3 col-md-6 mb-3">
                 <div class="stat-card info">
@@ -581,7 +581,7 @@ $solicitudes_recientes = $pdo->query("
                     <div class="stat-label">Enviadas al Supervisor</div>
                 </div>
             </div>
-        </div>
+        </div>-->
 
         <!-- Tarjetas por tipo de persona -->
         <div class="row mb-4">
