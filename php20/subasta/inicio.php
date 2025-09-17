@@ -626,6 +626,11 @@ $estadisticas_semana = obtenerEstadisticasPorSemana($pdo, $fecha_inicio, $fecha_
               tbody.innerHTML += row;
             });
 
+            // Destruir DataTable existente si existe
+            if ($.fn.DataTable.isDataTable('#detalleTable')) {
+              $('#detalleTable').DataTable().destroy();
+            }
+
             // Mostrar modal
             new bootstrap.Modal(document.getElementById('detalleModal')).show();
           })
@@ -647,14 +652,14 @@ $estadisticas_semana = obtenerEstadisticasPorSemana($pdo, $fecha_inicio, $fecha_
 
       // Inicializar DataTable cuando se abra el modal
       document.getElementById('detalleModal').addEventListener('shown.bs.modal', function () {
-        if ($.fn.DataTable.isDataTable('#detalleTable')) {
-          $('#detalleTable').DataTable().destroy();
+        // Solo inicializar si no existe ya un DataTable
+        if (!$.fn.DataTable.isDataTable('#detalleTable')) {
+          $('#detalleTable').DataTable({
+            language: {
+              url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+            }
+          });
         }
-        $('#detalleTable').DataTable({
-          language: {
-            url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
-          }
-        });
       });
     </script>
   </body>
