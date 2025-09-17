@@ -240,6 +240,13 @@ $solicitudes_recientes = $pdo->query("
         padding: 20px;
         margin-bottom: 20px;
         box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        height: 350px;
+        position: relative;
+      }
+
+      .chart-container canvas {
+        max-height: 300px !important;
+        width: 100% !important;
       }
 
       .recent-table {
@@ -407,7 +414,9 @@ $solicitudes_recientes = $pdo->query("
             <div class="col-lg-6 mb-4">
                 <div class="chart-container">
                     <h5 class="mb-3">Solicitudes por Tipo de Persona</h5>
-                    <canvas id="tipoPersonaChart" width="400" height="200"></canvas>
+                    <div style="height: 280px; position: relative;">
+                        <canvas id="tipoPersonaChart"></canvas>
+                    </div>
                 </div>
             </div>
             
@@ -415,7 +424,9 @@ $solicitudes_recientes = $pdo->query("
             <div class="col-lg-6 mb-4">
                 <div class="chart-container">
                     <h5 class="mb-3">Estado de las Solicitudes</h5>
-                    <canvas id="estadoChart" width="400" height="200"></canvas>
+                    <div style="height: 280px; position: relative;">
+                        <canvas id="estadoChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -423,9 +434,11 @@ $solicitudes_recientes = $pdo->query("
         <!-- Gráfico de tendencias mensuales -->
         <div class="row mb-4">
             <div class="col-12">
-                <div class="chart-container">
+                <div class="chart-container" style="height: 400px;">
                     <h5 class="mb-3">Tendencias Mensuales (Últimos 6 Meses)</h5>
-                    <canvas id="tendenciasChart" width="800" height="300"></canvas>
+                    <div style="height: 320px; position: relative;">
+                        <canvas id="tendenciasChart"></canvas>
+                    </div>
                 </div>
             </div>
         </div>
@@ -513,9 +526,17 @@ new Chart(tipoPersonaCtx, {
     options: {
         responsive: true,
         maintainAspectRatio: false,
+        aspectRatio: 1.2,
         plugins: {
             legend: {
-                position: 'bottom'
+                position: 'bottom',
+                labels: {
+                    padding: 15,
+                    usePointStyle: true,
+                    font: {
+                        size: 12
+                    }
+                }
             }
         }
     }
@@ -542,9 +563,17 @@ new Chart(estadoCtx, {
     options: {
         responsive: true,
         maintainAspectRatio: false,
+        aspectRatio: 1.2,
         plugins: {
             legend: {
-                position: 'bottom'
+                position: 'bottom',
+                labels: {
+                    padding: 15,
+                    usePointStyle: true,
+                    font: {
+                        size: 12
+                    }
+                }
             }
         }
     }
@@ -591,14 +620,30 @@ new Chart(tendenciasCtx, {
     options: {
         responsive: true,
         maintainAspectRatio: false,
+        aspectRatio: 2.5,
         scales: {
             y: {
-                beginAtZero: true
+                beginAtZero: true,
+                grid: {
+                    color: 'rgba(0,0,0,0.1)'
+                }
+            },
+            x: {
+                grid: {
+                    color: 'rgba(0,0,0,0.1)'
+                }
             }
         },
         plugins: {
             legend: {
-                position: 'top'
+                position: 'top',
+                labels: {
+                    padding: 20,
+                    usePointStyle: true,
+                    font: {
+                        size: 12
+                    }
+                }
             }
         }
     }
