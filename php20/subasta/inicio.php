@@ -596,6 +596,10 @@ $estadisticas_semana = obtenerEstadisticasPorSemana($pdo, $fecha_inicio, $fecha_
             break;
         }
 
+        console.log(estado);
+        console.log(titulo);
+        console.log(tipo);
+
         // Actualizar título del modal
         document.getElementById('detalleModalLabel').textContent = titulo;
 
