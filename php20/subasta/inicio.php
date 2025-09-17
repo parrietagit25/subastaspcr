@@ -18,9 +18,6 @@ try {
 $fecha_inicio = isset($_GET['fecha_inicio']) ? $_GET['fecha_inicio'] : null;
 $fecha_fin = isset($_GET['fecha_fin']) ? $_GET['fecha_fin'] : null;
 
-// Debug: Verificar parámetros recibidos
-error_log("Filtros recibidos - fecha_inicio: " . ($fecha_inicio ?? 'null') . ", fecha_fin: " . ($fecha_fin ?? 'null'));
-
 // Construir condición WHERE para fechas
 $where_fecha = "";
 $params = [];
@@ -35,15 +32,16 @@ if ($fecha_inicio && $fecha_fin) {
     $params = [$fecha_fin . " 23:59:59"];
 }
 
-// Debug: Verificar condición construida
-error_log("WHERE construido: " . $where_fecha);
-error_log("Parámetros: " . print_r($params, true));
-
 // Consultas para el dashboard
 // Total de solicitudes
 $stmt = $pdo->prepare("SELECT COUNT(*) as total FROM cc_subastas " . $where_fecha);
 $stmt->execute($params);
 $total_solicitudes = $stmt->fetch()['total'];
+
+// Debug temporal
+echo "<!-- Debug: total_solicitudes = $total_solicitudes -->";
+echo "<!-- Debug: where_fecha = $where_fecha -->";
+echo "<!-- Debug: params = " . print_r($params, true) . " -->";
 
 // Solicitudes por estado
 $where_estado = $where_fecha ? $where_fecha . " AND stat = ?" : "WHERE stat = ?";
@@ -420,7 +418,7 @@ $solicitudes_recientes = $stmt_recientes->fetchAll(PDO::FETCH_ASSOC);
       }
 
 .container-fluid {
-  /*padding-top: 120px;*/
+  padding-top: 120px;
 }
 
       .navbar {
@@ -489,12 +487,6 @@ $solicitudes_recientes = $stmt_recientes->fetchAll(PDO::FETCH_ASSOC);
         <?php echo $mensaje; ?>
         
         <!-- Header del Dashboard -->
-         <br>
-         <br>
-         <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-         <br>
-         <br>
-         <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
         <div class="row mb-4">
             <div class="col-12">
                 <h1 class="display-4 fw-bold text-center mb-0">Dashboard Subastas PCR</h1>
@@ -1168,25 +1160,12 @@ $solicitudes_recientes = $stmt_recientes->fetchAll(PDO::FETCH_ASSOC);
 
 <script src="https://getbootstrap.com/docs/5.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-// Debug: Verificar que los elementos existen
-console.log('tipoPersonaChart element:', document.getElementById('tipoPersonaChart'));
-console.log('estadoChart element:', document.getElementById('estadoChart'));
-console.log('tendenciasChart element:', document.getElementById('tendenciasChart'));
-
-// Debug: Verificar valores PHP
-console.log('Valores PHP:', {
-    natural: <?php echo $natural; ?>,
-    natural_independiente: <?php echo $natural_independiente; ?>,
-    juridica: <?php echo $juridica; ?>,
-    aprobadas: <?php echo $aprobadas; ?>,
-    pendientes: <?php echo $pendientes; ?>,
-    eliminadas: <?php echo $eliminadas; ?>,
-    enviadas_supervisor: <?php echo $enviadas_supervisor; ?>
-});
-
-// Gráfico de tipo de persona
-const tipoPersonaCtx = document.getElementById('tipoPersonaChart').getContext('2d');
-new Chart(tipoPersonaCtx, {
+// Esperar a que el DOM esté cargado
+document.addEventListener('DOMContentLoaded', function() {
+    // Gráfico de tipo de persona
+    const tipoPersonaCtx = document.getElementById('tipoPersonaChart');
+    if (tipoPersonaCtx) {
+        new Chart(tipoPersonaCtx, {
     type: 'doughnut',
     data: {
         labels: ['Persona Natural', 'Natural Independiente', 'Persona Jurídica'],
@@ -1218,11 +1197,13 @@ new Chart(tipoPersonaCtx, {
             }
         }
     }
-});
+        });
+    }
 
-// Gráfico de estado de solicitudes
-const estadoCtx = document.getElementById('estadoChart').getContext('2d');
-new Chart(estadoCtx, {
+    // Gráfico de estado de solicitudes
+    const estadoCtx = document.getElementById('estadoChart');
+    if (estadoCtx) {
+        new Chart(estadoCtx, {
     type: 'pie',
     data: {
         labels: ['Aprobadas', 'Pendientes', 'Eliminadas', 'Enviadas al Supervisor'],
@@ -1255,10 +1236,12 @@ new Chart(estadoCtx, {
             }
         }
     }
-});
+        });
+    }
 
-// Gráfico de tendencias mensuales
-const tendenciasCtx = document.getElementById('tendenciasChart').getContext('2d');
+    // Gráfico de tendencias mensuales
+    const tendenciasCtx = document.getElementById('tendenciasChart');
+    if (tendenciasCtx) {
 const meses = <?php echo json_encode(array_column($estadisticas_mes, 'mes')); ?>;
 const totales = <?php echo json_encode(array_column($estadisticas_mes, 'total')); ?>;
 const pendientes = <?php echo json_encode(array_column($estadisticas_mes, 'pendientes')); ?>;
@@ -1325,10 +1308,10 @@ new Chart(tendenciasCtx, {
             }
         }
     }
-});
+        });
+    }
 
-// Inicializar DataTables en los modales
-$(document).ready(function() {
+    // Inicializar DataTables en los modales
     // DataTable para Aprobadas
     $('#modalAprobadas').on('shown.bs.modal', function () {
         if (!$.fn.DataTable.isDataTable('#tablaAprobadas')) {
@@ -1425,8 +1408,6 @@ $(document).ready(function() {
         var fechaInicio = $('#fechaInicio').val();
         var fechaFin = $('#fechaFin').val();
         
-        console.log('Aplicando filtro:', {fechaInicio, fechaFin});
-        
         if (!fechaInicio && !fechaFin) {
             alert('Por favor selecciona al menos una fecha');
             return;
@@ -1470,6 +1451,7 @@ $(document).ready(function() {
     if (urlParams.get('fecha_fin')) {
         $('#fechaFin').val(urlParams.get('fecha_fin'));
     }
+    }); // Cerrar DOMContentLoaded
 });
 </script>
     </body>
