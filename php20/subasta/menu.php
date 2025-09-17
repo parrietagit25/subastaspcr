@@ -8,7 +8,10 @@
         <div class="navbar-collapse offcanvas-collapse" id="navbarsExampleDefault">
         <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="main.php">Inicio</a>
+            <a class="nav-link active" aria-current="page" href="inicio.php">Dashboard</a>
+            </li>
+            <li class="nav-item">
+            <a class="nav-link" href="main.php">Solicitudes</a>
             </li>
             
             <li class="nav-item dropdown">
