@@ -282,6 +282,29 @@ $solicitudes_recientes = $pdo->query("
         background-color: #d1ecf1;
         color: #0c5460;
       }
+
+      .legend-color {
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        transition: transform 0.2s ease;
+      }
+
+      .legend-color:hover {
+        transform: scale(1.1);
+      }
+
+      .stat-card h4 {
+        color: inherit;
+        font-weight: 600;
+        margin-bottom: 1rem;
+      }
+
+      .section-title {
+        color: #495057;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid #e9ecef;
+      }
     </style>
 
     
@@ -404,6 +427,111 @@ $solicitudes_recientes = $pdo->query("
                 <div class="stat-card warning">
                     <div class="stat-number"><?php echo number_format($enviadas_supervisor); ?></div>
                     <div class="stat-label">Enviadas al Supervisor</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjetas por tipo de persona -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h4 class="section-title">Solicitudes por Tipo de Persona</h4>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-3">
+                <div class="stat-card" style="background: linear-gradient(135deg, #FF6384 0%, #FF9A9E 100%);">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <div class="stat-number"><?php echo number_format($natural); ?></div>
+                            <div class="stat-label">Persona Natural</div>
+                        </div>
+                        <div class="ms-auto">
+                            <div class="legend-color" style="width: 20px; height: 20px; background-color: #FF6384; border-radius: 50%; border: 3px solid white;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-3">
+                <div class="stat-card" style="background: linear-gradient(135deg, #36A2EB 0%, #4facfe 100%);">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <div class="stat-number"><?php echo number_format($natural_independiente); ?></div>
+                            <div class="stat-label">Natural Independiente</div>
+                        </div>
+                        <div class="ms-auto">
+                            <div class="legend-color" style="width: 20px; height: 20px; background-color: #36A2EB; border-radius: 50%; border: 3px solid white;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4 col-md-6 mb-3">
+                <div class="stat-card" style="background: linear-gradient(135deg, #FFCE56 0%, #FFE066 100%); color: #333;">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <div class="stat-number"><?php echo number_format($juridica); ?></div>
+                            <div class="stat-label">Persona Jurídica</div>
+                        </div>
+                        <div class="ms-auto">
+                            <div class="legend-color" style="width: 20px; height: 20px; background-color: #FFCE56; border-radius: 50%; border: 3px solid white;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tarjetas por estado de solicitudes -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h4 class="section-title">Estado de las Solicitudes</h4>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="stat-card" style="background: linear-gradient(135deg, #28a745 0%, #38ef7d 100%);">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <div class="stat-number"><?php echo number_format($aprobadas); ?></div>
+                            <div class="stat-label">Aprobadas</div>
+                        </div>
+                        <div class="ms-auto">
+                            <div class="legend-color" style="width: 20px; height: 20px; background-color: #28a745; border-radius: 50%; border: 3px solid white;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="stat-card" style="background: linear-gradient(135deg, #ffc107 0%, #ffe066 100%); color: #333;">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <div class="stat-number"><?php echo number_format($pendientes); ?></div>
+                            <div class="stat-label">Pendientes</div>
+                        </div>
+                        <div class="ms-auto">
+                            <div class="legend-color" style="width: 20px; height: 20px; background-color: #ffc107; border-radius: 50%; border: 3px solid white;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="stat-card" style="background: linear-gradient(135deg, #dc3545 0%, #ff6b6b 100%);">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <div class="stat-number"><?php echo number_format($eliminadas); ?></div>
+                            <div class="stat-label">Eliminadas</div>
+                        </div>
+                        <div class="ms-auto">
+                            <div class="legend-color" style="width: 20px; height: 20px; background-color: #dc3545; border-radius: 50%; border: 3px solid white;"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="stat-card" style="background: linear-gradient(135deg, #17a2b8 0%, #4facfe 100%);">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <div class="stat-number"><?php echo number_format($enviadas_supervisor); ?></div>
+                            <div class="stat-label">Enviadas al Supervisor</div>
+                        </div>
+                        <div class="ms-auto">
+                            <div class="legend-color" style="width: 20px; height: 20px; background-color: #17a2b8; border-radius: 50%; border: 3px solid white;"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
