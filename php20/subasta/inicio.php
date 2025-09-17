@@ -487,6 +487,9 @@ $solicitudes_recientes = $pdo->query("
          <br>
          <br>
          <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+         <br>
+         <br>
+         <br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
         <div class="row mb-4">
             <div class="col-12">
                 <h1 class="display-4 fw-bold text-center mb-0">Dashboard Subastas PCR</h1>
