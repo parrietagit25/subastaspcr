@@ -18,6 +18,9 @@ try {
 $fecha_inicio = isset($_GET['fecha_inicio']) ? $_GET['fecha_inicio'] : null;
 $fecha_fin = isset($_GET['fecha_fin']) ? $_GET['fecha_fin'] : null;
 
+// Debug: Verificar parámetros recibidos
+error_log("Filtros recibidos - fecha_inicio: " . ($fecha_inicio ?? 'null') . ", fecha_fin: " . ($fecha_fin ?? 'null'));
+
 // Construir condición WHERE para fechas
 $where_fecha = "";
 $params = [];
@@ -32,6 +35,10 @@ if ($fecha_inicio && $fecha_fin) {
     $params = [$fecha_fin . " 23:59:59"];
 }
 
+// Debug: Verificar condición construida
+error_log("WHERE construido: " . $where_fecha);
+error_log("Parámetros: " . print_r($params, true));
+
 // Consultas para el dashboard
 // Total de solicitudes
 $stmt = $pdo->prepare("SELECT COUNT(*) as total FROM cc_subastas " . $where_fecha);
@@ -40,10 +47,10 @@ $total_solicitudes = $stmt->fetch()['total'];
 
 // Solicitudes por estado
 $where_estado = $where_fecha ? $where_fecha . " AND stat = ?" : "WHERE stat = ?";
-$params_pendientes = array_merge($params, [1]);
-$params_aprobadas = array_merge($params, [2]);
-$params_eliminadas = array_merge($params, [3]);
-$params_supervisor = array_merge($params, [4]);
+$params_pendientes = $where_fecha ? array_merge($params, [1]) : [1];
+$params_aprobadas = $where_fecha ? array_merge($params, [2]) : [2];
+$params_eliminadas = $where_fecha ? array_merge($params, [3]) : [3];
+$params_supervisor = $where_fecha ? array_merge($params, [4]) : [4];
 
 $stmt = $pdo->prepare("SELECT COUNT(*) as total FROM cc_subastas " . $where_estado);
 $stmt->execute($params_pendientes);
@@ -66,9 +73,9 @@ $total_usuarios = $pdo->query("SELECT COUNT(*) as total FROM usuarios")->fetch()
 
 // Solicitudes por tipo de persona
 $where_tipo = $where_fecha ? $where_fecha . " AND tipo_persona = ?" : "WHERE tipo_persona = ?";
-$params_natural = array_merge($params, ['NATURAL']);
-$params_natural_independiente = array_merge($params, ['NATURAL INDEPENDIENTE']);
-$params_juridica = array_merge($params, ['JURIDICA']);
+$params_natural = $where_fecha ? array_merge($params, ['NATURAL']) : ['NATURAL'];
+$params_natural_independiente = $where_fecha ? array_merge($params, ['NATURAL INDEPENDIENTE']) : ['NATURAL INDEPENDIENTE'];
+$params_juridica = $where_fecha ? array_merge($params, ['JURIDICA']) : ['JURIDICA'];
 
 $stmt = $pdo->prepare("SELECT COUNT(*) as total FROM cc_subastas " . $where_tipo);
 $stmt->execute($params_natural);
@@ -153,12 +160,10 @@ foreach ($solicitudes as $solicitud) {
 $promedio_adjuntos = $solicitudes_con_adjuntos > 0 ? round($total_adjuntos / $solicitudes_con_adjuntos, 2) : 0;
 
 // Solicitudes recientes (últimas 5)
-$solicitudes_recientes = $pdo->query("
-    SELECT id, nombre_completo, email, tipo_persona, stat, date_time 
-    FROM cc_subastas 
-    ORDER BY date_time DESC 
-    LIMIT 5
-")->fetchAll(PDO::FETCH_ASSOC);
+$sql_recientes = "SELECT id, nombre_completo, email, tipo_persona, stat, date_time FROM cc_subastas " . $where_fecha . " ORDER BY date_time DESC LIMIT 5";
+$stmt_recientes = $pdo->prepare($sql_recientes);
+$stmt_recientes->execute($params);
+$solicitudes_recientes = $stmt_recientes->fetchAll(PDO::FETCH_ASSOC);
 
 ?>
 <!doctype html>
@@ -813,7 +818,7 @@ $solicitudes_recientes = $pdo->query("
                         <tbody>
                             <?php 
                             $where_aprobadas_modal = $where_fecha ? $where_fecha . " AND stat = 2" : "WHERE stat = 2";
-                            $params_aprobadas_modal = array_merge($params, [2]);
+                            $params_aprobadas_modal = $where_fecha ? array_merge($params, [2]) : [2];
                             $stmt_aprobadas = $pdo->prepare("SELECT * FROM cc_subastas " . $where_aprobadas_modal . " ORDER BY fecha_update DESC");
                             $stmt_aprobadas->execute($params_aprobadas_modal);
                             $aprobadas_detalle = $stmt_aprobadas->fetchAll(PDO::FETCH_ASSOC);
@@ -862,7 +867,7 @@ $solicitudes_recientes = $pdo->query("
                         <tbody>
                             <?php 
                             $where_pendientes_modal = $where_fecha ? $where_fecha . " AND stat = 1" : "WHERE stat = 1";
-                            $params_pendientes_modal = array_merge($params, [1]);
+                            $params_pendientes_modal = $where_fecha ? array_merge($params, [1]) : [1];
                             $stmt_pendientes = $pdo->prepare("SELECT * FROM cc_subastas " . $where_pendientes_modal . " ORDER BY date_time DESC");
                             $stmt_pendientes->execute($params_pendientes_modal);
                             $pendientes_detalle = $stmt_pendientes->fetchAll(PDO::FETCH_ASSOC);
@@ -911,7 +916,7 @@ $solicitudes_recientes = $pdo->query("
                         <tbody>
                             <?php 
                             $where_eliminadas_modal = $where_fecha ? $where_fecha . " AND stat = 3" : "WHERE stat = 3";
-                            $params_eliminadas_modal = array_merge($params, [3]);
+                            $params_eliminadas_modal = $where_fecha ? array_merge($params, [3]) : [3];
                             $stmt_eliminadas = $pdo->prepare("SELECT * FROM cc_subastas " . $where_eliminadas_modal . " ORDER BY fecha_update DESC");
                             $stmt_eliminadas->execute($params_eliminadas_modal);
                             $eliminadas_detalle = $stmt_eliminadas->fetchAll(PDO::FETCH_ASSOC);
@@ -960,7 +965,7 @@ $solicitudes_recientes = $pdo->query("
                         <tbody>
                             <?php 
                             $where_supervisor_modal = $where_fecha ? $where_fecha . " AND stat = 4" : "WHERE stat = 4";
-                            $params_supervisor_modal = array_merge($params, [4]);
+                            $params_supervisor_modal = $where_fecha ? array_merge($params, [4]) : [4];
                             $stmt_supervisor = $pdo->prepare("SELECT * FROM cc_subastas " . $where_supervisor_modal . " ORDER BY fecha_update DESC");
                             $stmt_supervisor->execute($params_supervisor_modal);
                             $supervisor_detalle = $stmt_supervisor->fetchAll(PDO::FETCH_ASSOC);
@@ -1008,7 +1013,7 @@ $solicitudes_recientes = $pdo->query("
                         <tbody>
                             <?php 
                             $where_natural_modal = $where_fecha ? $where_fecha . " AND tipo_persona = 'NATURAL'" : "WHERE tipo_persona = 'NATURAL'";
-                            $params_natural_modal = array_merge($params, ['NATURAL']);
+                            $params_natural_modal = $where_fecha ? array_merge($params, ['NATURAL']) : ['NATURAL'];
                             $stmt_natural = $pdo->prepare("SELECT * FROM cc_subastas " . $where_natural_modal . " ORDER BY date_time DESC");
                             $stmt_natural->execute($params_natural_modal);
                             $natural_detalle = $stmt_natural->fetchAll(PDO::FETCH_ASSOC);
@@ -1067,7 +1072,7 @@ $solicitudes_recientes = $pdo->query("
                         <tbody>
                             <?php 
                             $where_natural_independiente_modal = $where_fecha ? $where_fecha . " AND tipo_persona = 'NATURAL INDEPENDIENTE'" : "WHERE tipo_persona = 'NATURAL INDEPENDIENTE'";
-                            $params_natural_independiente_modal = array_merge($params, ['NATURAL INDEPENDIENTE']);
+                            $params_natural_independiente_modal = $where_fecha ? array_merge($params, ['NATURAL INDEPENDIENTE']) : ['NATURAL INDEPENDIENTE'];
                             $stmt_natural_independiente = $pdo->prepare("SELECT * FROM cc_subastas " . $where_natural_independiente_modal . " ORDER BY date_time DESC");
                             $stmt_natural_independiente->execute($params_natural_independiente_modal);
                             $natural_independiente_detalle = $stmt_natural_independiente->fetchAll(PDO::FETCH_ASSOC);
@@ -1126,7 +1131,7 @@ $solicitudes_recientes = $pdo->query("
                         <tbody>
                             <?php 
                             $where_juridica_modal = $where_fecha ? $where_fecha . " AND tipo_persona = 'JURIDICA'" : "WHERE tipo_persona = 'JURIDICA'";
-                            $params_juridica_modal = array_merge($params, ['JURIDICA']);
+                            $params_juridica_modal = $where_fecha ? array_merge($params, ['JURIDICA']) : ['JURIDICA'];
                             $stmt_juridica = $pdo->prepare("SELECT * FROM cc_subastas " . $where_juridica_modal . " ORDER BY date_time DESC");
                             $stmt_juridica->execute($params_juridica_modal);
                             $juridica_detalle = $stmt_juridica->fetchAll(PDO::FETCH_ASSOC);
@@ -1163,6 +1168,22 @@ $solicitudes_recientes = $pdo->query("
 
 <script src="https://getbootstrap.com/docs/5.3/dist/js/bootstrap.bundle.min.js"></script>
 <script>
+// Debug: Verificar que los elementos existen
+console.log('tipoPersonaChart element:', document.getElementById('tipoPersonaChart'));
+console.log('estadoChart element:', document.getElementById('estadoChart'));
+console.log('tendenciasChart element:', document.getElementById('tendenciasChart'));
+
+// Debug: Verificar valores PHP
+console.log('Valores PHP:', {
+    natural: <?php echo $natural; ?>,
+    natural_independiente: <?php echo $natural_independiente; ?>,
+    juridica: <?php echo $juridica; ?>,
+    aprobadas: <?php echo $aprobadas; ?>,
+    pendientes: <?php echo $pendientes; ?>,
+    eliminadas: <?php echo $eliminadas; ?>,
+    enviadas_supervisor: <?php echo $enviadas_supervisor; ?>
+});
+
 // Gráfico de tipo de persona
 const tipoPersonaCtx = document.getElementById('tipoPersonaChart').getContext('2d');
 new Chart(tipoPersonaCtx, {
@@ -1403,6 +1424,8 @@ $(document).ready(function() {
     $('#aplicarFiltro').click(function() {
         var fechaInicio = $('#fechaInicio').val();
         var fechaFin = $('#fechaFin').val();
+        
+        console.log('Aplicando filtro:', {fechaInicio, fechaFin});
         
         if (!fechaInicio && !fechaFin) {
             alert('Por favor selecciona al menos una fecha');
