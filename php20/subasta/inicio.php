@@ -812,7 +812,11 @@ $solicitudes_recientes = $pdo->query("
                         </thead>
                         <tbody>
                             <?php 
-                            $aprobadas_detalle = $pdo->query("SELECT * FROM cc_subastas WHERE stat = 2 ORDER BY fecha_update DESC")->fetchAll(PDO::FETCH_ASSOC);
+                            $where_aprobadas_modal = $where_fecha ? $where_fecha . " AND stat = 2" : "WHERE stat = 2";
+                            $params_aprobadas_modal = array_merge($params, [2]);
+                            $stmt_aprobadas = $pdo->prepare("SELECT * FROM cc_subastas " . $where_aprobadas_modal . " ORDER BY fecha_update DESC");
+                            $stmt_aprobadas->execute($params_aprobadas_modal);
+                            $aprobadas_detalle = $stmt_aprobadas->fetchAll(PDO::FETCH_ASSOC);
                             foreach ($aprobadas_detalle as $row): 
                             ?>
                             <tr>
@@ -857,7 +861,11 @@ $solicitudes_recientes = $pdo->query("
                         </thead>
                         <tbody>
                             <?php 
-                            $pendientes_detalle = $pdo->query("SELECT * FROM cc_subastas WHERE stat = 1 ORDER BY date_time DESC")->fetchAll(PDO::FETCH_ASSOC);
+                            $where_pendientes_modal = $where_fecha ? $where_fecha . " AND stat = 1" : "WHERE stat = 1";
+                            $params_pendientes_modal = array_merge($params, [1]);
+                            $stmt_pendientes = $pdo->prepare("SELECT * FROM cc_subastas " . $where_pendientes_modal . " ORDER BY date_time DESC");
+                            $stmt_pendientes->execute($params_pendientes_modal);
+                            $pendientes_detalle = $stmt_pendientes->fetchAll(PDO::FETCH_ASSOC);
                             foreach ($pendientes_detalle as $row): 
                             ?>
                             <tr>
@@ -902,7 +910,11 @@ $solicitudes_recientes = $pdo->query("
                         </thead>
                         <tbody>
                             <?php 
-                            $eliminadas_detalle = $pdo->query("SELECT * FROM cc_subastas WHERE stat = 3 ORDER BY fecha_update DESC")->fetchAll(PDO::FETCH_ASSOC);
+                            $where_eliminadas_modal = $where_fecha ? $where_fecha . " AND stat = 3" : "WHERE stat = 3";
+                            $params_eliminadas_modal = array_merge($params, [3]);
+                            $stmt_eliminadas = $pdo->prepare("SELECT * FROM cc_subastas " . $where_eliminadas_modal . " ORDER BY fecha_update DESC");
+                            $stmt_eliminadas->execute($params_eliminadas_modal);
+                            $eliminadas_detalle = $stmt_eliminadas->fetchAll(PDO::FETCH_ASSOC);
                             foreach ($eliminadas_detalle as $row): 
                             ?>
                             <tr>
@@ -947,7 +959,11 @@ $solicitudes_recientes = $pdo->query("
                         </thead>
                         <tbody>
                             <?php 
-                            $supervisor_detalle = $pdo->query("SELECT * FROM cc_subastas WHERE stat = 4 ORDER BY fecha_update DESC")->fetchAll(PDO::FETCH_ASSOC);
+                            $where_supervisor_modal = $where_fecha ? $where_fecha . " AND stat = 4" : "WHERE stat = 4";
+                            $params_supervisor_modal = array_merge($params, [4]);
+                            $stmt_supervisor = $pdo->prepare("SELECT * FROM cc_subastas " . $where_supervisor_modal . " ORDER BY fecha_update DESC");
+                            $stmt_supervisor->execute($params_supervisor_modal);
+                            $supervisor_detalle = $stmt_supervisor->fetchAll(PDO::FETCH_ASSOC);
                             foreach ($supervisor_detalle as $row): 
                             ?>
                             <tr>
@@ -991,7 +1007,11 @@ $solicitudes_recientes = $pdo->query("
                         </thead>
                         <tbody>
                             <?php 
-                            $natural_detalle = $pdo->query("SELECT * FROM cc_subastas WHERE tipo_persona = 'NATURAL' ORDER BY date_time DESC")->fetchAll(PDO::FETCH_ASSOC);
+                            $where_natural_modal = $where_fecha ? $where_fecha . " AND tipo_persona = 'NATURAL'" : "WHERE tipo_persona = 'NATURAL'";
+                            $params_natural_modal = array_merge($params, ['NATURAL']);
+                            $stmt_natural = $pdo->prepare("SELECT * FROM cc_subastas " . $where_natural_modal . " ORDER BY date_time DESC");
+                            $stmt_natural->execute($params_natural_modal);
+                            $natural_detalle = $stmt_natural->fetchAll(PDO::FETCH_ASSOC);
                             foreach ($natural_detalle as $row): 
                             ?>
                             <tr>
@@ -1046,7 +1066,11 @@ $solicitudes_recientes = $pdo->query("
                         </thead>
                         <tbody>
                             <?php 
-                            $natural_independiente_detalle = $pdo->query("SELECT * FROM cc_subastas WHERE tipo_persona = 'NATURAL INDEPENDIENTE' ORDER BY date_time DESC")->fetchAll(PDO::FETCH_ASSOC);
+                            $where_natural_independiente_modal = $where_fecha ? $where_fecha . " AND tipo_persona = 'NATURAL INDEPENDIENTE'" : "WHERE tipo_persona = 'NATURAL INDEPENDIENTE'";
+                            $params_natural_independiente_modal = array_merge($params, ['NATURAL INDEPENDIENTE']);
+                            $stmt_natural_independiente = $pdo->prepare("SELECT * FROM cc_subastas " . $where_natural_independiente_modal . " ORDER BY date_time DESC");
+                            $stmt_natural_independiente->execute($params_natural_independiente_modal);
+                            $natural_independiente_detalle = $stmt_natural_independiente->fetchAll(PDO::FETCH_ASSOC);
                             foreach ($natural_independiente_detalle as $row): 
                             ?>
                             <tr>
@@ -1101,7 +1125,11 @@ $solicitudes_recientes = $pdo->query("
                         </thead>
                         <tbody>
                             <?php 
-                            $juridica_detalle = $pdo->query("SELECT * FROM cc_subastas WHERE tipo_persona = 'JURIDICA' ORDER BY date_time DESC")->fetchAll(PDO::FETCH_ASSOC);
+                            $where_juridica_modal = $where_fecha ? $where_fecha . " AND tipo_persona = 'JURIDICA'" : "WHERE tipo_persona = 'JURIDICA'";
+                            $params_juridica_modal = array_merge($params, ['JURIDICA']);
+                            $stmt_juridica = $pdo->prepare("SELECT * FROM cc_subastas " . $where_juridica_modal . " ORDER BY date_time DESC");
+                            $stmt_juridica->execute($params_juridica_modal);
+                            $juridica_detalle = $stmt_juridica->fetchAll(PDO::FETCH_ASSOC);
                             foreach ($juridica_detalle as $row): 
                             ?>
                             <tr>
