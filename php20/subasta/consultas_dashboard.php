@@ -28,8 +28,8 @@ $query = "SELECT id, tipo_persona, nombre_completo, email, telefono, date_time, 
 
 $params = [$fecha_inicio, $fecha_fin];
 
-// Agregar filtro por estado si no es 'total' o 'adjuntos'
-if ($tipo !== 'total' && $tipo !== 'adjuntos') {
+// Agregar filtro por estado si no es 'total'
+if ($tipo !== 'total') {
     $estado = '';
     switch($tipo) {
         case 'pendientes':
