@@ -1,6 +1,9 @@
 <?php 
 session_start();
 $mensaje = "";
+require 'vendor/autoload.php';
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\Exception;
 
 if(!isset($_SESSION["email"])) {
     header("Location: index.php");
@@ -14,154 +17,116 @@ try {
   echo "Error de conexión: " . $e->getMessage();
 }
 
-// Obtener parámetros de fecha
-$fecha_inicio = isset($_GET['fecha_inicio']) ? $_GET['fecha_inicio'] : null;
-$fecha_fin = isset($_GET['fecha_fin']) ? $_GET['fecha_fin'] : null;
+// Obtener fechas por defecto (último mes)
+$fecha_inicio = isset($_GET['fecha_inicio']) ? $_GET['fecha_inicio'] : date('Y-m-01');
+$fecha_fin = isset($_GET['fecha_fin']) ? $_GET['fecha_fin'] : date('Y-m-t');
 
-// Construir condición WHERE para fechas
-$where_fecha = "";
-$params = [];
-if ($fecha_inicio && $fecha_fin) {
-    $where_fecha = "WHERE date_time BETWEEN ? AND ?";
-    $params = [$fecha_inicio . " 00:00:00", $fecha_fin . " 23:59:59"];
-} elseif ($fecha_inicio) {
-    $where_fecha = "WHERE date_time >= ?";
-    $params = [$fecha_inicio . " 00:00:00"];
-} elseif ($fecha_fin) {
-    $where_fecha = "WHERE date_time <= ?";
-    $params = [$fecha_fin . " 23:59:59"];
+// Función para obtener estadísticas
+function obtenerEstadisticas($pdo, $fecha_inicio, $fecha_fin) {
+    $stats = [];
+    
+    // Total general
+    $query = "SELECT COUNT(*) as total FROM cc_subastas WHERE date_time BETWEEN ? AND ?";
+    $stmt = $pdo->prepare($query);
+    $stmt->execute([$fecha_inicio . ' 00:00:00', $fecha_fin . ' 23:59:59']);
+    $stats['total'] = $stmt->fetch()['total'];
+    
+    // Pendientes
+    $query = "SELECT COUNT(*) as total FROM cc_subastas WHERE stat = 1 AND date_time BETWEEN ? AND ?";
+    $stmt = $pdo->prepare($query);
+    $stmt->execute([$fecha_inicio . ' 00:00:00', $fecha_fin . ' 23:59:59']);
+    $stats['pendientes'] = $stmt->fetch()['total'];
+    
+    // Aprobadas
+    $query = "SELECT COUNT(*) as total FROM cc_subastas WHERE stat = 2 AND date_time BETWEEN ? AND ?";
+    $stmt = $pdo->prepare($query);
+    $stmt->execute([$fecha_inicio . ' 00:00:00', $fecha_fin . ' 23:59:59']);
+    $stats['aprobadas'] = $stmt->fetch()['total'];
+    
+    // Eliminadas
+    $query = "SELECT COUNT(*) as total FROM cc_subastas WHERE stat = 3 AND date_time BETWEEN ? AND ?";
+    $stmt = $pdo->prepare($query);
+    $stmt->execute([$fecha_inicio . ' 00:00:00', $fecha_fin . ' 23:59:59']);
+    $stats['eliminadas'] = $stmt->fetch()['total'];
+    
+    // Enviadas al supervisor
+    $query = "SELECT COUNT(*) as total FROM cc_subastas WHERE stat = 4 AND date_time BETWEEN ? AND ?";
+    $stmt = $pdo->prepare($query);
+    $stmt->execute([$fecha_inicio . ' 00:00:00', $fecha_fin . ' 23:59:59']);
+    $stats['supervisor'] = $stmt->fetch()['total'];
+    
+    // Total de adjuntos
+    $query = "SELECT 
+        SUM(CASE WHEN pn_recibo_servicios IS NOT NULL AND pn_recibo_servicios != '' THEN 1 ELSE 0 END) +
+        SUM(CASE WHEN pn_ficha IS NOT NULL AND pn_ficha != '' THEN 1 ELSE 0 END) +
+        SUM(CASE WHEN pn_carta_ex IS NOT NULL AND pn_carta_ex != '' THEN 1 ELSE 0 END) +
+        SUM(CASE WHEN pn_contrato IS NOT NULL AND pn_contrato != '' THEN 1 ELSE 0 END) +
+        SUM(CASE WHEN pn_cc IS NOT NULL AND pn_cc != '' THEN 1 ELSE 0 END) +
+        SUM(CASE WHEN pni_cedula IS NOT NULL AND pni_cedula != '' THEN 1 ELSE 0 END) +
+        SUM(CASE WHEN pni_aviso_op IS NOT NULL AND pni_aviso_op != '' THEN 1 ELSE 0 END) +
+        SUM(CASE WHEN pni_servicios IS NOT NULL AND pni_servicios != '' THEN 1 ELSE 0 END) +
+        SUM(CASE WHEN pni_referencia IS NOT NULL AND pni_referencia != '' THEN 1 ELSE 0 END) +
+        SUM(CASE WHEN pni_cc IS NOT NULL AND pni_cc != '' THEN 1 ELSE 0 END) +
+        SUM(CASE WHEN pni_carta_ex IS NOT NULL AND pni_carta_ex != '' THEN 1 ELSE 0 END) +
+        SUM(CASE WHEN pj_registro_publico IS NOT NULL AND pj_registro_publico != '' THEN 1 ELSE 0 END) +
+        SUM(CASE WHEN pj_aviso_ope IS NOT NULL AND pj_aviso_ope != '' THEN 1 ELSE 0 END) +
+        SUM(CASE WHEN pj_cedula_pass IS NOT NULL AND pj_cedula_pass != '' THEN 1 ELSE 0 END) +
+        SUM(CASE WHEN pj_servicios IS NOT NULL AND pj_servicios != '' THEN 1 ELSE 0 END) +
+        SUM(CASE WHEN pj_cc IS NOT NULL AND pj_cc != '' THEN 1 ELSE 0 END) +
+        SUM(CASE WHEN pj_carta_exo IS NOT NULL AND pj_carta_exo != '' THEN 1 ELSE 0 END) +
+        SUM(CASE WHEN pj_contrato IS NOT NULL AND pj_contrato != '' THEN 1 ELSE 0 END) +
+        SUM(CASE WHEN pni_contrato IS NOT NULL AND pni_contrato != '' THEN 1 ELSE 0 END) as total_adjuntos
+        FROM cc_subastas WHERE date_time BETWEEN ? AND ?";
+    $stmt = $pdo->prepare($query);
+    $stmt->execute([$fecha_inicio . ' 00:00:00', $fecha_fin . ' 23:59:59']);
+    $stats['total_adjuntos'] = $stmt->fetch()['total_adjuntos'] ?? 0;
+    
+    // Promedio de adjuntos
+    $stats['promedio_adjuntos'] = $stats['total'] > 0 ? round($stats['total_adjuntos'] / $stats['total'], 2) : 0;
+    
+    return $stats;
 }
 
-// Consultas para el dashboard
-// Total de solicitudes
-$stmt = $pdo->prepare("SELECT COUNT(*) as total FROM cc_subastas " . $where_fecha);
-$stmt->execute($params);
-$total_solicitudes = $stmt->fetch()['total'];
-
-// Debug temporal
-echo "<!-- Debug: total_solicitudes = $total_solicitudes -->";
-echo "<!-- Debug: where_fecha = $where_fecha -->";
-echo "<!-- Debug: params = " . print_r($params, true) . " -->";
-
-// Solicitudes por estado
-$where_estado = $where_fecha ? $where_fecha . " AND stat = ?" : "WHERE stat = ?";
-$params_pendientes = $where_fecha ? array_merge($params, [1]) : [1];
-$params_aprobadas = $where_fecha ? array_merge($params, [2]) : [2];
-$params_eliminadas = $where_fecha ? array_merge($params, [3]) : [3];
-$params_supervisor = $where_fecha ? array_merge($params, [4]) : [4];
-
-$stmt = $pdo->prepare("SELECT COUNT(*) as total FROM cc_subastas " . $where_estado);
-$stmt->execute($params_pendientes);
-$pendientes = $stmt->fetch()['total'];
-
-$stmt = $pdo->prepare("SELECT COUNT(*) as total FROM cc_subastas " . $where_estado);
-$stmt->execute($params_aprobadas);
-$aprobadas = $stmt->fetch()['total'];
-
-$stmt = $pdo->prepare("SELECT COUNT(*) as total FROM cc_subastas " . $where_estado);
-$stmt->execute($params_eliminadas);
-$eliminadas = $stmt->fetch()['total'];
-
-$stmt = $pdo->prepare("SELECT COUNT(*) as total FROM cc_subastas " . $where_estado);
-$stmt->execute($params_supervisor);
-$enviadas_supervisor = $stmt->fetch()['total'];
-
-// Total de usuarios registrados
-$total_usuarios = $pdo->query("SELECT COUNT(*) as total FROM usuarios")->fetch()['total'];
-
-// Solicitudes por tipo de persona
-$where_tipo = $where_fecha ? $where_fecha . " AND tipo_persona = ?" : "WHERE tipo_persona = ?";
-$params_natural = $where_fecha ? array_merge($params, ['NATURAL']) : ['NATURAL'];
-$params_natural_independiente = $where_fecha ? array_merge($params, ['NATURAL INDEPENDIENTE']) : ['NATURAL INDEPENDIENTE'];
-$params_juridica = $where_fecha ? array_merge($params, ['JURIDICA']) : ['JURIDICA'];
-
-$stmt = $pdo->prepare("SELECT COUNT(*) as total FROM cc_subastas " . $where_tipo);
-$stmt->execute($params_natural);
-$natural = $stmt->fetch()['total'];
-
-$stmt = $pdo->prepare("SELECT COUNT(*) as total FROM cc_subastas " . $where_tipo);
-$stmt->execute($params_natural_independiente);
-$natural_independiente = $stmt->fetch()['total'];
-
-$stmt = $pdo->prepare("SELECT COUNT(*) as total FROM cc_subastas " . $where_tipo);
-$stmt->execute($params_juridica);
-$juridica = $stmt->fetch()['total'];
-
-// Estadísticas por mes (últimos 6 meses)
-$where_mes = $where_fecha ? $where_fecha . " AND date_time >= DATE_SUB(NOW(), INTERVAL 6 MONTH)" : "WHERE date_time >= DATE_SUB(NOW(), INTERVAL 6 MONTH)";
-$sql_mes = "
-    SELECT 
+// Obtener estadísticas por mes
+function obtenerEstadisticasPorMes($pdo, $fecha_inicio, $fecha_fin) {
+    $query = "SELECT 
         DATE_FORMAT(date_time, '%Y-%m') as mes,
         COUNT(*) as total,
         SUM(CASE WHEN stat = 1 THEN 1 ELSE 0 END) as pendientes,
         SUM(CASE WHEN stat = 2 THEN 1 ELSE 0 END) as aprobadas,
-        SUM(CASE WHEN stat = 3 THEN 1 ELSE 0 END) as eliminadas
-    FROM cc_subastas 
-    " . $where_mes . "
-    GROUP BY DATE_FORMAT(date_time, '%Y-%m')
-    ORDER BY mes DESC
-";
-$stmt = $pdo->prepare($sql_mes);
-$stmt->execute($params);
-$estadisticas_mes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        SUM(CASE WHEN stat = 3 THEN 1 ELSE 0 END) as eliminadas,
+        SUM(CASE WHEN stat = 4 THEN 1 ELSE 0 END) as supervisor
+        FROM cc_subastas 
+        WHERE date_time BETWEEN ? AND ?
+        GROUP BY DATE_FORMAT(date_time, '%Y-%m')
+        ORDER BY mes";
+    $stmt = $pdo->prepare($query);
+    $stmt->execute([$fecha_inicio . ' 00:00:00', $fecha_fin . ' 23:59:59']);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
 
-// Estadísticas por semana (últimas 4 semanas)
-$where_semana = $where_fecha ? $where_fecha . " AND date_time >= DATE_SUB(NOW(), INTERVAL 4 WEEK)" : "WHERE date_time >= DATE_SUB(NOW(), INTERVAL 4 WEEK)";
-$sql_semana = "
-    SELECT 
-        YEARWEEK(date_time) as semana,
+// Obtener estadísticas por semana
+function obtenerEstadisticasPorSemana($pdo, $fecha_inicio, $fecha_fin) {
+    $query = "SELECT 
+        YEAR(date_time) as año,
+        WEEK(date_time) as semana,
         COUNT(*) as total,
         SUM(CASE WHEN stat = 1 THEN 1 ELSE 0 END) as pendientes,
         SUM(CASE WHEN stat = 2 THEN 1 ELSE 0 END) as aprobadas,
-        SUM(CASE WHEN stat = 3 THEN 1 ELSE 0 END) as eliminadas
-    FROM cc_subastas 
-    " . $where_semana . "
-    GROUP BY YEARWEEK(date_time)
-    ORDER BY semana DESC
-";
-$stmt = $pdo->prepare($sql_semana);
-$stmt->execute($params);
-$estadisticas_semana = $stmt->fetchAll(PDO::FETCH_ASSOC);
-
-// Calcular total de adjuntos y promedio
-$total_adjuntos = 0;
-$solicitudes_con_adjuntos = 0;
-
-$sql_solicitudes = "SELECT * FROM cc_subastas " . $where_fecha;
-$stmt = $pdo->prepare($sql_solicitudes);
-$stmt->execute($params);
-$solicitudes = $stmt->fetchAll(PDO::FETCH_ASSOC);
-foreach ($solicitudes as $solicitud) {
-    $adjuntos_count = 0;
-    
-    // Contar adjuntos según tipo de persona
-    if ($solicitud['tipo_persona'] == 'NATURAL') {
-        $campos = ['pn_recibo_servicios', 'pn_ficha', 'pn_cc', 'pn_cedula'];
-    } elseif ($solicitud['tipo_persona'] == 'NATURAL INDEPENDIENTE') {
-        $campos = ['pni_cedula', 'pni_aviso_op', 'pni_servicios', 'pni_referencia', 'pni_cc'];
-    } elseif ($solicitud['tipo_persona'] == 'JURIDICA') {
-        $campos = ['pj_registro_publico', 'pj_aviso_ope', 'pj_cedula_pass', 'pj_servicios', 'pj_cc'];
-    }
-    
-    foreach ($campos as $campo) {
-        if (!empty($solicitud[$campo])) {
-            $adjuntos_count++;
-        }
-    }
-    
-    if ($adjuntos_count > 0) {
-        $total_adjuntos += $adjuntos_count;
-        $solicitudes_con_adjuntos++;
-    }
+        SUM(CASE WHEN stat = 3 THEN 1 ELSE 0 END) as eliminadas,
+        SUM(CASE WHEN stat = 4 THEN 1 ELSE 0 END) as supervisor
+        FROM cc_subastas 
+        WHERE date_time BETWEEN ? AND ?
+        GROUP BY YEAR(date_time), WEEK(date_time)
+        ORDER BY año, semana";
+    $stmt = $pdo->prepare($query);
+    $stmt->execute([$fecha_inicio . ' 00:00:00', $fecha_fin . ' 23:59:59']);
+    return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-$promedio_adjuntos = $solicitudes_con_adjuntos > 0 ? round($total_adjuntos / $solicitudes_con_adjuntos, 2) : 0;
-
-// Solicitudes recientes (últimas 5)
-$sql_recientes = "SELECT id, nombre_completo, email, tipo_persona, stat, date_time FROM cc_subastas " . $where_fecha . " ORDER BY date_time DESC LIMIT 5";
-$stmt_recientes = $pdo->prepare($sql_recientes);
-$stmt_recientes->execute($params);
-$solicitudes_recientes = $stmt_recientes->fetchAll(PDO::FETCH_ASSOC);
+$estadisticas = obtenerEstadisticas($pdo, $fecha_inicio, $fecha_fin);
+$estadisticas_mes = obtenerEstadisticasPorMes($pdo, $fecha_inicio, $fecha_fin);
+$estadisticas_semana = obtenerEstadisticasPorSemana($pdo, $fecha_inicio, $fecha_fin);
 
 ?>
 <!doctype html>
@@ -256,174 +221,49 @@ $solicitudes_recientes = $stmt_recientes->fetchAll(PDO::FETCH_ASSOC);
         z-index: 1500;
       }
 
-      .stat-card {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-        color: white;
-        border-radius: 15px;
-        padding: 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        transition: transform 0.3s ease;
+      .dashboard-card {
+        cursor: pointer;
+        transition: transform 0.2s;
+        height: 120px;
       }
 
-      .stat-card:hover {
+      .dashboard-card:hover {
         transform: translateY(-5px);
       }
 
-      .stat-card.success {
-        background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
-      }
-
-      .stat-card.warning {
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-      }
-
-      .stat-card.danger {
-        background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
-        color: #333;
-      }
-
-      .stat-card.info {
-        background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
-      }
-
-      .stat-number {
-        font-size: 2.5rem;
-        font-weight: bold;
-        margin-bottom: 5px;
-      }
-
-      .stat-label {
-        font-size: 0.9rem;
-        opacity: 0.9;
-      }
-
       .chart-container {
-        background: white;
-        border-radius: 15px;
-        padding: 20px;
-        margin-bottom: 20px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-        height: 350px;
-        position: relative;
+        height: 400px;
+        width: 100%;
       }
 
-      .chart-container canvas {
-        max-height: 300px !important;
-        width: 100% !important;
+      .stats-card {
+        border-left: 4px solid;
       }
 
-      .recent-table {
-        background: white;
-        border-radius: 15px;
-        padding: 20px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      .stats-card.pendientes {
+        border-left-color: #ffc107;
       }
 
-      .status-badge {
-        padding: 4px 8px;
-        border-radius: 12px;
-        font-size: 0.75rem;
-        font-weight: 600;
+      .stats-card.aprobadas {
+        border-left-color: #198754;
       }
 
-      .status-pendiente {
-        background-color: #fff3cd;
-        color: #856404;
+      .stats-card.eliminadas {
+        border-left-color: #dc3545;
       }
 
-      .status-aprobado {
-        background-color: #d4edda;
-        color: #155724;
+      .stats-card.supervisor {
+        border-left-color: #0d6efd;
       }
 
-      .status-eliminado {
-        background-color: #f8d7da;
-        color: #721c24;
+      .stats-card.total {
+        border-left-color: #6f42c1;
       }
 
-      .status-supervisor {
-        background-color: #d1ecf1;
-        color: #0c5460;
+      .stats-card.adjuntos {
+        border-left-color: #fd7e14;
       }
 
-      .legend-color {
-        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        transition: transform 0.2s ease;
-      }
-
-      .legend-color:hover {
-        transform: scale(1.1);
-      }
-
-      .stat-card h4 {
-        color: inherit;
-        font-weight: 600;
-        margin-bottom: 1rem;
-      }
-
-      .section-title {
-        color: #495057;
-        font-weight: 600;
-        margin-bottom: 1.5rem;
-        padding-bottom: 0.5rem;
-        border-bottom: 2px solid #e9ecef;
-      }
-
-      .clickable-card {
-        cursor: pointer;
-        transition: all 0.3s ease;
-      }
-
-      .clickable-card:hover {
-        transform: translateY(-8px);
-        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
-      }
-
-      .clickable-card:active {
-        transform: translateY(-4px);
-      }
-
-.date-filter-card {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-  border: 1px solid #dee2e6;
-  border-radius: 15px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  position: relative;
-  z-index: 1000;
-  margin-top: 20px;
-  margin-bottom: 30px;
-}
-
-      .date-filter-card .form-control {
-        border-radius: 10px;
-        border: 2px solid #e9ecef;
-        transition: all 0.3s ease;
-      }
-
-      .date-filter-card .form-control:focus {
-        border-color: #007bff;
-        box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
-      }
-
-      .date-filter-card .btn {
-        border-radius: 10px;
-        font-weight: 600;
-        transition: all 0.3s ease;
-      }
-
-      .date-filter-card .btn:hover {
-        transform: translateY(-2px);
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-      }
-
-.container-fluid {
-  padding-top: 120px;
-}
-
-      .navbar {
-        z-index: 1050;
-      }
     </style>
 
     
@@ -443,7 +283,7 @@ $solicitudes_recientes = $stmt_recientes->fetchAll(PDO::FETCH_ASSOC);
         <path d="M10.794 3.148a.217.217 0 0 1 .412 0l.387 1.162c.173.518.579.924 1.097 1.097l1.162.387a.217.217 0 0 1 0 .412l-1.162.387a1.734 1.734 0 0 0-1.097 1.097l-.387 1.162a.217.217 0 0 1-.412 0l-.387-1.162A1.734 1.734 0 0 0 9.31 6.593l-1.162-.387a.217.217 0 0 1 0-.412l1.162-.387a1.734 1.734 0 0 0 1.097-1.097l.387-1.162zM13.863.099a.145.145 0 0 1 .274 0l.258.774c.115.346.386.617.732.732l.774.258a.145.145 0 0 1 0 .274l-.774.258a1.156 1.156 0 0 0-.732.732l-.258.774a.145.145 0 0 1-.274 0l-.258-.774a1.156 1.156 0 0 0-.732-.732l-.774-.258a.145.145 0 0 1 0-.274l.774-.258c.346-.115.617-.386.732-.732L13.863.1z"/>
       </symbol>
       <symbol id="sun-fill" viewBox="0 0 16 16">
-        <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .708z"/>
+        <path d="M8 12a4 4 0 1 0 0-8 4 4 0 0 0 0 8zM8 0a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 0zm0 13a.5.5 0 0 1 .5.5v2a.5.5 0 0 1-1 0v-2A.5.5 0 0 1 8 13zm8-5a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2a.5.5 0 0 1 .5.5zM3 8a.5.5 0 0 1-.5.5h-2a.5.5 0 0 1 0-1h2A.5.5 0 0 1 3 8zm10.657-5.657a.5.5 0 0 1 0 .707l-1.414 1.415a.5.5 0 1 1-.707-.708l1.414-1.414a.5.5 0 0 1 .707 0zm-9.193 9.193a.5.5 0 0 1 0 .707L3.05 13.657a.5.5 0 0 1-.707-.707l1.414-1.414a.5.5 0 0 1 .707 0zm9.193 2.121a.5.5 0 0 1-.707 0l-1.414-1.414a.5.5 0 0 1 .707-.707l1.414 1.414a.5.5 0 0 1 0 .707zM4.464 4.465a.5.5 0 0 1-.707 0L2.343 3.05a.5.5 0 1 1 .707-.707l1.414 1.414a.5.5 0 0 1 .707 0z"/>
       </symbol>
     </svg>
     <div class="dropdown position-fixed bottom-0 end-0 mb-3 me-3 bd-mode-toggle">
@@ -481,978 +321,335 @@ $solicitudes_recientes = $stmt_recientes->fetchAll(PDO::FETCH_ASSOC);
       </ul>
     </div>
     <?php include('menu.php'); ?>
-    
-<main class="container-fluid">
-    <div class="container">
-        <?php echo $mensaje; ?>
-        
-        <!-- Header del Dashboard -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <h1 class="display-4 fw-bold text-center mb-0">Dashboard Subastas PCR</h1>
-                <p class="text-center text-muted">Panel de control y estadísticas del sistema</p>
-            </div>
-        </div>
 
-        <!-- Selector de rango de fechas -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="card shadow-sm date-filter-card">
-                    <div class="card-body">
-                        <div class="row align-items-center">
-                            <div class="col-md-3">
-                                <h6 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Filtrar por Fecha</h6>
-                            </div>
-                            <div class="col-md-3">
-                                <label for="fechaInicio" class="form-label">Fecha Inicio</label>
-                                <input type="date" class="form-control" id="fechaInicio" name="fechaInicio">
-                            </div>
-                            <div class="col-md-3">
-                                <label for="fechaFin" class="form-label">Fecha Fin</label>
-                                <input type="date" class="form-control" id="fechaFin" name="fechaFin">
-                            </div>
-                            <div class="col-md-3">
-                                <div class="d-flex gap-2">
-                                    <button type="button" class="btn btn-primary" id="aplicarFiltro">
-                                        <i class="fas fa-filter me-1"></i>Aplicar
-                                    </button>
-                                    <button type="button" class="btn btn-outline-secondary" id="limpiarFiltro">
-                                        <i class="fas fa-times me-1"></i>Limpiar
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tarjetas de estadísticas principales 
-        <div class="row mb-4">
-            <div class="col-lg-3 col-md-6 mb-3">
-                <div class="stat-card">
-                    <div class="stat-number"><?php echo number_format($total_solicitudes); ?></div>
-                    <div class="stat-label">Total de Solicitudes</div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 mb-3">
-                <div class="stat-card success">
-                    <div class="stat-number"><?php echo number_format($aprobadas); ?></div>
-                    <div class="stat-label">Aprobadas</div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 mb-3">
-                <div class="stat-card warning">
-                    <div class="stat-number"><?php echo number_format($pendientes); ?></div>
-                    <div class="stat-label">Pendientes</div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 mb-3">
-                <div class="stat-card danger">
-                    <div class="stat-number"><?php echo number_format($eliminadas); ?></div>
-                    <div class="stat-label">Eliminadas</div>
-                </div>
-            </div>
-        </div>-->
-
-        <!-- Segunda fila de estadísticas 
-        <div class="row mb-4">
-            <div class="col-lg-3 col-md-6 mb-3">
-                <div class="stat-card info">
-                    <div class="stat-number"><?php echo number_format($total_usuarios); ?></div>
-                    <div class="stat-label">Usuarios Registrados</div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 mb-3">
-                <div class="stat-card">
-                    <div class="stat-number"><?php echo number_format($total_adjuntos); ?></div>
-                    <div class="stat-label">Total de Adjuntos</div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 mb-3">
-                <div class="stat-card success">
-                    <div class="stat-number"><?php echo $promedio_adjuntos; ?></div>
-                    <div class="stat-label">Promedio de Adjuntos</div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 mb-3">
-                <div class="stat-card warning">
-                    <div class="stat-number"><?php echo number_format($enviadas_supervisor); ?></div>
-                    <div class="stat-label">Enviadas al Supervisor</div>
-                </div>
-            </div>
-        </div>-->
-
-        <!-- Tarjetas por tipo de persona -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <h4 class="section-title">Solicitudes por Tipo de Persona</h4>
-            </div>
-            <div class="col-lg-4 col-md-6 mb-3">
-                <div class="stat-card clickable-card" style="background: linear-gradient(135deg, #FF6384 0%, #FF9A9E 100%);" data-bs-toggle="modal" data-bs-target="#modalNatural">
-                    <div class="d-flex align-items-center">
-                        <div class="me-3">
-                            <div class="stat-number"><?php echo number_format($natural); ?></div>
-                            <div class="stat-label">Persona Natural</div>
-                        </div>
-                        <div class="ms-auto">
-                            <div class="legend-color" style="width: 20px; height: 20px; background-color: #FF6384; border-radius: 50%; border: 3px solid white;"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 mb-3">
-                <div class="stat-card clickable-card" style="background: linear-gradient(135deg, #36A2EB 0%, #4facfe 100%);" data-bs-toggle="modal" data-bs-target="#modalNaturalIndependiente">
-                    <div class="d-flex align-items-center">
-                        <div class="me-3">
-                            <div class="stat-number"><?php echo number_format($natural_independiente); ?></div>
-                            <div class="stat-label">Natural Independiente</div>
-                        </div>
-                        <div class="ms-auto">
-                            <div class="legend-color" style="width: 20px; height: 20px; background-color: #36A2EB; border-radius: 50%; border: 3px solid white;"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-4 col-md-6 mb-3">
-                <div class="stat-card clickable-card" style="background: linear-gradient(135deg, #FFCE56 0%, #FFE066 100%); color: #333;" data-bs-toggle="modal" data-bs-target="#modalJuridica">
-                    <div class="d-flex align-items-center">
-                        <div class="me-3">
-                            <div class="stat-number"><?php echo number_format($juridica); ?></div>
-                            <div class="stat-label">Persona Jurídica</div>
-                        </div>
-                        <div class="ms-auto">
-                            <div class="legend-color" style="width: 20px; height: 20px; background-color: #FFCE56; border-radius: 50%; border: 3px solid white;"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tarjetas por estado de solicitudes -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <h4 class="section-title">Estado de las Solicitudes</h4>
-            </div>
-            <div class="col-lg-3 col-md-6 mb-3">
-                <div class="stat-card clickable-card" style="background: linear-gradient(135deg, #28a745 0%, #38ef7d 100%);" data-bs-toggle="modal" data-bs-target="#modalAprobadas">
-                    <div class="d-flex align-items-center">
-                        <div class="me-3">
-                            <div class="stat-number"><?php echo number_format($aprobadas); ?></div>
-                            <div class="stat-label">Aprobadas</div>
-                        </div>
-                        <div class="ms-auto">
-                            <div class="legend-color" style="width: 20px; height: 20px; background-color: #28a745; border-radius: 50%; border: 3px solid white;"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 mb-3">
-                <div class="stat-card clickable-card" style="background: linear-gradient(135deg, #ffc107 0%, #ffe066 100%); color: #333;" data-bs-toggle="modal" data-bs-target="#modalPendientes">
-                    <div class="d-flex align-items-center">
-                        <div class="me-3">
-                            <div class="stat-number"><?php echo number_format($pendientes); ?></div>
-                            <div class="stat-label">Pendientes</div>
-                        </div>
-                        <div class="ms-auto">
-                            <div class="legend-color" style="width: 20px; height: 20px; background-color: #ffc107; border-radius: 50%; border: 3px solid white;"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 mb-3">
-                <div class="stat-card clickable-card" style="background: linear-gradient(135deg, #dc3545 0%, #ff6b6b 100%);" data-bs-toggle="modal" data-bs-target="#modalEliminadas">
-                    <div class="d-flex align-items-center">
-                        <div class="me-3">
-                            <div class="stat-number"><?php echo number_format($eliminadas); ?></div>
-                            <div class="stat-label">Eliminadas</div>
-                        </div>
-                        <div class="ms-auto">
-                            <div class="legend-color" style="width: 20px; height: 20px; background-color: #dc3545; border-radius: 50%; border: 3px solid white;"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-3 col-md-6 mb-3">
-                <div class="stat-card clickable-card" style="background: linear-gradient(135deg, #17a2b8 0%, #4facfe 100%);" data-bs-toggle="modal" data-bs-target="#modalSupervisor">
-                    <div class="d-flex align-items-center">
-                        <div class="me-3">
-                            <div class="stat-number"><?php echo number_format($enviadas_supervisor); ?></div>
-                            <div class="stat-label">Enviadas al Supervisor</div>
-                        </div>
-                        <div class="ms-auto">
-                            <div class="legend-color" style="width: 20px; height: 20px; background-color: #17a2b8; border-radius: 50%; border: 3px solid white;"></div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Gráficos y tablas -->
-        <div class="row mb-4">
-            <!-- Gráfico de solicitudes por tipo de persona -->
-            <div class="col-lg-6 mb-4">
-                <div class="chart-container">
-                    <h5 class="mb-3">Solicitudes por Tipo de Persona</h5>
-                    <div style="height: 280px; position: relative;">
-                        <canvas id="tipoPersonaChart"></canvas>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Gráfico de estado de solicitudes -->
-            <div class="col-lg-6 mb-4">
-                <div class="chart-container">
-                    <h5 class="mb-3">Estado de las Solicitudes</h5>
-                    <div style="height: 280px; position: relative;">
-                        <canvas id="estadoChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Gráfico de tendencias mensuales -->
-        <div class="row mb-4">
-            <div class="col-12">
-                <div class="chart-container" style="height: 400px;">
-                    <h5 class="mb-3">Tendencias Mensuales (Últimos 6 Meses)</h5>
-                    <div style="height: 320px; position: relative;">
-                        <canvas id="tendenciasChart"></canvas>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Tabla de solicitudes recientes -->
-        <div class="row">
-            <div class="col-12">
-                <div class="recent-table">
-                    <h5 class="mb-3">Solicitudes Recientes</h5>
-                    <div class="table-responsive">
-                        <table class="table table-hover">
-                            <thead class="table-dark">
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Nombre</th>
-                                    <th>Email</th>
-                                    <th>Tipo</th>
-                                    <th>Estado</th>
-                                    <th>Fecha</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php foreach ($solicitudes_recientes as $solicitud): ?>
-                                <tr>
-                                    <td><?php echo $solicitud['id']; ?></td>
-                                    <td><?php echo htmlspecialchars($solicitud['nombre_completo']); ?></td>
-                                    <td><?php echo htmlspecialchars($solicitud['email']); ?></td>
-                                    <td><?php echo $solicitud['tipo_persona']; ?></td>
-                                    <td>
-                                        <?php
-                                        $estado = '';
-                                        $clase = '';
-                                        switch($solicitud['stat']) {
-                                            case 1:
-                                                $estado = 'Pendiente';
-                                                $clase = 'status-pendiente';
-                                                break;
-                                            case 2:
-                                                $estado = 'Aprobado';
-                                                $clase = 'status-aprobado';
-                                                break;
-                                            case 3:
-                                                $estado = 'Eliminado';
-                                                $clase = 'status-eliminado';
-                                                break;
-                                            case 4:
-                                                $estado = 'Enviado al Supervisor';
-                                                $clase = 'status-supervisor';
-                                                break;
-                                        }
-                                        ?>
-                                        <span class="status-badge <?php echo $clase; ?>"><?php echo $estado; ?></span>
-                                    </td>
-                                    <td><?php echo date('d/m/Y H:i', strtotime($solicitud['date_time'])); ?></td>
-                                </tr>
-                                <?php endforeach; ?>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-</main>
-
-<!-- Modales para mostrar detalles -->
-<!-- Modal Aprobadas -->
-<div class="modal fade" id="modalAprobadas" tabindex="-1" aria-labelledby="modalAprobadasLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
+    <!-- Modal para detalles -->
+    <div class="modal fade" id="detalleModal" tabindex="-1" aria-labelledby="detalleModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-xl">
         <div class="modal-content">
-            <div class="modal-header" style="background: linear-gradient(135deg, #28a745 0%, #38ef7d 100%); color: white;">
-                <h5 class="modal-title" id="modalAprobadasLabel">Solicitudes Aprobadas</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="detalleModalLabel">Detalle de Registros</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="table-responsive">
+              <table id="detalleTable" class="table table-striped table-bordered">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Tipo Persona</th>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Teléfono</th>
+                    <th>Fecha</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody>
+                </tbody>
+              </table>
             </div>
-            <div class="modal-body">
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover" id="tablaAprobadas">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre Completo</th>
-                                <th>Email</th>
-                                <th>Tipo Persona</th>
-                                <th>Teléfono</th>
-                                <th>Fecha Aprobación</th>
-                                <th>Código</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php 
-                            $where_aprobadas_modal = $where_fecha ? $where_fecha . " AND stat = 2" : "WHERE stat = 2";
-                            $params_aprobadas_modal = $where_fecha ? array_merge($params, [2]) : [2];
-                            $stmt_aprobadas = $pdo->prepare("SELECT * FROM cc_subastas " . $where_aprobadas_modal . " ORDER BY fecha_update DESC");
-                            $stmt_aprobadas->execute($params_aprobadas_modal);
-                            $aprobadas_detalle = $stmt_aprobadas->fetchAll(PDO::FETCH_ASSOC);
-                            foreach ($aprobadas_detalle as $row): 
-                            ?>
-                            <tr>
-                                <td><?php echo $row['id']; ?></td>
-                                <td><?php echo htmlspecialchars($row['nombre_completo']); ?></td>
-                                <td><?php echo htmlspecialchars($row['email']); ?></td>
-                                <td><?php echo $row['tipo_persona']; ?></td>
-                                <td><?php echo htmlspecialchars($row['telefono']); ?></td>
-                                <td><?php echo date('d/m/Y H:i', strtotime($row['fecha_update'])); ?></td>
-                                <td><span class="badge bg-success"><?php echo $row['codigo']; ?></span></td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+          </div>
         </div>
+      </div>
     </div>
-</div>
 
-<!-- Modal Pendientes -->
-<div class="modal fade" id="modalPendientes" tabindex="-1" aria-labelledby="modalPendientesLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header" style="background: linear-gradient(135deg, #ffc107 0%, #ffe066 100%); color: #333;">
-                <h5 class="modal-title" id="modalPendientesLabel">Solicitudes Pendientes</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+    <main class="container-fluid">
+      <div class="row">
+        <div class="col-12">
+          <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="mb-0">Dashboard - Subastas PCR</h2>
+            <div class="d-flex gap-2">
+              <input type="date" class="form-control" id="fecha_inicio" value="<?php echo $fecha_inicio; ?>" style="width: auto;">
+              <input type="date" class="form-control" id="fecha_fin" value="<?php echo $fecha_fin; ?>" style="width: auto;">
+              <button class="btn btn-primary" onclick="filtrarDashboard()">Filtrar</button>
             </div>
-            <div class="modal-body">
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover" id="tablaPendientes">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre Completo</th>
-                                <th>Email</th>
-                                <th>Tipo Persona</th>
-                                <th>Teléfono</th>
-                                <th>Fecha Solicitud</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php 
-                            $where_pendientes_modal = $where_fecha ? $where_fecha . " AND stat = 1" : "WHERE stat = 1";
-                            $params_pendientes_modal = $where_fecha ? array_merge($params, [1]) : [1];
-                            $stmt_pendientes = $pdo->prepare("SELECT * FROM cc_subastas " . $where_pendientes_modal . " ORDER BY date_time DESC");
-                            $stmt_pendientes->execute($params_pendientes_modal);
-                            $pendientes_detalle = $stmt_pendientes->fetchAll(PDO::FETCH_ASSOC);
-                            foreach ($pendientes_detalle as $row): 
-                            ?>
-                            <tr>
-                                <td><?php echo $row['id']; ?></td>
-                                <td><?php echo htmlspecialchars($row['nombre_completo']); ?></td>
-                                <td><?php echo htmlspecialchars($row['email']); ?></td>
-                                <td><?php echo $row['tipo_persona']; ?></td>
-                                <td><?php echo htmlspecialchars($row['telefono']); ?></td>
-                                <td><?php echo date('d/m/Y H:i', strtotime($row['date_time'])); ?></td>
-                                <td><span class="badge bg-warning">Pendiente</span></td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+          </div>
+
+          <!-- Tarjetas de estadísticas -->
+          <div class="row mb-4">
+            <div class="col-md-2">
+              <div class="card stats-card total dashboard-card" onclick="mostrarDetalle('total')">
+                <div class="card-body text-center">
+                  <h5 class="card-title text-primary">Total General</h5>
+                  <h2 class="text-primary"><?php echo $estadisticas['total']; ?></h2>
                 </div>
+              </div>
             </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Eliminadas -->
-<div class="modal fade" id="modalEliminadas" tabindex="-1" aria-labelledby="modalEliminadasLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header" style="background: linear-gradient(135deg, #dc3545 0%, #ff6b6b 100%); color: white;">
-                <h5 class="modal-title" id="modalEliminadasLabel">Solicitudes Eliminadas</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover" id="tablaEliminadas">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre Completo</th>
-                                <th>Email</th>
-                                <th>Tipo Persona</th>
-                                <th>Teléfono</th>
-                                <th>Fecha Eliminación</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php 
-                            $where_eliminadas_modal = $where_fecha ? $where_fecha . " AND stat = 3" : "WHERE stat = 3";
-                            $params_eliminadas_modal = $where_fecha ? array_merge($params, [3]) : [3];
-                            $stmt_eliminadas = $pdo->prepare("SELECT * FROM cc_subastas " . $where_eliminadas_modal . " ORDER BY fecha_update DESC");
-                            $stmt_eliminadas->execute($params_eliminadas_modal);
-                            $eliminadas_detalle = $stmt_eliminadas->fetchAll(PDO::FETCH_ASSOC);
-                            foreach ($eliminadas_detalle as $row): 
-                            ?>
-                            <tr>
-                                <td><?php echo $row['id']; ?></td>
-                                <td><?php echo htmlspecialchars($row['nombre_completo']); ?></td>
-                                <td><?php echo htmlspecialchars($row['email']); ?></td>
-                                <td><?php echo $row['tipo_persona']; ?></td>
-                                <td><?php echo htmlspecialchars($row['telefono']); ?></td>
-                                <td><?php echo date('d/m/Y H:i', strtotime($row['fecha_update'])); ?></td>
-                                <td><span class="badge bg-danger">Eliminada</span></td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+            <div class="col-md-2">
+              <div class="card stats-card pendientes dashboard-card" onclick="mostrarDetalle('pendientes')">
+                <div class="card-body text-center">
+                  <h5 class="card-title text-warning">Pendientes</h5>
+                  <h2 class="text-warning"><?php echo $estadisticas['pendientes']; ?></h2>
                 </div>
+              </div>
             </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Enviadas al Supervisor -->
-<div class="modal fade" id="modalSupervisor" tabindex="-1" aria-labelledby="modalSupervisorLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header" style="background: linear-gradient(135deg, #17a2b8 0%, #4facfe 100%); color: white;">
-                <h5 class="modal-title" id="modalSupervisorLabel">Solicitudes Enviadas al Supervisor</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover" id="tablaSupervisor">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre Completo</th>
-                                <th>Email</th>
-                                <th>Tipo Persona</th>
-                                <th>Teléfono</th>
-                                <th>Fecha Envío</th>
-                                <th>Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php 
-                            $where_supervisor_modal = $where_fecha ? $where_fecha . " AND stat = 4" : "WHERE stat = 4";
-                            $params_supervisor_modal = $where_fecha ? array_merge($params, [4]) : [4];
-                            $stmt_supervisor = $pdo->prepare("SELECT * FROM cc_subastas " . $where_supervisor_modal . " ORDER BY fecha_update DESC");
-                            $stmt_supervisor->execute($params_supervisor_modal);
-                            $supervisor_detalle = $stmt_supervisor->fetchAll(PDO::FETCH_ASSOC);
-                            foreach ($supervisor_detalle as $row): 
-                            ?>
-                            <tr>
-                                <td><?php echo $row['id']; ?></td>
-                                <td><?php echo htmlspecialchars($row['nombre_completo']); ?></td>
-                                <td><?php echo htmlspecialchars($row['email']); ?></td>
-                                <td><?php echo $row['tipo_persona']; ?></td>
-                                <td><?php echo htmlspecialchars($row['telefono']); ?></td>
-                                <td><?php echo date('d/m/Y H:i', strtotime($row['fecha_update'])); ?></td>
-                                <td><span class="badge bg-info">Enviada al Supervisor</span></td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+            <div class="col-md-2">
+              <div class="card stats-card aprobadas dashboard-card" onclick="mostrarDetalle('aprobadas')">
+                <div class="card-body text-center">
+                  <h5 class="card-title text-success">Aprobadas</h5>
+                  <h2 class="text-success"><?php echo $estadisticas['aprobadas']; ?></h2>
                 </div>
+              </div>
             </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Persona Natural -->
-<div class="modal fade" id="modalNatural" tabindex="-1" aria-labelledby="modalNaturalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header" style="background: linear-gradient(135deg, #FF6384 0%, #FF9A9E 100%); color: white;">
-                <h5 class="modal-title" id="modalNaturalLabel">Solicitudes - Persona Natural</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover" id="tablaNatural">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre Completo</th>
-                                <th>Email</th>
-                                <th>Teléfono</th>
-                                <th>Estado</th>
-                                <th>Fecha</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php 
-                            $where_natural_modal = $where_fecha ? $where_fecha . " AND tipo_persona = 'NATURAL'" : "WHERE tipo_persona = 'NATURAL'";
-                            $params_natural_modal = $where_fecha ? array_merge($params, ['NATURAL']) : ['NATURAL'];
-                            $stmt_natural = $pdo->prepare("SELECT * FROM cc_subastas " . $where_natural_modal . " ORDER BY date_time DESC");
-                            $stmt_natural->execute($params_natural_modal);
-                            $natural_detalle = $stmt_natural->fetchAll(PDO::FETCH_ASSOC);
-                            foreach ($natural_detalle as $row): 
-                            ?>
-                            <tr>
-                                <td><?php echo $row['id']; ?></td>
-                                <td><?php echo htmlspecialchars($row['nombre_completo']); ?></td>
-                                <td><?php echo htmlspecialchars($row['email']); ?></td>
-                                <td><?php echo htmlspecialchars($row['telefono']); ?></td>
-                                <td>
-                                    <?php
-                                    $estado = '';
-                                    $clase = '';
-                                    switch($row['stat']) {
-                                        case 1: $estado = 'Pendiente'; $clase = 'bg-warning'; break;
-                                        case 2: $estado = 'Aprobado'; $clase = 'bg-success'; break;
-                                        case 3: $estado = 'Eliminado'; $clase = 'bg-danger'; break;
-                                        case 4: $estado = 'Enviado al Supervisor'; $clase = 'bg-info'; break;
-                                    }
-                                    ?>
-                                    <span class="badge <?php echo $clase; ?>"><?php echo $estado; ?></span>
-                                </td>
-                                <td><?php echo date('d/m/Y H:i', strtotime($row['date_time'])); ?></td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+            <div class="col-md-2">
+              <div class="card stats-card supervisor dashboard-card" onclick="mostrarDetalle('supervisor')">
+                <div class="card-body text-center">
+                  <h5 class="card-title text-info">Enviadas al Supervisor</h5>
+                  <h2 class="text-info"><?php echo $estadisticas['supervisor']; ?></h2>
                 </div>
+              </div>
             </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Natural Independiente -->
-<div class="modal fade" id="modalNaturalIndependiente" tabindex="-1" aria-labelledby="modalNaturalIndependienteLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header" style="background: linear-gradient(135deg, #36A2EB 0%, #4facfe 100%); color: white;">
-                <h5 class="modal-title" id="modalNaturalIndependienteLabel">Solicitudes - Natural Independiente</h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover" id="tablaNaturalIndependiente">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre Completo</th>
-                                <th>Email</th>
-                                <th>Teléfono</th>
-                                <th>Estado</th>
-                                <th>Fecha</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php 
-                            $where_natural_independiente_modal = $where_fecha ? $where_fecha . " AND tipo_persona = 'NATURAL INDEPENDIENTE'" : "WHERE tipo_persona = 'NATURAL INDEPENDIENTE'";
-                            $params_natural_independiente_modal = $where_fecha ? array_merge($params, ['NATURAL INDEPENDIENTE']) : ['NATURAL INDEPENDIENTE'];
-                            $stmt_natural_independiente = $pdo->prepare("SELECT * FROM cc_subastas " . $where_natural_independiente_modal . " ORDER BY date_time DESC");
-                            $stmt_natural_independiente->execute($params_natural_independiente_modal);
-                            $natural_independiente_detalle = $stmt_natural_independiente->fetchAll(PDO::FETCH_ASSOC);
-                            foreach ($natural_independiente_detalle as $row): 
-                            ?>
-                            <tr>
-                                <td><?php echo $row['id']; ?></td>
-                                <td><?php echo htmlspecialchars($row['nombre_completo']); ?></td>
-                                <td><?php echo htmlspecialchars($row['email']); ?></td>
-                                <td><?php echo htmlspecialchars($row['telefono']); ?></td>
-                                <td>
-                                    <?php
-                                    $estado = '';
-                                    $clase = '';
-                                    switch($row['stat']) {
-                                        case 1: $estado = 'Pendiente'; $clase = 'bg-warning'; break;
-                                        case 2: $estado = 'Aprobado'; $clase = 'bg-success'; break;
-                                        case 3: $estado = 'Eliminado'; $clase = 'bg-danger'; break;
-                                        case 4: $estado = 'Enviado al Supervisor'; $clase = 'bg-info'; break;
-                                    }
-                                    ?>
-                                    <span class="badge <?php echo $clase; ?>"><?php echo $estado; ?></span>
-                                </td>
-                                <td><?php echo date('d/m/Y H:i', strtotime($row['date_time'])); ?></td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+            <div class="col-md-2">
+              <div class="card stats-card eliminadas dashboard-card" onclick="mostrarDetalle('eliminadas')">
+                <div class="card-body text-center">
+                  <h5 class="card-title text-danger">Eliminadas</h5>
+                  <h2 class="text-danger"><?php echo $estadisticas['eliminadas']; ?></h2>
                 </div>
+              </div>
             </div>
-        </div>
-    </div>
-</div>
-
-<!-- Modal Persona Jurídica -->
-<div class="modal fade" id="modalJuridica" tabindex="-1" aria-labelledby="modalJuridicaLabel" aria-hidden="true">
-    <div class="modal-dialog modal-xl">
-        <div class="modal-content">
-            <div class="modal-header" style="background: linear-gradient(135deg, #FFCE56 0%, #FFE066 100%); color: #333;">
-                <h5 class="modal-title" id="modalJuridicaLabel">Solicitudes - Persona Jurídica</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <div class="table-responsive">
-                    <table class="table table-striped table-hover" id="tablaJuridica">
-                        <thead class="table-dark">
-                            <tr>
-                                <th>ID</th>
-                                <th>Nombre Completo</th>
-                                <th>Email</th>
-                                <th>Teléfono</th>
-                                <th>Estado</th>
-                                <th>Fecha</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php 
-                            $where_juridica_modal = $where_fecha ? $where_fecha . " AND tipo_persona = 'JURIDICA'" : "WHERE tipo_persona = 'JURIDICA'";
-                            $params_juridica_modal = $where_fecha ? array_merge($params, ['JURIDICA']) : ['JURIDICA'];
-                            $stmt_juridica = $pdo->prepare("SELECT * FROM cc_subastas " . $where_juridica_modal . " ORDER BY date_time DESC");
-                            $stmt_juridica->execute($params_juridica_modal);
-                            $juridica_detalle = $stmt_juridica->fetchAll(PDO::FETCH_ASSOC);
-                            foreach ($juridica_detalle as $row): 
-                            ?>
-                            <tr>
-                                <td><?php echo $row['id']; ?></td>
-                                <td><?php echo htmlspecialchars($row['nombre_completo']); ?></td>
-                                <td><?php echo htmlspecialchars($row['email']); ?></td>
-                                <td><?php echo htmlspecialchars($row['telefono']); ?></td>
-                                <td>
-                                    <?php
-                                    $estado = '';
-                                    $clase = '';
-                                    switch($row['stat']) {
-                                        case 1: $estado = 'Pendiente'; $clase = 'bg-warning'; break;
-                                        case 2: $estado = 'Aprobado'; $clase = 'bg-success'; break;
-                                        case 3: $estado = 'Eliminado'; $clase = 'bg-danger'; break;
-                                        case 4: $estado = 'Enviado al Supervisor'; $clase = 'bg-info'; break;
-                                    }
-                                    ?>
-                                    <span class="badge <?php echo $clase; ?>"><?php echo $estado; ?></span>
-                                </td>
-                                <td><?php echo date('d/m/Y H:i', strtotime($row['date_time'])); ?></td>
-                            </tr>
-                            <?php endforeach; ?>
-                        </tbody>
-                    </table>
+            <div class="col-md-2">
+              <div class="card stats-card adjuntos dashboard-card" onclick="mostrarDetalle('adjuntos')">
+                <div class="card-body text-center">
+                  <h5 class="card-title text-warning">Total Adjuntos</h5>
+                  <h2 class="text-warning"><?php echo $estadisticas['total_adjuntos']; ?></h2>
+                  <small class="text-muted">Promedio: <?php echo $estadisticas['promedio_adjuntos']; ?></small>
                 </div>
+              </div>
             </div>
+          </div>
+
+          <!-- Gráficas -->
+          <div class="row">
+            <div class="col-md-6">
+              <div class="card">
+                <div class="card-header">
+                  <h5 class="card-title mb-0">Estadísticas por Mes</h5>
+                </div>
+                <div class="card-body">
+                  <div class="chart-container">
+                    <canvas id="chartMes"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="card">
+                <div class="card-header">
+                  <h5 class="card-title mb-0">Estadísticas por Semana</h5>
+                </div>
+                <div class="card-body">
+                  <div class="chart-container">
+                    <canvas id="chartSemana"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-    </div>
-</div>
+      </div>
+    </main>
 
-<script src="https://getbootstrap.com/docs/5.3/dist/js/bootstrap.bundle.min.js"></script>
-<script>
-// Esperar a que el DOM esté cargado
-document.addEventListener('DOMContentLoaded', function() {
-    // Gráfico de tipo de persona
-    const tipoPersonaCtx = document.getElementById('tipoPersonaChart');
-    if (tipoPersonaCtx) {
-        new Chart(tipoPersonaCtx, {
-    type: 'doughnut',
-    data: {
-        labels: ['Persona Natural', 'Natural Independiente', 'Persona Jurídica'],
-        datasets: [{
-            data: [<?php echo $natural; ?>, <?php echo $natural_independiente; ?>, <?php echo $juridica; ?>],
-            backgroundColor: [
-                '#FF6384',
-                '#36A2EB',
-                '#FFCE56'
-            ],
-            borderWidth: 2,
-            borderColor: '#fff'
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        aspectRatio: 1.2,
-        plugins: {
-            legend: {
-                position: 'bottom',
-                labels: {
-                    padding: 15,
-                    usePointStyle: true,
-                    font: {
-                        size: 12
-                    }
-                }
-            }
-        }
-    }
-        });
-    }
+    <script src="https://getbootstrap.com/docs/5.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+      // Datos para las gráficas
+      const datosMes = <?php echo json_encode($estadisticas_mes); ?>;
+      const datosSemana = <?php echo json_encode($estadisticas_semana); ?>;
 
-    // Gráfico de estado de solicitudes
-    const estadoCtx = document.getElementById('estadoChart');
-    if (estadoCtx) {
-        new Chart(estadoCtx, {
-    type: 'pie',
-    data: {
-        labels: ['Aprobadas', 'Pendientes', 'Eliminadas', 'Enviadas al Supervisor'],
-        datasets: [{
-            data: [<?php echo $aprobadas; ?>, <?php echo $pendientes; ?>, <?php echo $eliminadas; ?>, <?php echo $enviadas_supervisor; ?>],
-            backgroundColor: [
-                '#28a745',
-                '#ffc107',
-                '#dc3545',
-                '#17a2b8'
-            ],
-            borderWidth: 2,
-            borderColor: '#fff'
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        aspectRatio: 1.2,
-        plugins: {
-            legend: {
-                position: 'bottom',
-                labels: {
-                    padding: 15,
-                    usePointStyle: true,
-                    font: {
-                        size: 12
-                    }
-                }
-            }
-        }
-    }
-        });
-    }
-
-    // Gráfico de tendencias mensuales
-    const tendenciasCtx = document.getElementById('tendenciasChart');
-    if (tendenciasCtx) {
-const meses = <?php echo json_encode(array_column($estadisticas_mes, 'mes')); ?>;
-const totales = <?php echo json_encode(array_column($estadisticas_mes, 'total')); ?>;
-const pendientes = <?php echo json_encode(array_column($estadisticas_mes, 'pendientes')); ?>;
-const aprobadas = <?php echo json_encode(array_column($estadisticas_mes, 'aprobadas')); ?>;
-const eliminadas = <?php echo json_encode(array_column($estadisticas_mes, 'eliminadas')); ?>;
-
-new Chart(tendenciasCtx, {
-    type: 'line',
-    data: {
-        labels: meses,
-        datasets: [{
-            label: 'Total',
-            data: totales,
-            borderColor: '#007bff',
-            backgroundColor: 'rgba(0, 123, 255, 0.1)',
-            tension: 0.4
-        }, {
-            label: 'Pendientes',
-            data: pendientes,
-            borderColor: '#ffc107',
-            backgroundColor: 'rgba(255, 193, 7, 0.1)',
-            tension: 0.4
-        }, {
-            label: 'Aprobadas',
-            data: aprobadas,
-            borderColor: '#28a745',
-            backgroundColor: 'rgba(40, 167, 69, 0.1)',
-            tension: 0.4
-        }, {
-            label: 'Eliminadas',
-            data: eliminadas,
-            borderColor: '#dc3545',
-            backgroundColor: 'rgba(220, 53, 69, 0.1)',
-            tension: 0.4
-        }]
-    },
-    options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        aspectRatio: 2.5,
-        scales: {
-            y: {
-                beginAtZero: true,
-                grid: {
-                    color: 'rgba(0,0,0,0.1)'
-                }
+      // Gráfica por mes
+      const ctxMes = document.getElementById('chartMes').getContext('2d');
+      new Chart(ctxMes, {
+        type: 'line',
+        data: {
+          labels: datosMes.map(item => item.mes),
+          datasets: [
+            {
+              label: 'Total',
+              data: datosMes.map(item => item.total),
+              borderColor: '#6f42c1',
+              backgroundColor: 'rgba(111, 66, 193, 0.1)',
+              tension: 0.1
             },
-            x: {
-                grid: {
-                    color: 'rgba(0,0,0,0.1)'
-                }
+            {
+              label: 'Pendientes',
+              data: datosMes.map(item => item.pendientes),
+              borderColor: '#ffc107',
+              backgroundColor: 'rgba(255, 193, 7, 0.1)',
+              tension: 0.1
+            },
+            {
+              label: 'Aprobadas',
+              data: datosMes.map(item => item.aprobadas),
+              borderColor: '#198754',
+              backgroundColor: 'rgba(25, 135, 84, 0.1)',
+              tension: 0.1
+            },
+            {
+              label: 'Eliminadas',
+              data: datosMes.map(item => item.eliminadas),
+              borderColor: '#dc3545',
+              backgroundColor: 'rgba(220, 53, 69, 0.1)',
+              tension: 0.1
             }
+          ]
         },
-        plugins: {
-            legend: {
-                position: 'top',
-                labels: {
-                    padding: 20,
-                    usePointStyle: true,
-                    font: {
-                        size: 12
-                    }
-                }
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true
             }
+          }
         }
-    }
+      });
+
+      // Gráfica por semana
+      const ctxSemana = document.getElementById('chartSemana').getContext('2d');
+      new Chart(ctxSemana, {
+        type: 'bar',
+        data: {
+          labels: datosSemana.map(item => `Año ${item.año} - Semana ${item.semana}`),
+          datasets: [
+            {
+              label: 'Total',
+              data: datosSemana.map(item => item.total),
+              backgroundColor: '#6f42c1'
+            },
+            {
+              label: 'Pendientes',
+              data: datosSemana.map(item => item.pendientes),
+              backgroundColor: '#ffc107'
+            },
+            {
+              label: 'Aprobadas',
+              data: datosSemana.map(item => item.aprobadas),
+              backgroundColor: '#198754'
+            },
+            {
+              label: 'Eliminadas',
+              data: datosSemana.map(item => item.eliminadas),
+              backgroundColor: '#dc3545'
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+
+      // Función para filtrar dashboard
+      function filtrarDashboard() {
+        const fechaInicio = document.getElementById('fecha_inicio').value;
+        const fechaFin = document.getElementById('fecha_fin').value;
+        
+        if (fechaInicio && fechaFin) {
+          window.location.href = `inicio.php?fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`;
+        } else {
+          alert('Por favor seleccione ambas fechas');
+        }
+      }
+
+      // Función para mostrar detalles
+      function mostrarDetalle(tipo) {
+        const fechaInicio = document.getElementById('fecha_inicio').value;
+        const fechaFin = document.getElementById('fecha_fin').value;
+        
+        // Determinar el estado según el tipo
+        let estado = '';
+        let titulo = '';
+        
+        switch(tipo) {
+          case 'total':
+            estado = '';
+            titulo = 'Todos los Registros';
+            break;
+          case 'pendientes':
+            estado = '1';
+            titulo = 'Registros Pendientes';
+            break;
+          case 'aprobadas':
+            estado = '2';
+            titulo = 'Registros Aprobados';
+            break;
+          case 'supervisor':
+            estado = '4';
+            titulo = 'Registros Enviados al Supervisor';
+            break;
+          case 'eliminadas':
+            estado = '3';
+            titulo = 'Registros Eliminados';
+            break;
+          case 'adjuntos':
+            estado = 'adjuntos';
+            titulo = 'Registros con Adjuntos';
+            break;
+        }
+
+        // Actualizar título del modal
+        document.getElementById('detalleModalLabel').textContent = titulo;
+
+        // Cargar datos
+        fetch(`consultas_dashboard.php?tipo=${tipo}&fecha_inicio=${fechaInicio}&fecha_fin=${fechaFin}`)
+          .then(response => response.json())
+          .then(data => {
+            const tbody = document.querySelector('#detalleTable tbody');
+            tbody.innerHTML = '';
+            
+            data.forEach(item => {
+              const estadoTexto = getEstadoTexto(item.stat);
+              const row = `
+                <tr>
+                  <td>${item.id}</td>
+                  <td>${item.tipo_persona}</td>
+                  <td>${item.nombre_completo}</td>
+                  <td>${item.email}</td>
+                  <td>${item.telefono}</td>
+                  <td>${item.date_time}</td>
+                  <td>${estadoTexto}</td>
+                </tr>
+              `;
+              tbody.innerHTML += row;
+            });
+
+            // Mostrar modal
+            new bootstrap.Modal(document.getElementById('detalleModal')).show();
+          })
+          .catch(error => {
+            console.error('Error:', error);
+            alert('Error al cargar los datos');
+          });
+      }
+
+      function getEstadoTexto(stat) {
+        switch(stat) {
+          case '1': return 'Pendiente';
+          case '2': return 'Aprobado';
+          case '3': return 'Eliminado';
+          case '4': return 'Enviado al Supervisor';
+          default: return 'Desconocido';
+        }
+      }
+
+      // Inicializar DataTable cuando se abra el modal
+      document.getElementById('detalleModal').addEventListener('shown.bs.modal', function () {
+        if ($.fn.DataTable.isDataTable('#detalleTable')) {
+          $('#detalleTable').DataTable().destroy();
+        }
+        $('#detalleTable').DataTable({
+          language: {
+            url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json'
+          }
         });
-    }
-
-    // Inicializar DataTables en los modales
-    // DataTable para Aprobadas
-    $('#modalAprobadas').on('shown.bs.modal', function () {
-        if (!$.fn.DataTable.isDataTable('#tablaAprobadas')) {
-            $('#tablaAprobadas').DataTable({
-                "language": {
-                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
-                },
-                "pageLength": 10,
-                "order": [[ 0, "desc" ]]
-            });
-        }
-    });
-
-    // DataTable para Pendientes
-    $('#modalPendientes').on('shown.bs.modal', function () {
-        if (!$.fn.DataTable.isDataTable('#tablaPendientes')) {
-            $('#tablaPendientes').DataTable({
-                "language": {
-                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
-                },
-                "pageLength": 10,
-                "order": [[ 0, "desc" ]]
-            });
-        }
-    });
-
-    // DataTable para Eliminadas
-    $('#modalEliminadas').on('shown.bs.modal', function () {
-        if (!$.fn.DataTable.isDataTable('#tablaEliminadas')) {
-            $('#tablaEliminadas').DataTable({
-                "language": {
-                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
-                },
-                "pageLength": 10,
-                "order": [[ 0, "desc" ]]
-            });
-        }
-    });
-
-    // DataTable para Supervisor
-    $('#modalSupervisor').on('shown.bs.modal', function () {
-        if (!$.fn.DataTable.isDataTable('#tablaSupervisor')) {
-            $('#tablaSupervisor').DataTable({
-                "language": {
-                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
-                },
-                "pageLength": 10,
-                "order": [[ 0, "desc" ]]
-            });
-        }
-    });
-
-    // DataTable para Natural
-    $('#modalNatural').on('shown.bs.modal', function () {
-        if (!$.fn.DataTable.isDataTable('#tablaNatural')) {
-            $('#tablaNatural').DataTable({
-                "language": {
-                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
-                },
-                "pageLength": 10,
-                "order": [[ 0, "desc" ]]
-            });
-        }
-    });
-
-    // DataTable para Natural Independiente
-    $('#modalNaturalIndependiente').on('shown.bs.modal', function () {
-        if (!$.fn.DataTable.isDataTable('#tablaNaturalIndependiente')) {
-            $('#tablaNaturalIndependiente').DataTable({
-                "language": {
-                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
-                },
-                "pageLength": 10,
-                "order": [[ 0, "desc" ]]
-            });
-        }
-    });
-
-    // DataTable para Jurídica
-    $('#modalJuridica').on('shown.bs.modal', function () {
-        if (!$.fn.DataTable.isDataTable('#tablaJuridica')) {
-            $('#tablaJuridica').DataTable({
-                "language": {
-                    "url": "//cdn.datatables.net/plug-ins/1.13.6/i18n/es-ES.json"
-                },
-                "pageLength": 10,
-                "order": [[ 0, "desc" ]]
-            });
-        }
-    });
-
-    // Funcionalidad del filtro de fechas
-    $('#aplicarFiltro').click(function() {
-        var fechaInicio = $('#fechaInicio').val();
-        var fechaFin = $('#fechaFin').val();
-        
-        if (!fechaInicio && !fechaFin) {
-            alert('Por favor selecciona al menos una fecha');
-            return;
-        }
-        
-        if (fechaInicio && fechaFin && fechaInicio > fechaFin) {
-            alert('La fecha de inicio no puede ser mayor que la fecha de fin');
-            return;
-        }
-        
-        // Construir URL con parámetros
-        var url = window.location.pathname;
-        var params = [];
-        
-        if (fechaInicio) {
-            params.push('fecha_inicio=' + encodeURIComponent(fechaInicio));
-        }
-        if (fechaFin) {
-            params.push('fecha_fin=' + encodeURIComponent(fechaFin));
-        }
-        
-        if (params.length > 0) {
-            url += '?' + params.join('&');
-        }
-        
-        // Recargar la página con los filtros
-        window.location.href = url;
-    });
-    
-    $('#limpiarFiltro').click(function() {
-        $('#fechaInicio').val('');
-        $('#fechaFin').val('');
-        window.location.href = window.location.pathname;
-    });
-    
-    // Establecer valores de fecha desde URL
-    var urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('fecha_inicio')) {
-        $('#fechaInicio').val(urlParams.get('fecha_inicio'));
-    }
-    if (urlParams.get('fecha_fin')) {
-        $('#fechaFin').val(urlParams.get('fecha_fin'));
-    }
-    }); // Cerrar DOMContentLoaded
-});
-</script>
-    </body>
+      });
+    </script>
+  </body>
 </html>
