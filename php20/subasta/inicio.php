@@ -14,26 +14,77 @@ try {
   echo "Error de conexión: " . $e->getMessage();
 }
 
+// Obtener parámetros de fecha
+$fecha_inicio = isset($_GET['fecha_inicio']) ? $_GET['fecha_inicio'] : null;
+$fecha_fin = isset($_GET['fecha_fin']) ? $_GET['fecha_fin'] : null;
+
+// Construir condición WHERE para fechas
+$where_fecha = "";
+$params = [];
+if ($fecha_inicio && $fecha_fin) {
+    $where_fecha = "WHERE date_time BETWEEN ? AND ?";
+    $params = [$fecha_inicio . " 00:00:00", $fecha_fin . " 23:59:59"];
+} elseif ($fecha_inicio) {
+    $where_fecha = "WHERE date_time >= ?";
+    $params = [$fecha_inicio . " 00:00:00"];
+} elseif ($fecha_fin) {
+    $where_fecha = "WHERE date_time <= ?";
+    $params = [$fecha_fin . " 23:59:59"];
+}
+
 // Consultas para el dashboard
 // Total de solicitudes
-$total_solicitudes = $pdo->query("SELECT COUNT(*) as total FROM cc_subastas")->fetch()['total'];
+$stmt = $pdo->prepare("SELECT COUNT(*) as total FROM cc_subastas " . $where_fecha);
+$stmt->execute($params);
+$total_solicitudes = $stmt->fetch()['total'];
 
 // Solicitudes por estado
-$pendientes = $pdo->query("SELECT COUNT(*) as total FROM cc_subastas WHERE stat = 1")->fetch()['total'];
-$aprobadas = $pdo->query("SELECT COUNT(*) as total FROM cc_subastas WHERE stat = 2")->fetch()['total'];
-$eliminadas = $pdo->query("SELECT COUNT(*) as total FROM cc_subastas WHERE stat = 3")->fetch()['total'];
-$enviadas_supervisor = $pdo->query("SELECT COUNT(*) as total FROM cc_subastas WHERE stat = 4")->fetch()['total'];
+$where_estado = $where_fecha ? $where_fecha . " AND stat = ?" : "WHERE stat = ?";
+$params_pendientes = array_merge($params, [1]);
+$params_aprobadas = array_merge($params, [2]);
+$params_eliminadas = array_merge($params, [3]);
+$params_supervisor = array_merge($params, [4]);
+
+$stmt = $pdo->prepare("SELECT COUNT(*) as total FROM cc_subastas " . $where_estado);
+$stmt->execute($params_pendientes);
+$pendientes = $stmt->fetch()['total'];
+
+$stmt = $pdo->prepare("SELECT COUNT(*) as total FROM cc_subastas " . $where_estado);
+$stmt->execute($params_aprobadas);
+$aprobadas = $stmt->fetch()['total'];
+
+$stmt = $pdo->prepare("SELECT COUNT(*) as total FROM cc_subastas " . $where_estado);
+$stmt->execute($params_eliminadas);
+$eliminadas = $stmt->fetch()['total'];
+
+$stmt = $pdo->prepare("SELECT COUNT(*) as total FROM cc_subastas " . $where_estado);
+$stmt->execute($params_supervisor);
+$enviadas_supervisor = $stmt->fetch()['total'];
 
 // Total de usuarios registrados
 $total_usuarios = $pdo->query("SELECT COUNT(*) as total FROM usuarios")->fetch()['total'];
 
 // Solicitudes por tipo de persona
-$natural = $pdo->query("SELECT COUNT(*) as total FROM cc_subastas WHERE tipo_persona = 'NATURAL'")->fetch()['total'];
-$natural_independiente = $pdo->query("SELECT COUNT(*) as total FROM cc_subastas WHERE tipo_persona = 'NATURAL INDEPENDIENTE'")->fetch()['total'];
-$juridica = $pdo->query("SELECT COUNT(*) as total FROM cc_subastas WHERE tipo_persona = 'JURIDICA'")->fetch()['total'];
+$where_tipo = $where_fecha ? $where_fecha . " AND tipo_persona = ?" : "WHERE tipo_persona = ?";
+$params_natural = array_merge($params, ['NATURAL']);
+$params_natural_independiente = array_merge($params, ['NATURAL INDEPENDIENTE']);
+$params_juridica = array_merge($params, ['JURIDICA']);
+
+$stmt = $pdo->prepare("SELECT COUNT(*) as total FROM cc_subastas " . $where_tipo);
+$stmt->execute($params_natural);
+$natural = $stmt->fetch()['total'];
+
+$stmt = $pdo->prepare("SELECT COUNT(*) as total FROM cc_subastas " . $where_tipo);
+$stmt->execute($params_natural_independiente);
+$natural_independiente = $stmt->fetch()['total'];
+
+$stmt = $pdo->prepare("SELECT COUNT(*) as total FROM cc_subastas " . $where_tipo);
+$stmt->execute($params_juridica);
+$juridica = $stmt->fetch()['total'];
 
 // Estadísticas por mes (últimos 6 meses)
-$estadisticas_mes = $pdo->query("
+$where_mes = $where_fecha ? $where_fecha . " AND date_time >= DATE_SUB(NOW(), INTERVAL 6 MONTH)" : "WHERE date_time >= DATE_SUB(NOW(), INTERVAL 6 MONTH)";
+$sql_mes = "
     SELECT 
         DATE_FORMAT(date_time, '%Y-%m') as mes,
         COUNT(*) as total,
@@ -41,13 +92,17 @@ $estadisticas_mes = $pdo->query("
         SUM(CASE WHEN stat = 2 THEN 1 ELSE 0 END) as aprobadas,
         SUM(CASE WHEN stat = 3 THEN 1 ELSE 0 END) as eliminadas
     FROM cc_subastas 
-    WHERE date_time >= DATE_SUB(NOW(), INTERVAL 6 MONTH)
+    " . $where_mes . "
     GROUP BY DATE_FORMAT(date_time, '%Y-%m')
     ORDER BY mes DESC
-")->fetchAll(PDO::FETCH_ASSOC);
+";
+$stmt = $pdo->prepare($sql_mes);
+$stmt->execute($params);
+$estadisticas_mes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Estadísticas por semana (últimas 4 semanas)
-$estadisticas_semana = $pdo->query("
+$where_semana = $where_fecha ? $where_fecha . " AND date_time >= DATE_SUB(NOW(), INTERVAL 4 WEEK)" : "WHERE date_time >= DATE_SUB(NOW(), INTERVAL 4 WEEK)";
+$sql_semana = "
     SELECT 
         YEARWEEK(date_time) as semana,
         COUNT(*) as total,
@@ -55,16 +110,22 @@ $estadisticas_semana = $pdo->query("
         SUM(CASE WHEN stat = 2 THEN 1 ELSE 0 END) as aprobadas,
         SUM(CASE WHEN stat = 3 THEN 1 ELSE 0 END) as eliminadas
     FROM cc_subastas 
-    WHERE date_time >= DATE_SUB(NOW(), INTERVAL 4 WEEK)
+    " . $where_semana . "
     GROUP BY YEARWEEK(date_time)
     ORDER BY semana DESC
-")->fetchAll(PDO::FETCH_ASSOC);
+";
+$stmt = $pdo->prepare($sql_semana);
+$stmt->execute($params);
+$estadisticas_semana = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Calcular total de adjuntos y promedio
 $total_adjuntos = 0;
 $solicitudes_con_adjuntos = 0;
 
-$solicitudes = $pdo->query("SELECT * FROM cc_subastas")->fetchAll(PDO::FETCH_ASSOC);
+$sql_solicitudes = "SELECT * FROM cc_subastas " . $where_fecha;
+$stmt = $pdo->prepare($sql_solicitudes);
+$stmt->execute($params);
+$solicitudes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 foreach ($solicitudes as $solicitud) {
     $adjuntos_count = 0;
     
@@ -319,6 +380,35 @@ $solicitudes_recientes = $pdo->query("
       .clickable-card:active {
         transform: translateY(-4px);
       }
+
+      .date-filter-card {
+        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+        border: 1px solid #dee2e6;
+        border-radius: 15px;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      }
+
+      .date-filter-card .form-control {
+        border-radius: 10px;
+        border: 2px solid #e9ecef;
+        transition: all 0.3s ease;
+      }
+
+      .date-filter-card .form-control:focus {
+        border-color: #007bff;
+        box-shadow: 0 0 0 0.2rem rgba(0,123,255,0.25);
+      }
+
+      .date-filter-card .btn {
+        border-radius: 10px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .date-filter-card .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      }
     </style>
 
     
@@ -386,6 +476,39 @@ $solicitudes_recientes = $pdo->query("
             <div class="col-12">
                 <h1 class="display-4 fw-bold text-center mb-0">Dashboard Subastas PCR</h1>
                 <p class="text-center text-muted">Panel de control y estadísticas del sistema</p>
+            </div>
+        </div>
+
+        <!-- Selector de rango de fechas -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow-sm date-filter-card">
+                    <div class="card-body">
+                        <div class="row align-items-center">
+                            <div class="col-md-3">
+                                <h6 class="mb-0"><i class="fas fa-calendar-alt me-2"></i>Filtrar por Fecha</h6>
+                            </div>
+                            <div class="col-md-3">
+                                <label for="fechaInicio" class="form-label">Fecha Inicio</label>
+                                <input type="date" class="form-control" id="fechaInicio" name="fechaInicio">
+                            </div>
+                            <div class="col-md-3">
+                                <label for="fechaFin" class="form-label">Fecha Fin</label>
+                                <input type="date" class="form-control" id="fechaFin" name="fechaFin">
+                            </div>
+                            <div class="col-md-3">
+                                <div class="d-flex gap-2">
+                                    <button type="button" class="btn btn-primary" id="aplicarFiltro">
+                                        <i class="fas fa-filter me-1"></i>Aplicar
+                                    </button>
+                                    <button type="button" class="btn btn-outline-secondary" id="limpiarFiltro">
+                                        <i class="fas fa-times me-1"></i>Limpiar
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -1229,6 +1352,55 @@ $(document).ready(function() {
             });
         }
     });
+
+    // Funcionalidad del filtro de fechas
+    $('#aplicarFiltro').click(function() {
+        var fechaInicio = $('#fechaInicio').val();
+        var fechaFin = $('#fechaFin').val();
+        
+        if (!fechaInicio && !fechaFin) {
+            alert('Por favor selecciona al menos una fecha');
+            return;
+        }
+        
+        if (fechaInicio && fechaFin && fechaInicio > fechaFin) {
+            alert('La fecha de inicio no puede ser mayor que la fecha de fin');
+            return;
+        }
+        
+        // Construir URL con parámetros
+        var url = window.location.pathname;
+        var params = [];
+        
+        if (fechaInicio) {
+            params.push('fecha_inicio=' + encodeURIComponent(fechaInicio));
+        }
+        if (fechaFin) {
+            params.push('fecha_fin=' + encodeURIComponent(fechaFin));
+        }
+        
+        if (params.length > 0) {
+            url += '?' + params.join('&');
+        }
+        
+        // Recargar la página con los filtros
+        window.location.href = url;
+    });
+    
+    $('#limpiarFiltro').click(function() {
+        $('#fechaInicio').val('');
+        $('#fechaFin').val('');
+        window.location.href = window.location.pathname;
+    });
+    
+    // Establecer valores de fecha desde URL
+    var urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('fecha_inicio')) {
+        $('#fechaInicio').val(urlParams.get('fecha_inicio'));
+    }
+    if (urlParams.get('fecha_fin')) {
+        $('#fechaFin').val(urlParams.get('fecha_fin'));
+    }
 });
 </script>
     </body>
