@@ -381,15 +381,16 @@ $solicitudes_recientes = $pdo->query("
         transform: translateY(-4px);
       }
 
-      .date-filter-card {
-        background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-        border: 1px solid #dee2e6;
-        border-radius: 15px;
-        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        position: relative;
-        z-index: 1000;
-        margin-top: 20px;
-      }
+.date-filter-card {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border: 1px solid #dee2e6;
+  border-radius: 15px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+  position: relative;
+  z-index: 1000;
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
 
       .date-filter-card .form-control {
         border-radius: 10px;
@@ -413,9 +414,9 @@ $solicitudes_recientes = $pdo->query("
         box-shadow: 0 4px 15px rgba(0,0,0,0.2);
       }
 
-      .container-fluid {
-        padding-top: 100px;
-      }
+.container-fluid {
+  padding-top: 120px;
+}
 
       .navbar {
         z-index: 1050;
