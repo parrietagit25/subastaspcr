@@ -17,6 +17,52 @@ try {
   echo "Error de conexión: " . $e->getMessage();
 }
 
+if (isset($_POST['crear_usuario'])) {
+
+    $nombre_nuevo = trim($_POST['nombre_nuevo'] ?? '');
+    $email_nuevo = trim($_POST['email_nuevo'] ?? '');
+    $edad_nuevo = $_POST['edad_nuevo'] ?? '';
+    $password_nuevo = $_POST['password_nuevo'] ?? '';
+    $tipo_user_nuevo = $_POST['tipo_user_nuevo'] ?? '';
+    $stat_nuevo = isset($_POST['stat_nuevo']) && $_POST['stat_nuevo'] === '0' ? 0 : 1;
+
+    if (empty($nombre_nuevo) || empty($email_nuevo) || empty($password_nuevo) || empty($tipo_user_nuevo)) {
+        $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>Todos los campos obligatorios deben estar completos.</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>';
+    } elseif (!filter_var($email_nuevo, FILTER_VALIDATE_EMAIL)) {
+        $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>El correo electrónico no es válido.</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>';
+    } else {
+        $edad_param = ($edad_nuevo === '' ? null : (int)$edad_nuevo);
+        $password_hash = password_hash($password_nuevo, PASSWORD_DEFAULT);
+
+        try {
+            $stmt = $pdo->prepare("INSERT INTO usuarios (nombre, email, edad, password, tipo_user, stat) VALUES (:nombre, :email, :edad, :password, :tipo_user, :stat)");
+            $stmt->bindParam(':nombre', $nombre_nuevo);
+            $stmt->bindParam(':email', $email_nuevo);
+            $stmt->bindParam(':edad', $edad_param, is_null($edad_param) ? PDO::PARAM_NULL : PDO::PARAM_INT);
+            $stmt->bindParam(':password', $password_hash);
+            $stmt->bindParam(':tipo_user', $tipo_user_nuevo);
+            $stmt->bindParam(':stat', $stat_nuevo, PDO::PARAM_INT);
+            $stmt->execute();
+
+            $mensaje = '<div class="alert alert-success alert-dismissible fade show" role="alert">
+                            <strong>Usuario creado correctamente.</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>';
+        } catch (PDOException $e) {
+            $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Error al crear el usuario.</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>';
+        }
+    }
+}
+
 if (isset($_POST['editar_usuario'])) {
 
     $id = $_POST['id'];
@@ -220,6 +266,59 @@ if (isset($_POST['editar_usuario'])) {
       </ul>
     </div>
     <?php include('menu.php'); ?>
+
+    <?php if($_SESSION["tipo_user"] == 'admin'){ ?>
+    <div class="modal fade" id="crear_usuario_modal" tabindex="-1" aria-labelledby="crearUsuarioLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-5" id="crearUsuarioLabel">Registrar Usuario</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <form action="" method="post" class="prevent-double-submit">
+            <div class="modal-body">
+              <div class="mb-3">
+                <label for="nombre_nuevo" class="form-label">Nombre</label>
+                <input type="text" class="form-control" id="nombre_nuevo" name="nombre_nuevo" required>
+              </div>
+              <div class="mb-3">
+                <label for="email_nuevo" class="form-label">Email</label>
+                <input type="email" class="form-control" id="email_nuevo" name="email_nuevo" required>
+              </div>
+              <div class="mb-3">
+                <label for="edad_nuevo" class="form-label">Edad</label>
+                <input type="number" class="form-control" id="edad_nuevo" name="edad_nuevo" min="0">
+              </div>
+              <div class="mb-3">
+                <label for="password_nuevo" class="form-label">Password</label>
+                <input type="password" class="form-control" id="password_nuevo" name="password_nuevo" required>
+              </div>
+              <div class="mb-3">
+                <label for="tipo_user_nuevo" class="form-label">Tipo de Usuario</label>
+                <select class="form-select" id="tipo_user_nuevo" name="tipo_user_nuevo" required>
+                  <option value="vendedor">Vendedor</option>
+                  <option value="supervisor">Supervisor</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label for="stat_nuevo" class="form-label">Estado</label>
+                <select class="form-select" id="stat_nuevo" name="stat_nuevo">
+                  <option value="1" selected>Activo</option>
+                  <option value="0">Inactivo</option>
+                </select>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+              <button type="submit" class="btn btn-primary" name="crear_usuario">Registrar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+    <?php } ?>
+
     <!-- Modal Aprobar -->
     <div class="modal fade" id="editar_users" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
       <div class="modal-dialog">
@@ -228,7 +327,7 @@ if (isset($_POST['editar_usuario'])) {
             <h1 class="modal-title fs-5" id="exampleModalLabel">Editar Usuario</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <form action="" method="post">
+          <form action="" method="post" class="prevent-double-submit">
             <div class="modal-body" id="aprobar">
             </div>
             <div class="modal-footer">
@@ -247,7 +346,7 @@ if (isset($_POST['editar_usuario'])) {
             <h1 class="modal-title fs-5" id="exampleModalLabel">Enviar Email</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <form action="" method="post">
+          <form action="" method="post" class="prevent-double-submit">
             <div class="modal-body" id="enviar_email_cont">
             </div>
             <div class="modal-footer">
@@ -286,7 +385,7 @@ if (isset($_POST['editar_usuario'])) {
             <h1 class="modal-title fs-5" id="exampleModalLabel">Adjuntos</h1>
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
-          <form action="" method="post">
+          <form action="" method="post" class="prevent-double-submit">
             <div class="modal-body" id="eliminar_conte">
             </div>
             <div class="modal-footer">
@@ -302,7 +401,14 @@ if (isset($_POST['editar_usuario'])) {
 <main class="d-flex align-items-center justify-content-center vh-100 bg-light">
     <div class="table-responsive" style="max-height: 100%; overflow-y: auto; width: 100%;">
         <?php echo $mensaje; ?>
-        <h2 class="text-center">Mantenimineto de Usuarios</h2>
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between mb-3">
+            <h2 class="text-center text-md-start mb-3 mb-md-0">Mantenimiento de Usuarios</h2>
+            <?php if($_SESSION["tipo_user"] == 'admin'){ ?>
+            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#crear_usuario_modal">
+                Registrar usuario
+            </button>
+            <?php } ?>
+        </div>
         <table id="example" class="table table-striped table-bordered text-center">
             <thead>
                 <tr>
@@ -321,7 +427,7 @@ if (isset($_POST['editar_usuario'])) {
                     <td><?php echo $row['nombre']; ?></td>
                     <td><?php echo $row['tipo_user']; ?></td>
                     <td><?php echo $row['email']; ?></td>
-                    <td><?php echo $row['stat']; ?></td>\
+                    <td><?php echo $row['stat']; ?></td>
                     <td>
 
                       <?php if($_SESSION["tipo_user"] == 'admin'){ ?>
@@ -448,18 +554,22 @@ if (isset($_POST['editar_usuario'])) {
 
 
     document.addEventListener('DOMContentLoaded', function() {
+      const forms = document.querySelectorAll('form.prevent-double-submit');
 
-      const form = document.querySelector('form');
-      const enviar = document.getElementById('enviar');
-      const cancelar = document.getElementById('cancelar');
+      forms.forEach(function(form) {
+        form.addEventListener('submit', function() {
+          const submitBtn = form.querySelector('button[type="submit"]');
+          const cancelBtn = form.querySelector('button[data-bs-dismiss="modal"]');
 
-      form.addEventListener('submit', function(event) {
+          if (submitBtn) {
+            submitBtn.disabled = true;
+            submitBtn.textContent = 'Procesando...';
+          }
 
-        enviar.disabled = true;
-        enviar.value = 'Aprobando...'; 
-        cancelar.disabled = true;
-        cancelar.value = 'Aprobando...'; 
-
+          if (cancelBtn) {
+            cancelBtn.disabled = true;
+          }
+        });
       });
     });
 
