@@ -179,9 +179,11 @@ body.admin-body {
 /* Action buttons */
 .btn-actions {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 0.35rem;
   justify-content: center;
+  align-items: center;
+  white-space: nowrap;
 }
 
 .btn-action {
