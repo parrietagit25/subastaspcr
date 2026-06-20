@@ -49,7 +49,8 @@ if (isset($_GET['editar_usuario'])) {
                     <label for="stat" class="form-label">Estado</label>
                     <select class="form-control" id="stat" name="stat">
                       <option value="1" <?php echo $row['stat'] == 1 ? 'selected' : ''; ?>>Activo</option>
-                      <option value="0" <?php echo $row['stat'] == 0 ? 'selected' : ''; ?>>Inactivo</option>
+                      <option value="2" <?php echo $row['stat'] == 2 ? 'selected' : ''; ?>>Inactivo</option>
+                      <option value="3" <?php echo $row['stat'] == 3 ? 'selected' : ''; ?>>Eliminado</option>
                     </select>
                   </div>
                 </div>

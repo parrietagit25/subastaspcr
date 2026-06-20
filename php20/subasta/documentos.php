@@ -1,6 +1,7 @@
 <?php
 $mensaje = "";
 require 'vendor/autoload.php';
+require_once 'config/mail.php';
 use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
@@ -26,20 +27,9 @@ if (isset($_POST['nombre_pn'])) {
     $mail = new PHPMailer(true);
 
     try {
-        // Configuración del servidor
-        $mail->SMTPDebug = 0; // Habilita la salida de depuración detallada (0 para desactivar)
-        $mail->isSMTP();
-        $mail->Host       = 'smtp-mail.outlook.com';
-        $mail->SMTPAuth   = true;
-        $mail->Username   = 'subastas@grupopcr.com.pa';
-        $mail->Password   = 'Admin254812%';
-        $mail->SMTPSecure = 'tls';
-        $mail->Port       = 587;
-
-        $email_origen = 'subastas@grupopcr.com.pa';
+        configure_mailer($mail, 'Subastas Grupo PCR');
 
         // Destinatarios
-        $mail->setFrom($email_origen, 'Subastas Grupo PCR');
         $mail->addAddress('perdidas@grupopcr.com.pa', 'Perdidas - Subastas');
         #$mail->addAddress('yamileth.rodriguez@grupopcr.com.pa', 'Yamileth Rodriguez');
         $mail->addAddress('graciela.mora@grupopcr.com.pa', 'Graciela');
@@ -152,20 +142,9 @@ if (isset($_POST['nombre_completo_pni'])) {
   $mail = new PHPMailer(true);
 
   try {
-      // Configuración del servidor
-      $mail->SMTPDebug = 0; // Habilita la salida de depuración detallada (0 para desactivar)
-      $mail->isSMTP();
-      $mail->Host       = 'smtp-mail.outlook.com';
-      $mail->SMTPAuth   = true;
-      $mail->Username   = 'subastas@grupopcr.com.pa';
-      $mail->Password   = 'Law70344';
-      $mail->SMTPSecure = 'tls';
-      $mail->Port       = 587;
-
-      $email_origen = 'subastas@grupopcr.com.pa';
+      configure_mailer($mail, 'Subastas Grupo PCR');
 
       // Destinatarios
-      $mail->setFrom($email_origen, 'Subastas Grupo PCR');
       $mail->addAddress('perdidas@grupopcr.com.pa', 'Perdidas - Subastas');
 
       // Contenido del correo
@@ -277,20 +256,9 @@ if (isset($_POST['nombre_completo_pj'])) {
   $mail = new PHPMailer(true);
 
   try {
-      // Configuración del servidor
-      $mail->SMTPDebug = 0; // Habilita la salida de depuración detallada (0 para desactivar)
-      $mail->isSMTP();
-      $mail->Host       = 'smtp-mail.outlook.com';
-      $mail->SMTPAuth   = true;
-      $mail->Username   = 'subastas@grupopcr.com.pa';
-      $mail->Password   = 'Law70344';
-      $mail->SMTPSecure = 'tls';
-      $mail->Port       = 587;
-
-      $email_origen = 'subastas@grupopcr.com.pa';
+      configure_mailer($mail, 'Subastas Grupo PCR');
 
       // Destinatarios
-      $mail->setFrom($email_origen, 'Subastas Grupo PCR');
       $mail->addAddress('perdidas@grupopcr.com.pa', 'Perdidas - Subastas');
 
       // Contenido del correo

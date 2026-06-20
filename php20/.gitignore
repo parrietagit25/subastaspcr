@@ -1,4 +1,5 @@
 .env
+subasta/.env
 subasta/aviso_op_pj/*.pdf
 subasta/aviso_pni/*.pdf
 subasta/cedula_pni/*.jpeg
