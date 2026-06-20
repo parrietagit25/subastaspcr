@@ -108,7 +108,7 @@ function obtenerEstadisticasPorMes($pdo, $fecha_inicio, $fecha_fin) {
 // Obtener estadÃ­sticas por semana
 function obtenerEstadisticasPorSemana($pdo, $fecha_inicio, $fecha_fin) {
     $query = "SELECT 
-        YEAR(date_time) as aÃ±o,
+        YEAR(date_time) as anio,
         WEEK(date_time) as semana,
         COUNT(*) as total,
         SUM(CASE WHEN stat = 1 THEN 1 ELSE 0 END) as pendientes,
@@ -118,7 +118,7 @@ function obtenerEstadisticasPorSemana($pdo, $fecha_inicio, $fecha_fin) {
         FROM cc_subastas 
         WHERE date_time BETWEEN ? AND ?
         GROUP BY YEAR(date_time), WEEK(date_time)
-        ORDER BY aÃ±o, semana";
+        ORDER BY anio, semana";
     $stmt = $pdo->prepare($query);
     $stmt->execute([$fecha_inicio . ' 00:00:00', $fecha_fin . ' 23:59:59']);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -458,7 +458,7 @@ $estadisticas_semana = obtenerEstadisticasPorSemana($pdo, $fecha_inicio, $fecha_
       new Chart(ctxSemana, {
         type: 'bar',
         data: {
-          labels: datosSemana.map(item => `AÃ±o ${item.aÃ±o} - Semana ${item.semana}`),
+          labels: datosSemana.map(item => `Año ${item.anio} - Semana ${item.semana}`),
           datasets: [
             {
               label: 'Total',
