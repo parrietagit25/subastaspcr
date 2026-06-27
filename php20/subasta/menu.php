@@ -33,6 +33,9 @@
                     </a>
                     <ul class="dropdown-menu">
                         <li><a class="dropdown-item" href="usuarios.php"><i class="bi bi-people me-2"></i>Usuarios</a></li>
+                        <?php if (($_SESSION['tipo_user'] ?? '') === 'admin'): ?>
+                        <li><a class="dropdown-item" href="test_correo.php"><i class="bi bi-envelope-check me-2"></i>Test de correo</a></li>
+                        <?php endif; ?>
                     </ul>
                 </li>
             </ul>
