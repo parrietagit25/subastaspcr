@@ -20,27 +20,18 @@ $destinatario = '';
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $destinatario = trim($_POST['destinatario'] ?? '');
-    $metodo = $_POST['metodo'] ?? '';
 
     if (!filter_var($destinatario, FILTER_VALIDATE_EMAIL)) {
         $mensaje = 'Ingrese un correo electrónico válido.';
         $tipoAlerta = 'danger';
-    } elseif ($metodo === 'smtp') {
-        $resultado = send_test_email_smtp($destinatario);
-        $mensaje = $resultado['ok'] ? $resultado['message'] : $resultado['error'];
-        $tipoAlerta = $resultado['ok'] ? 'success' : 'danger';
-    } elseif ($metodo === 'resend') {
-        $resultado = send_test_email_resend($destinatario);
-        $mensaje = $resultado['ok'] ? $resultado['message'] : $resultado['error'];
-        $tipoAlerta = $resultado['ok'] ? 'success' : 'danger';
     } else {
-        $mensaje = 'Seleccione un método de envío válido.';
-        $tipoAlerta = 'danger';
+        $resultado = send_test_email($destinatario);
+        $mensaje = $resultado['ok'] ? $resultado['message'] : $resultado['error'];
+        $tipoAlerta = $resultado['ok'] ? 'success' : 'danger';
     }
 }
 
-$smtpFrom = $_ENV['MAIL_FROM_ADDRESS'] ?? '—';
-$resendFrom = $_ENV['RESEND_FROM_ADDRESS'] ?? 'subastas@automarket.com.pa';
+$resendFrom = resend_from_address();
 $resendConfigured = trim($_ENV['RESEND_API_KEY'] ?? '') !== '';
 
 $pageTitle = 'Test de correo - Subastas PCR';
@@ -50,7 +41,7 @@ include('includes/admin_layout_open.php');
 <main class="admin-main">
     <div class="page-header">
         <h1><i class="bi bi-envelope-check me-2"></i>Test de envío de correo</h1>
-        <p>Pruebe SMTP (Outlook) y Resend con el mismo destinatario</p>
+        <p>Envío de prueba vía Resend</p>
     </div>
 
     <?php if ($mensaje): ?>
@@ -74,44 +65,29 @@ include('includes/admin_layout_open.php');
                             value="<?php echo htmlspecialchars($destinatario); ?>"
                             placeholder="ejemplo@correo.com"
                             required
+                            <?php echo $resendConfigured ? '' : 'disabled'; ?>
                         >
                     </div>
 
-                    <div class="d-flex flex-wrap gap-2">
-                        <button type="submit" name="metodo" value="smtp" class="btn btn-pcr-primary">
-                            <i class="bi bi-send me-1"></i> Enviar prueba SMTP
-                        </button>
-                        <button type="submit" name="metodo" value="resend" class="btn btn-outline-primary" <?php echo $resendConfigured ? '' : 'disabled'; ?>>
-                            <i class="bi bi-lightning me-1"></i> Enviar prueba Resend
-                        </button>
-                    </div>
+                    <button type="submit" class="btn btn-pcr-primary" <?php echo $resendConfigured ? '' : 'disabled'; ?>>
+                        <i class="bi bi-send me-1"></i> Enviar prueba
+                    </button>
                 </form>
             </div>
         </div>
 
         <div class="col-lg-5">
             <div class="form-card">
-                <h2 class="h5 mb-3">Configuración actual</h2>
-
+                <h2 class="h5 mb-3">Configuración Resend</h2>
                 <div class="mb-3">
-                    <strong class="d-block text-muted small text-uppercase">SMTP (normal)</strong>
-                    <span><?php echo htmlspecialchars($smtpFrom); ?></span>
-                    <div class="small text-muted">vía <?php echo htmlspecialchars($_ENV['MAIL_HOST'] ?? '—'); ?></div>
-                </div>
-
-                <div class="mb-3">
-                    <strong class="d-block text-muted small text-uppercase">Resend</strong>
+                    <strong class="d-block text-muted small text-uppercase">Remitente</strong>
                     <span><?php echo htmlspecialchars($resendFrom); ?></span>
                     <?php if ($resendConfigured): ?>
-                        <div class="small text-success"><i class="bi bi-check-circle me-1"></i>API key configurada</div>
+                        <div class="small text-success mt-1"><i class="bi bi-check-circle me-1"></i>API key configurada</div>
                     <?php else: ?>
-                        <div class="small text-danger"><i class="bi bi-exclamation-circle me-1"></i>Falta RESEND_API_KEY en .env</div>
+                        <div class="small text-danger mt-1"><i class="bi bi-exclamation-circle me-1"></i>Falta RESEND_API_KEY en .env</div>
                     <?php endif; ?>
                 </div>
-
-                <p class="small text-muted mb-0">
-                    Agregue en <code>.env</code>: <code>RESEND_API_KEY=re_...</code>
-                </p>
             </div>
         </div>
     </div>

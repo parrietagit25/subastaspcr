@@ -3,8 +3,6 @@ session_start();
 $mensaje = "";
 require 'vendor/autoload.php';
 require_once 'config/ui_helpers.php';
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
 
 if(!isset($_SESSION["email"])) {
     header("Location: index.php");

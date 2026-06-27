@@ -3,8 +3,6 @@ session_start();
 require 'vendor/autoload.php';
 require_once 'config/mail.php';
 require_once 'config/ui_helpers.php';
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
 
 if(!isset($_SESSION["email"])) {
     header("Location: index.php");
@@ -33,20 +31,10 @@ try {
 
      }
 
-    $mail = new PHPMailer(true);
-
-    try {
-        configure_mailer($mail, 'Subastas Grupo PCR');
-
-        // Destinatarios
-        $mail->addAddress($email_destinatario, $nombre);
-
-        // Contenido del correo
-        $mail->CharSet = 'UTF-8';
-        $mail->IsHTML(true);
-
-        $mail->Subject = 'GRUPO PCR - APROBADO';
-        $mail->Body    = '
+    $result = send_email(
+        $email_destinatario,
+        'GRUPO PCR - APROBADO',
+        '
         <html>
           <head>
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
@@ -69,16 +57,14 @@ try {
             <img src="cid:logogrupopcr" width="250" alt="Logo 2" />
           </body>
         </html>
-        ';
+        ',
+        'Subastas Grupo PCR',
+        mail_default_logos()
+    );
 
-        $mail->AddEmbeddedImage('../img/logo20años.png', 'logogrupopcr');
-        $mail->AddEmbeddedImage('../img/logosubastas.png', 'logosubastas');
-
-        $mail->send();
-        //echo 'El mensaje ha sido enviado';
-    } catch (Exception $e) {
-        echo "El mensaje no se pudo enviar. Error: {$mail->ErrorInfo}";
-    } 
+    if (!$result['ok']) {
+        echo "El mensaje no se pudo enviar. Error: {$result['error']}";
+    }
     
     $mensaje = '<div class="alert alert-success alert-dismissible fade show" role="alert">
                   <strong>Persona Aprobada! Codigo enviado por correo</strong>

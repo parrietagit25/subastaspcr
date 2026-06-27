@@ -10,9 +10,6 @@ try {
 }
 
 
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
-
 require 'vendor/autoload.php';
 require_once 'config/mail.php';
 
@@ -20,36 +17,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $asunto = $_POST['asunto'];
     $contenido = $_POST['contenido'];
 
-    $mail = new PHPMailer(true);
-
     if (isset($_POST['email_send']) && $_POST['email_send'] == 'todos') {
 
       $ultimo_id = $pdo -> query("SELECT email FROM cc_subastas group by email");
       $rows = $ultimo_id->fetchAll(PDO::FETCH_ASSOC);
 
       foreach ($rows as $key => $value) {
-        
-        $mail = new PHPMailer(true);
-    
-        try {
-            configure_mailer($mail, 'Notificaciones PCR');
-            $mail->addAddress($value['email']); 
-    
-            $mail->isHTML(true);
-            $mail->Subject = $asunto;
-            $mail->Body = $contenido;
-    
-            $mail->send();
-    
+        $result = send_email($value['email'], $asunto, $contenido, 'Notificaciones PCR');
+
+        if ($result['ok']) {
             $mensaje = '<div class="alert alert-success alert-dismissible fade show" role="alert">
                           <strong>El correo ha sido enviado a '.$value['email'].'</strong>
                           <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>';
-    
-        } catch (Exception $e) {
-            
+        } else {
             echo '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <strong>Error al enviar el correo a '.$value['email'].': '.$mail->ErrorInfo.'</strong>
+                    <strong>Error al enviar el correo a '.$value['email'].': '.$result['error'].'</strong>
                     <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                   </div>';
         }
@@ -57,23 +40,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   
     }elseif (isset($_POST['email_send']) && $_POST['email_send'] == 'ind') {
       
-      try {
-        configure_mailer($mail, 'Notificaciones PCR');
-        $mail->addAddress($_POST['email'], ''); 
+      $result = send_email($_POST['email'], $asunto, $contenido, 'Notificaciones PCR');
 
-        $mail->isHTML(true);
-        $mail->Subject = $asunto;
-        $mail->Body = $contenido;
-
-        $mail->send();
-
+      if ($result['ok']) {
         $mensaje = '<div class="alert alert-success alert-dismissible fade show" role="alert">
                       <strong>El correo ha sido enviado</strong>
                       <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                     </div>';
-
-      } catch (Exception $e) {
-          echo "Error al enviar el correo: {$mail->ErrorInfo}";
+      } else {
+          echo "Error al enviar el correo: {$result['error']}";
       }
 
     }

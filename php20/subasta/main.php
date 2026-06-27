@@ -4,8 +4,6 @@ $mensaje = "";
 require 'vendor/autoload.php';
 require_once 'config/mail.php';
 require_once 'config/ui_helpers.php';
-use PHPMailer\PHPMailer\PHPMailer;
-use PHPMailer\PHPMailer\Exception;
 
 if(!isset($_SESSION["email"])) {
     header("Location: index.php");
@@ -21,40 +19,27 @@ try {
 
 if (isset($_POST['send_email'])) {
 
-  $mail = new PHPMailer(true);
-
-  try {
-      configure_mailer($mail, 'Subastas Grupo PCR');
-
-      // Destinatarios
-      $mail->addAddress($_POST['email_send_email']);
-
-      // Contenido del correo
-      $mail->CharSet = 'UTF-8';
-      $mail->IsHTML(true);
-
-      $mail->Subject = 'GRUPO PCR - Revicion de Documentos';
-      $mail->Body    = '
+  $result = send_email(
+      $_POST['email_send_email'],
+      'GRUPO PCR - Revicion de Documentos',
+      '
       <html>
         <head>
           <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-
         </head>
         <body> 
           <p>Buen dia, el siguiente mensaje fue enviado por parte del personal administrativo, el mensaje enviado es:</p>
           " - '.$_POST['mensaje_send_email'].' - "
         </body>
       </html>
-      ';
+      ',
+      'Subastas Grupo PCR',
+      mail_default_logos()
+  );
 
-      $mail->AddEmbeddedImage('../img/logo20años.png', 'logogrupopcr');
-      $mail->AddEmbeddedImage('../img/logosubastas.png', 'logosubastas');
-
-      $mail->send();
-      //echo 'El mensaje ha sido enviado';
-  } catch (Exception $e) {
-      echo "El mensaje no se pudo enviar. Error: {$mail->ErrorInfo}";
-  } 
+  if (!$result['ok']) {
+      echo "El mensaje no se pudo enviar. Error: {$result['error']}";
+  }
   
   $mensaje = '<div class="alert alert-success alert-dismissible fade show" role="alert">
                 <strong>Mensaje Enviado!</strong>
@@ -79,24 +64,13 @@ if (isset($_POST['send_email'])) {
 
      }
 
-    $mail = new PHPMailer(true);
-
-    try {
-        configure_mailer($mail, 'Subastas Grupo PCR');
-
-        // Destinatarios
-        $mail->addAddress($email_destinatario, $nombre);
-
-        // Contenido del correo
-        $mail->CharSet = 'UTF-8';
-        $mail->IsHTML(true);
-
-        $mail->Subject = 'GRUPO PCR - APROBADO';
-        $mail->Body    = '
+    $result = send_email(
+        $email_destinatario,
+        'GRUPO PCR - APROBADO',
+        '
         <html>
           <head>
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-
           </head>
           <body> 
             <img src="cid:logosubastas" width="250" alt="Logo 1" />
@@ -116,16 +90,14 @@ if (isset($_POST['send_email'])) {
             <img src="cid:logogrupopcr" width="250" alt="Logo 2" />
           </body>
         </html>
-        ';
+        ',
+        'Subastas Grupo PCR',
+        mail_default_logos()
+    );
 
-        $mail->AddEmbeddedImage('../img/logo20años.png', 'logogrupopcr');
-        $mail->AddEmbeddedImage('../img/logosubastas.png', 'logosubastas');
-
-        $mail->send();
-        //echo 'El mensaje ha sido enviado';
-    } catch (Exception $e) {
-        echo "El mensaje no se pudo enviar. Error: {$mail->ErrorInfo}";
-    } 
+    if (!$result['ok']) {
+        echo "El mensaje no se pudo enviar. Error: {$result['error']}";
+    }
     
     $mensaje = '<div class="alert alert-success alert-dismissible fade show" role="alert">
                   <strong>Persona Aprobada! Codigo enviado por correo</strong>
@@ -149,42 +121,30 @@ if (isset($_POST['send_email'])) {
     # code...
     $insert = $pdo -> query("UPDATE cc_subastas SET stat = 4 WHERE id = '".$_POST['id_aprobar_supervisor']."'");
 
-    $mail = new PHPMailer(true);
-
-    try {
-        configure_mailer($mail, 'Subastas Grupo PCR');
-
-        // Destinatarios
-        $mail->addAddress('yamileth.rodriguez@grupopcr.com.pa', 'Yamileth Rodriguez');
-        $mail->addAddress('ilany.albeo@grupopcr.com.pa', 'Ilany Albeo');
-
-        // Contenido del correo
-        $mail->CharSet = 'UTF-8';
-        $mail->IsHTML(true);
-
-        $mail->Subject = 'GRUPO PCR - Revicion de Documentos';
-        $mail->Body    = '
+    $result = send_email(
+        [
+            'yamileth.rodriguez@grupopcr.com.pa',
+            'ilany.albeo@grupopcr.com.pa',
+        ],
+        'GRUPO PCR - Revicion de Documentos',
+        '
         <html>
           <head>
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-
           </head>
           <body> 
             <p>Buen dia, se acaba de aprobar unos documentos para su revicion: <br>
               puede ingresar a <a href="https://subastas.grupopcr.com.pa/subasta/main.php" target="_blank">https://subastas.grupopcr.com.pa/subasta/</a> para ver los detalles.</p>
-            </p>
           </body>
         </html>
-        ';
+        ',
+        'Subastas Grupo PCR',
+        mail_default_logos()
+    );
 
-        $mail->AddEmbeddedImage('../img/logo20años.png', 'logogrupopcr');
-        $mail->AddEmbeddedImage('../img/logosubastas.png', 'logosubastas');
-
-        $mail->send();
-        //echo 'El mensaje ha sido enviado';
-    } catch (Exception $e) {
-        echo "El mensaje no se pudo enviar. Error: {$mail->ErrorInfo}";
-    } 
+    if (!$result['ok']) {
+        echo "El mensaje no se pudo enviar. Error: {$result['error']}";
+    }
 
     $mensaje = '<div class="alert alert-success alert-dismissible fade show" role="alert">
                   <strong>Registro enviado al supervisor!</strong>
