@@ -15,7 +15,11 @@ services:
     command: --default-authentication-plugin=mysql_native_password
     restart: always
     volumes:
-      - ./my_database.sql:/docker-entrypoint-initdb.d/masterdd.sql
+      # Solo corre al crear el volumen MySQL por primera vez.
+      # Si la BD ya existe vacía, importar manualmente: php20/fix_schema.sql
+      - ./php20/fix_schema.sql:/docker-entrypoint-initdb.d/01_fix_schema.sql
+      # Backup histórico opcional (descomentar solo en volumen NUEVO si quieres datos viejos):
+      # - ./my_database.sql:/docker-entrypoint-initdb.d/02_backup.sql
     environment:
       MYSQL_ROOT_PASSWORD: rootpass
       MYSQL_DATABASE: subastas  
