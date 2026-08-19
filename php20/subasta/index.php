@@ -79,6 +79,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
           </div>
 
           <button class="btn btn-pcr-primary w-100" type="submit">Ingresar</button>
+          <p class="text-center mt-3 mb-0">
+            <a href="login_test.php" class="small">Acceso de prueba (temporal)</a>
+          </p>
           <p class="login-footer">&copy; <?php echo date('Y'); ?> Grupo PCR</p>
         </form>
       </div>
