@@ -1,4 +1,4 @@
-﻿<?php 
+<?php 
 session_start();
 $mensaje = "";
 require 'vendor/autoload.php';
