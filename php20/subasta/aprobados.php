@@ -182,7 +182,7 @@ if (isset($_POST['edit_user'])) {
             <tbody>
                 <?php foreach ($rows as $row) { ?>
                 <tr>
-                    <td><strong>#<?php echo $row['id']; ?></strong></td>
+                    <td><strong><?php echo $row['id']; ?></strong></td>
                     <td><?php echo tipo_persona_badge($row['tipo_persona']); ?></td>
                     <td class="text-start"><?php echo htmlspecialchars($row['nombre_completo']); ?></td>
                     <td><?php echo htmlspecialchars($row['email']); ?></td>
