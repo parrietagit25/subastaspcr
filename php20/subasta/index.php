@@ -1,57 +1,54 @@
-<?php 
+<?php
 session_start();
 $mensaje = "";
 
-if(isset($_SESSION["email"])) {
+if (isset($_SESSION["email"])) {
     header("Location: main.php");
     exit();
 }
 
-if (isset($_POST['email'])) {
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['email'])) {
+    $email = trim((string) $_POST['email']);
+    $password = (string) ($_POST['password'] ?? '');
 
     try {
         $pdo = new PDO('mysql:host=db;dbname=subastas;charset=utf8mb4', 'root', 'rootpass');
         $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    } catch (PDOException $e) {
-        echo "Error de conexión: " . $e->getMessage();
-    }
 
-    $email = $_POST['email'];
-    $password = $_POST['password'];
+        try {
+            $stmt = $pdo->prepare('SELECT id, password, tipo_user FROM usuarios WHERE email = ? LIMIT 1');
+            $stmt->execute([$email]);
+        } catch (PDOException $e) {
+            $stmt = $pdo->prepare('SELECT id, password FROM usuarios WHERE email = ? LIMIT 1');
+            $stmt->execute([$email]);
+        }
 
-    $comprobar_user = $pdo -> query("SELECT id, password, tipo_user FROM usuarios WHERE email  = '".$email."'");
-    $rows = $comprobar_user->fetchAll(PDO::FETCH_ASSOC);
-    foreach ($rows as $row) {
-      $id = $row['id'];
-      $pass = $row['password'];
-      $tipo_user = $row['tipo_user'];
-    }
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-    if (isset($pass)) {
-
-        if (password_verify($password, $pass)) {
-            session_start();
-            $_SESSION["loggedin"] = true;
-            $_SESSION["id"] = $id;
-            $_SESSION["email"] = $email;
-            $_SESSION["tipo_user"] = $tipo_user;
-            header("Location: main.php");
-        } else {
+        if (!$row) {
+            $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                            <strong>Usuario incorrecto</strong>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>';
+        } elseif (!password_verify($password, $row['password'])) {
             $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
                             <strong>Contraseña incorrecta</strong>
                             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
                         </div>';
+        } else {
+            $_SESSION["loggedin"] = true;
+            $_SESSION["id"] = $row['id'];
+            $_SESSION["email"] = $email;
+            $_SESSION["tipo_user"] = $row['tipo_user'] ?? 'vendedor';
+            header("Location: main.php");
+            exit();
         }
-        
-    }else{
-
-    $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    <strong>Usuario incorrecto</strong>
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>';
-
+    } catch (PDOException $e) {
+        $mensaje = '<div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <strong>No se pudo validar el acceso:</strong> ' . htmlspecialchars($e->getMessage()) . '
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>';
     }
-        
 }
 
 ?>
@@ -73,7 +70,7 @@ if (isset($_POST['email'])) {
           <h1>Panel de administración</h1>
 
           <div class="form-floating mb-3">
-            <input type="email" name="email" class="form-control" id="floatingInput" placeholder="name@example.com" required>
+            <input type="email" name="email" class="form-control" id="floatingInput" placeholder="name@example.com" value="<?php echo htmlspecialchars($email ?? ''); ?>" required>
             <label for="floatingInput">Correo electrónico</label>
           </div>
           <div class="form-floating mb-4">
